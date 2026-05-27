@@ -1,71 +1,354 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1"
-    />
-    <meta name="theme-color" content="#c41e3a" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="活動小幫手" />
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="format-detection" content="telephone=no" />
-    <link rel="manifest" href="/manifest.json" />
-    <link rel="apple-touch-icon" href="/icons/icon-192.svg" />
-    <title>廣運50週年慶｜智能客服</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="/css/style.css" />
-  </head>
-  <body>
-    <div class="page">
-      <header class="hero">
-        <div class="hero-badge">50th Anniversary</div>
-        <h1>廣運50週年慶</h1>
-        <p class="hero-sub" id="event-subtitle">智能客服 · 即時解答活動疑問</p>
-      </header>
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#c41e3a" />
+<title>廣運50週年慶｜智能客服</title>
+<style>:root {
+  --bg: #0f172a;
+  --card: #ffffff;
+  --primary: #c41e3a;
+  --primary-dark: #9a1830;
+  --text: #1e293b;
+  --muted: #64748b;
+  --bot-bg: #f1f5f9;
+  --user-bg: linear-gradient(135deg, #c41e3a, #e11d48);
+  --shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+  --radius: 16px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
 
-      <main class="chat-card" aria-label="智能客服對話">
-        <div class="chat-header">
-          <div class="avatar" aria-hidden="true">
-            <img src="/messageImage_1779701547098.jpg" alt="" />
-          </div>
-          <div>
-            <strong>活動小幫手</strong>
-            <span class="status"><span class="dot"></span> 線上服務中</span>
-          </div>
-        </div>
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
 
-        <div id="messages" class="messages" role="log" aria-live="polite"></div>
+html {
+  height: 100%;
+}
 
-        <div id="quick-replies" class="quick-replies"></div>
+body {
+  margin: 0;
+  min-height: 100%;
+  min-height: 100dvh;
+  font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif;
+  background: radial-gradient(ellipse at top, #1e3a5f 0%, var(--bg) 55%);
+  color: var(--text);
+  overscroll-behavior: none;
+}
 
-        <form id="chat-form" class="chat-form">
-          <label class="sr-only" for="user-input">輸入問題</label>
-          <input
-            id="user-input"
-            type="text"
-            enterkeyhint="send"
-            placeholder="例如：活動幾點開始？"
-            autocomplete="off"
-            autocorrect="off"
-            autocapitalize="sentences"
-            maxlength="500"
-          />
-          <button type="submit" id="send-btn">送出</button>
-        </form>
-      </main>
+.page {
+  max-width: 720px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: calc(12px + var(--safe-top)) 12px calc(12px + var(--safe-bottom));
+}
 
-      <footer class="footer">
-        <p>由活動知識庫驅動 · 有問題請洽「廣運福利委員會」或現場服務台</p>
-      </footer>
-    </div>
-    <script src="/js/chat.js"></script>
-  </body>
+.hero {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.hero-badge {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 5px 12px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.hero h1 {
+  margin: 0 0 4px;
+  font-size: clamp(1.5rem, 6vw, 2rem);
+  font-weight: 700;
+}
+
+.hero-sub {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.875rem;
+}
+
+.chat-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(90deg, #fff7ed, #fff);
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid rgba(196, 30, 58, 0.18);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(196, 30, 58, 0.28);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 120px;
+}
+
+.msg {
+  max-width: 90%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  line-height: 1.6;
+  font-size: 15px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.msg.bot {
+  align-self: flex-start;
+  background: var(--bot-bg);
+  border-bottom-left-radius: 4px;
+}
+
+.msg.user {
+  align-self: flex-end;
+  background: var(--user-bg);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.msg.typing {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.msg strong {
+  font-weight: 600;
+}
+
+.quick-replies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 12px 10px;
+  flex-shrink: 0;
+}
+
+.quick-replies button {
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: var(--text);
+  padding: 10px 14px;
+  min-height: 44px;
+  border-radius: 999px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  touch-action: manipulation;
+}
+
+.quick-replies button:active {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: #fff5f5;
+}
+
+.chat-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  padding-bottom: calc(12px + var(--safe-bottom));
+  border-top: 1px solid #e2e8f0;
+  background: #fafafa;
+  flex-shrink: 0;
+}
+
+.chat-form input {
+  flex: 1;
+  min-width: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 16px;
+  font-family: inherit;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.chat-form input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.15);
+}
+
+.chat-form button {
+  flex-shrink: 0;
+  border: none;
+  background: var(--primary);
+  color: #fff;
+  min-width: 64px;
+  min-height: 48px;
+  padding: 0 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  font-family: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.chat-form button:active:not(:disabled) {
+  background: var(--primary-dark);
+}
+
+.chat-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 11px;
+  line-height: 1.5;
+  flex-shrink: 0;
+  padding: 0 8px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media (min-width: 481px) {
+  .page {
+    padding: 24px 16px 40px;
+  }
+
+  .hero {
+    margin-bottom: 20px;
+  }
+
+  .chat-card {
+    min-height: 520px;
+  }
+
+  .messages {
+    max-height: 420px;
+    padding: 20px;
+  }
+
+  .quick-replies button:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: #fff5f5;
+  }
+
+  .chat-form button:hover:not(:disabled) {
+    background: var(--primary-dark);
+  }
+}
+</style>
+</head>
+<body>
+<div class="page">
+<header class="hero"><div class="hero-badge">50th Anniversary</div><h1>廣運50週年慶</h1><p class="hero-sub" id="event-subtitle">智能客服 · 大量使用版</p></header>
+<main class="chat-card" aria-label="智能客服對話">
+<div class="chat-header"><div class="avatar" aria-hidden="true"><img src="messageImage_1779701547098.jpg" alt="" /></div><div><strong>活動小幫手</strong><span class="status"><span class="dot"></span> 線上服務中</span></div></div>
+<div id="messages" class="messages" role="log" aria-live="polite"></div>
+<div id="quick-replies" class="quick-replies"></div>
+<form id="chat-form" class="chat-form"><label class="sr-only" for="user-input">輸入問題</label><input id="user-input" type="text" enterkeyhint="send" placeholder="例如：要怎麼去？" autocomplete="off" maxlength="500" /><button type="submit" id="send-btn">送出</button></form>
+</main>
+<footer class="footer"><p>由活動知識庫驅動 · 有問題請洽「廣運福利委員會」或現場服務台</p></footer>
+</div>
+<script>
+const KNOWLEDGE = {"event":{"name":"廣運50週年慶活動","company":"廣運機械工程股份有限公司","venue":"台大綜合體育館","venueAddress":"台北市大安區羅斯福路四段1號（台大綜合體育館）","dates":{"setup":"2026年8月14日（五）進場佈置 07:00–22:00","eventDay":"2026年8月15日（六）活動日 07:00–22:00"},"serviceHours":"活動日 09:30–16:00（報至閉幕，詳見 Rundown）"},"rundown":{"summary":"2026年8月15日（六）台大綜合體育館 · 09:30 報到至 16:00 閉幕","opening":[{"time":"09:30–10:00","title":"報到進場"},{"time":"10:00–10:10","title":"主持人開場"},{"time":"10:10–10:25","title":"開場表演"},{"time":"10:25–10:45","title":"長官致詞"},{"time":"10:45–11:00","title":"50週年榮耀盛典儀式"}],"freeTime":{"time":"11:00–15:00","title":"自由闖關＆親子活動","activities":["廣運50闖關（五大關卡）","廣運時光探險","親子手作體驗","充氣城堡","街頭互動表演","美食餐車（11:30 開始供餐）"]},"stageShows":[{"time":"12:00–12:30","title":"親子舞台競賽"},{"time":"12:30–13:00","title":"LIVE BAND"},{"time":"13:00–13:30","title":"MOMO兒童劇場"},{"time":"13:30–14:00","title":"LIVE BAND"},{"time":"14:00–14:30","title":"奇幻泡泡秀"},{"time":"14:30–15:00","title":"暖場音樂"}],"closing":[{"time":"15:00–15:30","title":"閉幕集合／摸彩 I"},{"time":"15:30–16:00","title":"頒獎／摸彩 II／閉幕"}]},"contacts":{"welfareCommittee":"廣運福利委員會","serviceDesk":"現場服務台（報到區旁，以現場標示為準）","emergency":"身體不適或緊急狀況：請至救護站，或就近告知工作人員／服務台","helpMessage":"活動相關問題無法解決時，請洽 **廣運福利委員會**；現場亦可至服務台由專人協助。"},"amenities":{"water":"場地四處均設飲水機，可自由取用飲用水","massage":"現場提供視障按摩服務（服務時段待確認，請留意現場公告）","participationGift":"每位參加之廣運員工可領取參加禮：50週年紀念保溫杯（活動結束後領取）","challengeGift":"完成闖關後可領取闖關禮（品項待確認，請依現場兌換規則）","craftWorkshop":"親子手作體驗限量 500 份，先到先得（品項待確認）"},"faqs":[{"id":"when","category":"基本資訊","question":"活動什麼時候？幾點開始？","keywords":["時間","日期","幾點","什麼時候","何時","開始","結束","活動日","8/15","8月","09:30","幾點結束"],"answer":"廣運50週年慶主活動日為 **2026年8月15日（六）**。\n\n- **09:30–10:00** 報到進場（請務必於 10:00 前完成報到，以免錯過開場）\n- **10:00** 主持人開場\n- **15:00** 閉幕集合／摸彩\n- **16:00** 活動結束\n\n前一日的 **8月14日（五）** 為進場佈置日。完整流程請輸入「Rundown」或「活動流程」查詢。"},{"id":"traffic","category":"交通方式","question":"活動交通方式與停車資訊？","keywords":["交通","怎麼去","怎麼到","如何去","怎麼前往","交通方式","搭車","坐車","開車","停車","停車場","車位","有停車場嗎","可以停車嗎","停哪","附近停車","捷運","地鐵","公車","火車","高鐵","計程車","uber","導航","地址","位置","在哪裡","活動地點","會場在哪","台大","體育館","台大體育館","羅斯福路","開車怎麼去","搭捷運","坐捷運","公館站","台大醫院站","附近車站","附近捷運","怎麼搭","交通路線","怎麼過去","開車方便嗎","停車方便嗎","路線","map","google map","交通資訊","接駁","有接駁車嗎","附近有車位嗎","騎車","機車","機車停車","汽車停車","停車資訊","交通指引","導航位置"],"answer":"- 捷運：可搭乘至公館站或台大醫院站後步行前往\n- 公車：羅斯福路沿線皆有公車可抵達\n- 自行開車：請依現場交通指引與停車公告為準\n- 詳細位置：台北市大安區羅斯福路四段1號（台大綜合體育館）"},{"id":"checkin","category":"報到","question":"如何報到？需要帶什麼？","keywords":["報到","簽到","入場","證件","員工證","眷屬","護照","QR","掃描","9:30","09:30"],"answer":"**報到時段：09:30–10:00**\n\n請至報到區完成報到，並於 **10:00 開場前** 入場就座。\n\n- 現場採 **數位報到系統**（含 QR 等），請依工作人員引導操作\n- 報到後將領取 **活動護照**（含園區地圖、餐券等；眷屬版本不含抽獎券，以現場規定為準）\n- **參加禮（保溫杯）** 請於 **活動結束後** 領取，報到時不發放\n- 請攜帶 **員工識別或主辦單位通知之證明文件**\n\n若有報到異常，請至服務台或洽 **廣運福利委員會** 協助。"},{"id":"passport","category":"闖關","question":"活動護照與闖關怎麼玩？","keywords":["護照","闖關","關卡","集章","蓋章","兌換","抽獎券","五大關卡","時光探險"],"answer":"**11:00–15:00** 為自由闖關＆親子活動時段，請持活動護照參與。\n\n**園區體驗：**\n- **廣運50闖關**（五大關卡）\n- **廣運時光探險**\n- 親子手作體驗、充氣城堡、街頭互動表演\n\n**闖關禮：** 完成闖關後可領取闖關禮（**品項待確認**），請依護照集章／現場兌換規則至指定區域領取。\n\n各關位置請參考護照地圖或現場立牌。"},{"id":"food","category":"餐飲","question":"餐飲怎麼安排？","keywords":["餐","吃","午餐","晚餐","餐盒","美食","攤位","飲料","素食","過敏","餐車","11:30","供餐"],"answer":"**美食餐車於 11:30 開始供餐**（自由活動時段 11:00–15:00 內）。\n\n現場另有精緻餐盒、飲品等規劃，餐券／兌換方式請依活動護照及現場立牌說明。\n\n若有 **素食、過敏或特殊飲食** 需求，請於報到時告知服務台（請以現場實際供應為準）。"},{"id":"kids","category":"親子手作流程","question":"親子手作與DIY流程","keywords":["手作","DIY","親子手作","親子DIY","小朋友DIY","兒童手作","手工","手作課","手作體驗","DIY活動","怎麼參加","怎麼玩","在哪玩","手作流程","親子活動","小孩活動","兒童活動","小朋友可以玩什麼","親子區","DIY流程","手作時間","手作地點","限量","500份","先到先得","怎麼報名","要排隊嗎","體驗活動","手工藝","DIY教學","兒童DIY","小孩DIY","親子體驗","做東西","可以做什麼","手作區","DIY區","家長陪同","兒童體驗","手工活動","製作活動","親子課程","小孩課程","現場DIY","小朋友手作","親子遊戲","DIY體驗","製作流程","活動DIY","創作活動","親子","小孩","兒童","氣墊","城堡","泡泡","MOMO","競賽","500"],"answer":"**11:00–15:00** 自由活動時段親子項目：\n\n- **親子手作體驗**：限量 **500 份**，**先到先得**（品項待確認，建議提早前往）\n- 充氣城堡\n- 街頭互動表演\n\n**舞台親子節目：**\n- **12:00–12:30** 親子舞台競賽\n- **13:00–13:30** MOMO兒童劇場\n- **14:00–14:30** 奇幻泡泡秀\n\n請家長陪同幼童，並留意現場安全標示。"},{"id":"rundown","category":"活動流程","question":"活動流程與時間安排","keywords":["流程","活動流程","rundown","時間表","節目表","活動安排","活動時間","時程","時間","幾點","開始","結束","流程表","活動順序","今天流程","今日流程","活動內容","有什麼活動","行程","流程安排","活動 schedule","schedule","流程是什麼","完整流程","活動有哪些","活動有什麼","流程圖","活動節目","幾點開始","幾點結束","早上做什麼","下午做什麼","舞台時間","表演時間","幾點摸彩","報到時間","節目流程","活動規劃","活動順序表","今日活動","活動內容表","活動時段","活動安排表","活動 timeline","timeline","開場時間","閉幕時間","流程資訊","活動清單","當天流程"],"answer":"**廣運50週年活動流程（Rundown）**\n\n**上午｜開幕**\n- 09:30–10:00｜報到進場\n- 10:00–10:10｜主持人開場\n- 10:10–10:25｜開場表演\n- 10:25–10:45｜長官致詞\n- 10:45–11:00｜50週年榮耀盛典儀式\n\n**11:00–15:00｜自由闖關＆親子活動**\n・廣運50闖關（五大關卡）\n・廣運時光探險\n・親子手作體驗\n・充氣城堡\n・街頭互動表演\n・美食餐車（**11:30 開始供餐**）\n\n**舞台表演時段**\n- 12:00–12:30｜親子舞台競賽\n- 12:30–13:00｜LIVE BAND\n- 13:00–13:30｜MOMO兒童劇場\n- 13:30–14:00｜LIVE BAND\n- 14:00–14:30｜奇幻泡泡秀\n- 14:30–15:00｜暖場音樂\n\n**閉幕**\n- 15:00–15:30｜閉幕集合／摸彩 I\n- 15:30–16:00｜頒獎／摸彩 II／閉幕\n\n※ 15:00 請依工作人員指引至指定區域集合，以免錯過摸彩。"},{"id":"stage","category":"舞台","question":"舞台表演有哪些？","keywords":["舞台","表演","開場","致詞","band","樂團","live","盛典","榮耀"],"answer":"**開幕（10:00–11:00）**\n開場表演 → 長官致詞 → 50週年榮耀盛典儀式\n\n**午間舞台（12:00–15:00）**\n- 12:00–12:30｜親子舞台競賽\n- 12:30–13:00｜LIVE BAND\n- 13:00–13:30｜MOMO兒童劇場\n- 13:30–14:00｜LIVE BAND\n- 14:00–14:30｜奇幻泡泡秀\n- 14:30–15:00｜暖場音樂\n\n**閉幕（15:00–16:00）**\n閉幕集合／摸彩 I → 頒獎／摸彩 II／閉幕\n\n輸入「Rundown」可查看完整一日流程。"},{"id":"lottery","category":"摸彩與閉幕","question":"摸彩與閉幕資訊","keywords":["摸彩","抽獎","抽獎券","中獎","領獎","摸彩時間","幾點摸彩","什麼時候抽","閉幕","閉幕典禮","頒獎","抽獎活動","抽什麼","大獎","有抽獎嗎","會抽獎嗎","幾點集合","集合","集合地點","閉幕時間","散場","活動結束","最後活動","抽獎資格","怎麼抽","抽獎規則","抽獎辦法","頒獎典禮","閉幕流程","摸彩流程","領獎方式","中獎名單","得獎","有禮物抽嗎","抽獎時間","閉幕活動","最後流程","三點","15:00","15點","閉幕集合","活動尾聲","抽獎區","大會抽獎","會後抽獎","抽獎券在哪","需要在場嗎","人要在嗎","最後環節","結尾活動"],"answer":"**摸彩與閉幕流程：**\n\n- **15:00–15:30** 閉幕集合／摸彩 I\n- **15:30–16:00** 頒獎／摸彩 II／閉幕\n\n請於 **15:00 前** 依現場廣播與工作人員指引至指定區域集合。摸彩資格與抽獎券規則以主辦單位現場公告為準。"},{"id":"puzzle","category":"園區體驗","question":"廣運時光探險是什麼？","keywords":["解謎","實境","謎題","時光探險","探險"],"answer":"**廣運時光探險** 為 11:00–15:00 自由活動時段的體驗項目之一，與廣運50闖關、親子手作等並行開放。\n\n請至活動區查看說明立牌，或詢問該區工作人員。建議與同事組隊參加！"},{"id":"photo","category":"其他","question":"拍照與紀念？","keywords":["拍照","照片","攝影","相簿","雲端","上傳","紀念品"],"answer":"現場設有 **主視覺拍照牆** 及專業攝影／雲端相簿服務（含即時上傳等，以當日設備為準）。歡迎分享美好回憶！"},{"id":"gift","category":"參加禮與闖關禮","question":"參加禮與闖關禮","keywords":["參加禮","禮物","贈品","送什麼","有送東西嗎","有禮物嗎","紀念品","保溫杯","保溫瓶","禮品","拿禮物","領禮物","怎麼領","哪裡領","幾點領","闖關禮","完成禮","集章禮","活動禮","員工禮","參加送什麼","有紀念品嗎","活動送什麼","公司送什麼","有贈品嗎","抽獎禮","完成闖關","集章","蓋章","兌換","兌換禮物","領取地點","禮物在哪","散場禮","離場禮","活動禮物","完成關卡","有杯子嗎","50週年禮物","紀念保溫杯","參加獎","小禮物","伴手禮","兌換方式","怎麼換","活動獎品","禮物發放","領獎","領取方式","禮品資訊","發放","員工","結束後","散場","離場"],"answer":"**參加禮**\n每位參加之 **廣運員工** 皆可領取 **50週年紀念保溫杯**（參加禮）。\n\n請於 **活動結束後**（閉幕流程後，約 16:00 起）至指定領取區領取，**報到時不發放**。實際領取位置與方式請依現場公告或工作人員指引。\n\n**闖關禮**\n完成 **廣運50闖關** 後，可領取 **闖關禮**（**品項待確認**），請依活動護照集章規則至現場兌換區領取。\n\n眷屬禮品規則以現場公告為準，若有疑問請洽廣運福利委員會。"},{"id":"toilet","category":"飲水與設施","question":"飲水、廁所與設施資訊","keywords":["飲水","喝水","水","開水","飲水機","有水嗎","哪裡喝水","裝水","補水","廁所","洗手間","WC","化妝室","休息區","休息","座位","冷氣","空調","救護站","醫護","醫療","身體不舒服","不舒服","急救","服務設施","場地設施","有沒有廁所","哪裡有廁所","有飲水機嗎","哪裡有水","休息空間","現場設備","設備","充電","插座","育嬰","親子廁所","尿布台","洗手","無障礙","輪椅","休息椅","醫護站","急診","醫療站","設施位置","場地","會場設備","服務台","現場服務"],"answer":"**飲用水**\n場地 **四處均設飲水機**，可自由取用飲用水，建議自備環保杯。\n\n**其他設施**\n台大綜合體育館內設有廁所；活動另規劃流動廁所、救護站、工作人員休息區等（位置請見現場配置圖）。\n\n身體不適請至 **救護站** 或洽服務台／廣運福利委員會。"},{"id":"massage","category":"園區服務","question":"視障按摩服務？","keywords":["按摩","視障","紓壓","ESG","放鬆"],"answer":"現場提供 **視障按摩服務**。\n\n- **服務時段：待確認**，請留意現場公告或詢問工作人員\n- 實際名額與預約方式以當日現場安排為準\n\n詳情亦可洽 **廣運福利委員會**。"},{"id":"weather","category":"其他","question":"下雨怎麼辦？","keywords":["下雨","雨天","颱風","取消","延期","天氣"],"answer":"活動於室內體育館為主，多數節目不受小雨影響。若遇 **颱風、重大天災或不可抗力**，是否調整將由 **主辦單位** 另行公告，請留意公司官方通知與 EDM。"},{"id":"lost","category":"其他","question":"遺失物品怎麼辦？","keywords":["遺失","丟","失物","招領","掉了"],"answer":"遺失物品請至 **服務台** 登記；活動結束後之認領方式，將由主辦單位於公告中說明。"},{"id":"welfare","category":"聯絡福利委員會","question":"如何聯絡福利委員會","keywords":["福利委員會","福利","委員會","聯絡","聯繫","找誰","窗口","客服","真人客服","人工客服","有人嗎","幫忙","協助","求助","詢問","聯絡方式","電話","信箱","email","line","聯絡窗口","主辦單位","活動窗口","負責人","誰可以問","有問題","想問","客服電話","客服信箱","人工","真人","工作人員","服務台","現場服務","聯絡人","有專人嗎","客服中心","詢問窗口","問題反映","反應問題","申訴","協助窗口","活動問題","找工作人員","現場求助","誰負責","活動客服","找人","我有問題","無法解決"],"answer":"活動相關問題，歡迎洽詢 **廣運福利委員會**。\n\n- **現場**：請至服務台，工作人員將協助轉介或解答\n- **活動前後**：請依公司公告之福利委員會聯絡方式洽詢\n\n緊急醫療請至救護站或就近告知工作人員。"},{"id":"human","category":"轉人工","question":"我要找真人客服","keywords":["人工","真人","客服","找不到","聽不懂","轉人工","福利委員會","人工客服","真人客服","工作人員","服務台","我有問題","無法解決"],"answer":"若智能客服無法解答，請洽 **廣運福利委員會**，或至現場 **服務台** 由專人協助。\n\n我們會盡快為您處理，感謝您的耐心！"}],"quickReplies":["活動流程 Rundown","參加禮與闖關禮","親子手作體驗","飲水與設施","摸彩與閉幕","聯絡福利委員會"],"fallback":"抱歉，我暫時無法確定這個問題的答案。您可以試試下方快捷問題，或輸入「福利委員會」了解聯絡方式。活動相關問題亦可洽 **廣運福利委員會** 或現場服務台。"};
+const QUICK_MAP = {'活動流程 Rundown':'Rundown','如何報到':'如何報到','參加禮與闖關禮':'參加禮','親子手作體驗':'親子手作','飲水與設施':'飲水','舞台表演時段':'舞台表演','餐飲安排':'餐飲','摸彩與閉幕':'摸彩','聯絡福利委員會':'福利委員會','轉人工客服':'福利委員會'};
+const messagesEl = document.getElementById('messages');
+const quickRepliesEl = document.getElementById('quick-replies');
+const form = document.getElementById('chat-form');
+const input = document.getElementById('user-input');
+function renderMarkdown(text){return text.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>')}
+function appendMessage(text,role){const div=document.createElement('div');div.className='msg '+role;if(role==='bot')div.innerHTML=renderMarkdown(text);else div.textContent=text;messagesEl.appendChild(div);messagesEl.scrollTop=messagesEl.scrollHeight;return div}
+function normalize(text){return text.toLowerCase().replace(/[\s\u3000]+/g,'').replace(/[？?！!。．，,、；;：:「」『』【】（）()]/g,'')}
+function tokenize(text){const normalized=text.toLowerCase();const tokens=new Set();(normalized.match(/[\u4e00-\u9fff]{2,}/g)||[]).forEach(w=>{tokens.add(w);for(let i=0;i<w.length-1;i++)tokens.add(w.slice(i,i+2))});(normalized.match(/[a-z0-9]+/gi)||[]).forEach(w=>tokens.add(w));return tokens}
+function scoreFaq(message,faq){const normMsg=normalize(message);let score=0;(faq.keywords||[]).forEach(kw=>{const nk=normalize(kw);if(nk&&normMsg.includes(nk))score+=3});const qNorm=normalize(faq.question);if(qNorm&&normMsg.includes(qNorm))score+=5;const msgTokens=tokenize(message);const faqTokens=tokenize([faq.question,...(faq.keywords||[])].join(' '));msgTokens.forEach(t=>{if(faqTokens.has(t))score+=1});return score}
+function findBestFaq(message){let best=null,bestScore=0;KNOWLEDGE.faqs.forEach(faq=>{const s=scoreFaq(message,faq);if(s>bestScore){bestScore=s;best=faq}});if(bestScore>=2)return{faq:best,score:bestScore,confident:bestScore>=4};return{faq:null,score:bestScore,confident:false}}
+function answer(message){const text=QUICK_MAP[message.trim()]||message.trim();const found=findBestFaq(text);return found.faq?found.faq.answer:KNOWLEDGE.fallback}
+function sendMessage(text){const trimmed=text.trim();if(!trimmed)return;appendMessage(trimmed,'user');input.value='';const typing=appendMessage('正在為您查詢…','bot typing');setTimeout(()=>{typing.remove();appendMessage(answer(trimmed),'bot')},120)}
+function bindQuickReplies(items){quickRepliesEl.innerHTML='';items.forEach(label=>{const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.addEventListener('click',()=>sendMessage(label));quickRepliesEl.appendChild(btn)})}
+form.addEventListener('submit',e=>{e.preventDefault();sendMessage(input.value)});
+document.getElementById('event-subtitle').textContent = KNOWLEDGE.event.name + ' · 智能客服';
+bindQuickReplies(KNOWLEDGE.quickReplies||[]);
+appendMessage('您好！我是廣運50週年慶活動小幫手，可協助查詢活動流程、交通、報到、餐飲、闖關、舞台節目等常見問題。若有其他問題，請洽 **廣運福利委員會** 或現場服務台。','bot');
+</script>
+</body>
 </html>
