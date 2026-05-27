@@ -1,0 +1,12 @@
+{
+  "name": "guangyun-50-chatbot",
+  "version": "1.0.0",
+  "description": "廣運50週年慶活動智能客服（零依賴，僅需 Node 18+）",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
