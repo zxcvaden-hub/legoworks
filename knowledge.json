@@ -2,8 +2,8 @@
   "event": {
     "name": "廣運50週年慶活動",
     "company": "廣運機械工程股份有限公司",
-    "venue": "台大綜合體育館",
-    "venueAddress": "台北市大安區羅斯福路四段1號（台大綜合體育館）",
+    "venue": "國立臺灣大學綜合體育館",
+    "venueAddress": "台北市大安區羅斯福路四段1號（國立臺灣大學綜合體育館）",
     "dates": {
       "setup": "2026年8月14日（五）進場佈置 07:00–22:00",
       "eventDay": "2026年8月15日（六）活動日 07:00–22:00"
@@ -11,7 +11,7 @@
     "serviceHours": "活動日 09:30–16:00（報至閉幕，詳見 Rundown）"
   },
   "rundown": {
-    "summary": "2026年8月15日（六）台大綜合體育館 · 09:30 報到至 16:00 閉幕",
+    "summary": "2026年8月15日（六）國立臺灣大學綜合體育館 · 09:30 報到至 16:00 閉幕",
     "opening": [
       {
         "time": "09:30–10:00",
@@ -180,10 +180,15 @@
         "汽車停車",
         "停車資訊",
         "交通指引",
-        "導航位置"
+        "導航位置",
+        "google maps",
+        "googlemap",
+        "導航",
+        "開地圖",
+        "地圖導航"
       ],
-      "answer": "- 捷運：可搭乘至公館站或台大醫院站後步行前往\n- 公車：羅斯福路沿線皆有公車可抵達\n- 自行開車：請依現場交通指引與停車公告為準\n- 詳細位置：台北市大安區羅斯福路四段1號（台大綜合體育館）",
-      "answerHtml": "<div class=\"transport-container\"><h2 class=\"transport-title\">交通方式與停車</h2><div class=\"transport-grid\"><div class=\"transport-card\"><div class=\"transport-icon\" aria-hidden=\"true\">🚇</div><h3>捷運</h3><p>可搭乘至<strong>公館站</strong>或<strong>台大醫院站</strong>，步行前往台大綜合體育館。</p></div><div class=\"transport-card\"><div class=\"transport-icon\" aria-hidden=\"true\">🚌</div><h3>公車</h3><p><strong>羅斯福路</strong>沿線皆有公車可抵達，請留意站牌與班次。</p></div><div class=\"transport-card\"><div class=\"transport-icon\" aria-hidden=\"true\">🚗</div><h3>自行開車</h3><p>請依現場交通指引與<strong>停車公告</strong>為準（實際車位以當日公告為主）。</p></div></div><p class=\"transport-address\">📍 <strong>活動地點</strong>：台北市大安區羅斯福路四段1號（台大綜合體育館）</p></div>"
+      "answer": "- 捷運：可搭乘至公館站或台大醫院站後步行前往\n- 公車：羅斯福路沿線皆有公車可抵達\n- 自行開車：請依現場交通指引與停車公告為準\n- 詳細位置：台北市大安區羅斯福路四段1號（**國立臺灣大學綜合體育館**）\n\n可點選快捷「交通方式」開啟 **Google Maps 導航**（導航至國立臺灣大學綜合體育館；需網路與已安裝地圖 App）。",
+      "answerHtml": "<div class=\"transport-container\"><h2 class=\"transport-title\">交通方式與停車</h2><div class=\"transport-grid\"><div class=\"transport-card\"><div class=\"transport-icon\" aria-hidden=\"true\">🚇</div><h3>捷運</h3><p>可搭乘至<strong>公館站</strong>或<strong>台大醫院站</strong>，步行前往<strong>國立臺灣大學綜合體育館</strong>。</p></div><div class=\"transport-card\"><div class=\"transport-icon\" aria-hidden=\"true\">🚌</div><h3>公車</h3><p><strong>羅斯福路</strong>沿線皆有公車可抵達，請留意站牌與班次。</p></div><div class=\"transport-card\"><div class=\"transport-icon\" aria-hidden=\"true\">🚗</div><h3>自行開車</h3><p>請依現場交通指引與<strong>停車公告</strong>為準（實際車位以當日公告為主）。</p></div></div><p class=\"transport-address\">📍 <strong>活動地點</strong>：台北市大安區羅斯福路四段1號<br><strong>國立臺灣大學綜合體育館</strong></p><div class=\"transport-nav-actions\"><a class=\"transport-nav-btn\" href=\"https://www.google.com/maps/dir/?api=1&amp;destination=%E5%9C%8B%E7%AB%8B%E8%87%BA%E7%81%A3%E5%A4%A7%E5%AD%B8%E7%B7%9C%E5%90%88%E9%AB%94%E8%82%B2%E9%A4%A8&amp;travelmode=driving\" target=\"_blank\" rel=\"noopener noreferrer\">🗺️ 開啟 Google Maps 導航</a><a class=\"transport-nav-btn transport-nav-btn-secondary\" href=\"https://www.google.com/maps/search/?api=1&amp;query=%E5%9C%8B%E7%AB%8B%E8%87%BA%E7%81%A3%E5%A4%A7%E5%AD%B8%E7%B7%9C%E5%90%88%E9%AB%94%E8%82%B2%E9%A4%A8\" target=\"_blank\" rel=\"noopener noreferrer\">查看地點</a></div></div>"
     },
     {
       "id": "checkin",
