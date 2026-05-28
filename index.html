@@ -804,16 +804,7 @@ function getCountdownText() {
 
 function getCurrentSuggestion() {
   if (!isEventDay()) {
-    return `
-🙌 歡迎來到廣運50週年慶智能客服！
-
-你可以詢問：
-・活動流程
-・交通方式
-・餐飲資訊
-・親子活動
-・摸彩時間
-`;
+    return "請點選下方快捷按鈕，或直接輸入問題（例如：交通、報到、摸彩）。";
   }
 
   const now = new Date();
@@ -882,16 +873,7 @@ function getCurrentSuggestion() {
 `;
   }
 
-  return `
-🙌 活動日尚未開始或已結束今日流程。
-
-你可以詢問：
-・活動流程
-・交通方式
-・餐飲資訊
-・親子活動
-・摸彩時間
-`;
+  return "活動日尚未開始或已結束今日流程。請點選下方快捷按鈕或輸入問題。";
 }
 
 function getSuggestions(message) {
@@ -947,6 +929,7 @@ function answer(message) {
 
 function addMessage(role, content, options = {}) {
   const faq = options.faq;
+  const plain = options.plain === true;
   const msg = document.createElement("div");
 
   if (role === "bot" && faq && faq.answerHtml) {
@@ -961,7 +944,7 @@ function addMessage(role, content, options = {}) {
       msg.innerHTML = faq.answerHtml;
     }
   } else if (role === "bot") {
-    msg.className = "msg bot";
+    msg.className = "msg bot" + (plain ? " welcome-msg" : "");
     msg.innerHTML = renderMarkdown(String(content || ""));
   } else {
     msg.className = "msg user";
@@ -989,21 +972,13 @@ function addMessage(role, content, options = {}) {
 }
 
 function showWelcomeMessage() {
-  const welcome = `🎉 歡迎來到廣運50週年智能客服！
+  const welcome = `您好，歡迎使用廣運50週年慶活動智能客服。
 
 ${getCountdownText()}
 
-${getCurrentSuggestion()}
+${getCurrentSuggestion().trim()}`;
 
-🙌 我可以幫你查詢：
-・活動流程
-・交通方式
-・餐飲資訊
-・親子手作體驗
-・摸彩時間
-・報到方式`;
-
-  addMessage("bot", decorateBotReply(welcome));
+  addMessage("bot", welcome, { plain: true });
 }
 
 function sendMessage(text) {
