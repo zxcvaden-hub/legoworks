@@ -1,0 +1,62 @@
+{
+  "format": "guangyun-50-github-pages-release",
+  "version": "20260528",
+  "generatedAt": "2026-05-28T05:43:29.092Z",
+  "deployTarget": "GitHub repo root (e.g. zxcvaden-hub/legoworks)",
+  "publicUrls": {
+    "site": "https://zxcvaden-hub.github.io/legoworks/",
+    "qr": "https://zxcvaden-hub.github.io/legoworks/qr.html",
+    "testWithCacheBuster": "https://zxcvaden-hub.github.io/legoworks/?v=20260528"
+  },
+  "uploadInstructions": [
+    "Upload ALL files in this folder to the repository root (overwrite existing).",
+    "Do not upload public/index.html — that is the old Node server UI.",
+    "After upload, open the test URL with ?v= date to bypass cache."
+  ],
+  "contentSummary": {
+    "event": "廣運50週年慶活動",
+    "eventDay": "2026年8月15日（六）活動日 07:00–22:00",
+    "faqCount": 18,
+    "keywordCount": 635,
+    "quickReplies": [
+      "活動流程 Rundown",
+      "廣運50週年紀念品與闖關禮",
+      "親子手作體驗",
+      "飲水與設施",
+      "摸彩與閉幕",
+      "聯絡福利委員會"
+    ],
+    "highlights": [
+      "廣運50週年紀念品：報到處掃 QR Code 入場時領取（非結束後）",
+      "關鍵字批次已合併（635+ keywords）",
+      "內嵌 CSS + FAQ，無需後端"
+    ]
+  },
+  "files": [
+    {
+      "file": "index.html",
+      "bytes": 30529,
+      "md5": "79fc30da809f0cd1db231822fbe6d33f"
+    },
+    {
+      "file": "knowledge.json",
+      "bytes": 28014,
+      "md5": "24a281e24cedc9be090c3c26cdbc8012"
+    },
+    {
+      "file": "qr.html",
+      "bytes": 1487,
+      "md5": "5403b09b2d895c0ffc8a2c78cfc600aa"
+    },
+    {
+      "file": "qrcode.min.js",
+      "bytes": 19927,
+      "md5": "517b55d3688ce9ef1085a3d9632bcb97"
+    },
+    {
+      "file": "messageImage_1779701547098.jpg",
+      "bytes": 644789,
+      "md5": "ac2b75d7622c3c8dec383184284ca40c"
+    }
+  ]
+}
