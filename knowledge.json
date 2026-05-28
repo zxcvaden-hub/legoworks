@@ -182,7 +182,8 @@
         "交通指引",
         "導航位置"
       ],
-      "answer": "- 捷運：可搭乘至公館站或台大醫院站後步行前往\n- 公車：羅斯福路沿線皆有公車可抵達\n- 自行開車：請依現場交通指引與停車公告為準\n- 詳細位置：台北市大安區羅斯福路四段1號（台大綜合體育館）"
+      "answer": "- 捷運：可搭乘至公館站或台大醫院站後步行前往\n- 公車：羅斯福路沿線皆有公車可抵達\n- 自行開車：請依現場交通指引與停車公告為準\n- 詳細位置：台北市大安區羅斯福路四段1號（台大綜合體育館）",
+      "answerHtml": "<div class=\"transport-container\"><h2 class=\"transport-title\">交通方式與停車</h2><div class=\"transport-grid\"><div class=\"transport-card\"><div class=\"transport-icon\" aria-hidden=\"true\">🚇</div><h3>捷運</h3><p>可搭乘至<strong>公館站</strong>或<strong>台大醫院站</strong>，步行前往台大綜合體育館。</p></div><div class=\"transport-card\"><div class=\"transport-icon\" aria-hidden=\"true\">🚌</div><h3>公車</h3><p><strong>羅斯福路</strong>沿線皆有公車可抵達，請留意站牌與班次。</p></div><div class=\"transport-card\"><div class=\"transport-icon\" aria-hidden=\"true\">🚗</div><h3>自行開車</h3><p>請依現場交通指引與<strong>停車公告</strong>為準（實際車位以當日公告為主）。</p></div></div><p class=\"transport-address\">📍 <strong>活動地點</strong>：台北市大安區羅斯福路四段1號（台大綜合體育館）</p></div>"
     },
     {
       "id": "checkin",
@@ -879,6 +880,7 @@
   ],
   "quickReplies": [
     "活動流程 Rundown",
+    "交通方式",
     "廣運50週年紀念品與闖關禮",
     "親子手作體驗",
     "飲水與設施",

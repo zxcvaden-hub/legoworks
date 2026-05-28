@@ -1,41 +1,42 @@
-# GitHub Pages 發布包 · 20260528
+# 廣運上線版 · GitHub Pages 上傳包
 
-此資料夾內檔案請**全部**上傳至 GitHub 儲存庫**根目錄**（覆蓋舊檔）。
+此資料夾內**所有檔案**請上傳到新 GitHub 儲存庫的**根目錄**（不要放進子資料夾）。
 
-## 內含檔案
+## 必傳檔案（5 個）
 
 | 檔案 | 用途 |
 |------|------|
-| index.html | 前台智能客服（內嵌樣式 + FAQ，**正式版**） |
-| knowledge.json | 知識庫 JSON（與 data/knowledge.json 同步） |
-| qr.html | QR Code 導向頁 |
-| qrcode.min.js | QR 產生函式庫 |
-| messageImage_1779701547098.jpg | 客服頭像／主視覺 |
-| MANIFEST.json | 版本清單與 MD5 校驗 |
+| index.html | **智能客服主頁**（含樣式、FAQ、快捷按鈕、交通卡片） |
+| messageImage_1779701547098.jpg | 客服頭像圖（與 index.html 同層） |
+| qr.html | QR Code 頁（掃碼進客服） |
+| qrcode.min.js | QR 頁所需程式 |
+| knowledge.json | 知識庫備份（選填但建議一併上傳，方便日後對照） |
 
 ## 上傳步驟
 
-1. 開啟 https://github.com/zxcvaden-hub/legoworks
-2. Add file → Upload files
-3. 拖入本資料夾**所有檔案**（含圖片）
-4. Commit message：`release 20260528 - chatbot pages`
-5. 等 1–3 分鐘後開啟測試網址
+1. 開啟你的 GitHub 新 repo 頁面  
+2. **Add file** → **Upload files**  
+3. 將本資料夾內 **5 個檔案** 全部拖入（含 jpg）  
+4. Commit message 例：`deploy guangyun chatbot`  
+5. 到 repo **Settings** → **Pages** → Source 選 **Deploy from branch** → 分支 **main**（或 master）→ 資料夾 **/ (root)** → Save  
+6. 等 1～3 分鐘，網址通常為：  
+   `https://你的帳號.github.io/你的repo名稱/`
 
-## 測試網址
+## 上傳後測試
 
-- 客服：https://zxcvaden-hub.github.io/legoworks/?v=20260528
-- QR：https://zxcvaden-hub.github.io/legoworks/qr.html
+- 客服首頁：`https://你的帳號.github.io/repo名稱/?v=1`  
+- QR 頁：`https://你的帳號.github.io/repo名稱/qr.html`  
+- 點快捷 **「交通方式」** → 應出現三欄交通卡片  
+- 點 **「廣運50週年紀念品與闖關禮」** → 應寫入場報到 QR 領取  
 
-## 本版摘要
+## 勿上傳這些（會搞錯版面）
 
-- 活動：廣運50週年慶活動
-- 活動日：2026年8月15日（六）活動日 07:00–22:00
-- FAQ 則數：18
-- 關鍵字總數：635
-- 產生時間：2026-05-28T05:43:29.092Z
+- `public/index.html`（舊版，樣式會壞）  
+- 整個 `public/` 資料夾  
+- `server.js`、`.env`（本機用，上線不需要）
 
-## 注意
+## 重新打包
 
-- 勿上傳 `public/index.html`（舊版介面，CSS 路徑錯誤）
-- 本機完整專案與知識庫維護仍用工作目錄的 `data/knowledge.json` + `node build-pages.js`
+在 chatbot2 專案執行：`node pack-guangyun-deploy.js`
 
+產生時間：2026/5/28 下午2:14:50
