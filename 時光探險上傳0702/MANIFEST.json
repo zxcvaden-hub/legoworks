@@ -1,0 +1,32 @@
+{
+  "label": "時光探險上傳0702",
+  "packedAt": "2026-07-02",
+  "verifiedAt": "2026-07-02",
+  "targetRepo": "zxcvaden-hub/kenmec",
+  "status": "complete",
+  "files": {
+    "root": [
+      "README.md",
+      "README-上傳說明.md",
+      "MANIFEST.json",
+      "index.html",
+      "knowledge.json",
+      "qr.html",
+      "qrcode.min.js",
+      "messageImage_1779701547098.jpg"
+    ],
+    "timeAdventure": [
+      "index.html",
+      "puzzles.json",
+      "adventure.js"
+    ]
+  },
+  "totalFiles": 11,
+  "latestFeatures": [
+    "第一關：啟航輸送機 · 用手指點選方塊旋轉水管",
+    "第二關：雙層 canvas 擦除顯示數字",
+    "第三關：題目標題【主題】格式、第五題 5 字答案百年展願景",
+    "第四關：孿生記憶牆 · 用手指點選即可翻牌",
+    "第五關：終極密碼 2026"
+  ]
+}
