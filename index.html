@@ -1,1206 +1,2280 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<meta name="theme-color" content="#c41e3a" />
-<title>廣運50週年慶｜智能客服</title>
-<style>:root {
-  --bg: #0f172a;
-  --card: #ffffff;
-  --primary: #c41e3a;
-  --primary-dark: #9a1830;
-  --text: #1e293b;
-  --muted: #64748b;
-  --bot-bg: #f1f5f9;
-  --user-bg: linear-gradient(135deg, #c41e3a, #e11d48);
-  --shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
-  --radius: 16px;
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-top: env(safe-area-inset-top, 0px);
-}
-
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
-
-html {
-  height: 100%;
-}
-
-body {
-  margin: 0;
-  min-height: 100%;
-  min-height: 100dvh;
-  font-family: 'Noto Sans TC', system-ui, -apple-system, sans-serif;
-  background: radial-gradient(ellipse at top, #1e3a5f 0%, var(--bg) 55%);
-  color: var(--text);
-  overscroll-behavior: none;
-  overflow-x: hidden;
-}
-
-.page {
-  max-width: 720px;
-  margin: 0 auto;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  padding: calc(12px + var(--safe-top)) 12px calc(12px + var(--safe-bottom));
-}
-
-.hero {
-  text-align: center;
-  color: #fff;
-  margin-bottom: 12px;
-  flex-shrink: 0;
-}
-
-.hero-badge {
-  display: inline-block;
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 5px 12px;
-  border-radius: 999px;
-  margin-bottom: 8px;
-}
-
-.hero h1 {
-  margin: 0 0 4px;
-  font-size: clamp(1.5rem, 6vw, 2rem);
-  font-weight: 700;
-}
-
-.hero-sub {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 0.875rem;
-}
-
-.chat-card {
-  background: var(--card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  max-height: calc(100dvh - 132px - var(--safe-top) - var(--safe-bottom));
-}
-
-.chat-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-bottom: 1px solid #e2e8f0;
-  background: linear-gradient(90deg, #fff7ed, #fff);
-  flex-shrink: 0;
-}
-
-.avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: #fff;
-  border: 1px solid rgba(196, 30, 58, 0.18);
-  display: grid;
-  place-items: center;
-  overflow: hidden;
-  box-shadow: 0 6px 16px rgba(196, 30, 58, 0.28);
-}
-
-.avatar img {
-  width: 100%;
-  height: 100%;
-  display: block;
-  object-fit: cover;
-}
-
-.status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #22c55e;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-.messages {
-  flex: 1 1 0;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  min-height: 0;
-}
-
-.messages .quick-replies.suggest-inline {
-  align-self: flex-start;
-  max-width: 100%;
-  padding: 0;
-  margin: 0 0 4px;
-  flex-wrap: wrap;
-}
-
-.messages .quick-replies.suggest-inline button {
-  font-size: 13px;
-  padding: 8px 12px;
-  min-height: 40px;
-}
-
-.msg {
-  max-width: 90%;
-  padding: 12px 14px;
-  border-radius: 14px;
-  line-height: 1.6;
-  font-size: 15px;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.msg.bot {
-  align-self: flex-start;
-  background: var(--bot-bg);
-  border-bottom-left-radius: 4px;
-}
-
-.msg.user {
-  align-self: flex-end;
-  background: var(--user-bg);
-  color: #fff;
-  border-bottom-right-radius: 4px;
-}
-
-.msg.typing {
-  color: var(--muted);
-  font-style: italic;
-}
-
-.msg strong {
-  font-weight: 600;
-}
-
-.msg.bot a {
-  color: var(--primary);
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-.msg.bot a:active {
-  color: var(--primary-dark);
-}
-
-.bot-personality-lead {
-  margin: 0 0 12px;
-  font-size: 15px;
-  line-height: 1.5;
-  color: var(--text);
-}
-
-.quick-replies {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 0 12px 10px;
-  flex-shrink: 0;
-}
-
-.quick-replies button {
-  border: 1px solid #e2e8f0;
-  background: #fff;
-  color: var(--text);
-  padding: 10px 14px;
-  min-height: 44px;
-  border-radius: 999px;
-  font-size: 14px;
-  cursor: pointer;
-  font-family: inherit;
-  touch-action: manipulation;
-}
-
-.quick-replies button:active {
-  border-color: var(--primary);
-  color: var(--primary);
-  background: #fff5f5;
-}
-
-.chat-form {
-  display: flex;
-  gap: 8px;
-  padding: 12px;
-  padding-bottom: calc(12px + var(--safe-bottom));
-  border-top: 1px solid #e2e8f0;
-  background: #fafafa;
-  flex-shrink: 0;
-}
-
-.chat-form input {
-  flex: 1;
-  min-width: 0;
-  border: 1px solid #cbd5e1;
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-size: 16px;
-  font-family: inherit;
-  outline: none;
-  -webkit-appearance: none;
-}
-
-.chat-form input:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.15);
-}
-
-.chat-form button {
-  flex-shrink: 0;
-  border: none;
-  background: var(--primary);
-  color: #fff;
-  min-width: 64px;
-  min-height: 48px;
-  padding: 0 18px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 16px;
-  font-family: inherit;
-  cursor: pointer;
-  touch-action: manipulation;
-}
-
-.chat-form button:active:not(:disabled) {
-  background: var(--primary-dark);
-}
-
-.chat-form button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.footer {
-  text-align: center;
-  margin-top: 10px;
-  color: rgba(255, 255, 255, 0.55);
-  font-size: 11px;
-  line-height: 1.5;
-  flex-shrink: 0;
-  padding: 0 8px;
-}
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
-}
-
-@media (min-width: 481px) {
-  .page {
-    padding: 24px 16px 40px;
-  }
-
-  .hero {
-    margin-bottom: 20px;
-  }
-
-  .chat-card {
-    max-height: calc(100dvh - 160px - var(--safe-top) - var(--safe-bottom));
-  }
-
-  .messages {
-    padding: 20px;
-  }
-
-  .quick-replies button:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-    background: #fff5f5;
-  }
-
-  .chat-form button:hover:not(:disabled) {
-    background: var(--primary-dark);
-  }
-}
-
-/* --- 交通方式卡片（客服回覆內）--- */
-.msg.bot.transport-msg {
-  max-width: 100%;
-  white-space: normal;
-  padding: 10px;
-  background: #fff;
-}
-
-.transport-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 8px 4px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-}
-
-.transport-title {
-  font-size: 22px;
-  color: #333333;
-  text-align: center;
-  margin: 0 0 16px;
-  font-weight: bold;
-}
-
-.transport-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-}
-
-.transport-card {
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 20px 16px;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.transport-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-}
-
-.transport-icon {
-  font-size: 36px;
-  margin-bottom: 12px;
-  line-height: 1;
-}
-
-.transport-card h3 {
-  font-size: 20px;
-  color: #222222;
-  margin: 0 0 10px;
-  font-weight: 600;
-}
-
-.transport-card p {
-  font-size: 16px;
-  color: #555555;
-  line-height: 1.6;
-  margin: 0;
-  text-align: left;
-}
-
-.transport-card strong {
-  color: #0066cc;
-}
-
-.transport-address {
-  margin: 16px 0 0;
-  font-size: 15px;
-  color: #333;
-  line-height: 1.6;
-  text-align: center;
-}
-
-.transport-nav-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.transport-nav-btn {
-  display: block;
-  width: 100%;
-  min-height: 48px;
-  padding: 14px 16px;
-  border-radius: 12px;
-  background: #0066cc;
-  color: #fff !important;
-  font-size: 17px;
-  font-weight: 700;
-  text-align: center;
-  text-decoration: none;
-  line-height: 1.3;
-  box-shadow: 0 4px 10px rgba(0, 102, 204, 0.25);
-  touch-action: manipulation;
-}
-
-.transport-nav-btn:active {
-  background: #0052a3;
-}
-
-.transport-nav-btn-secondary {
-  background: #fff;
-  color: #0066cc !important;
-  border: 2px solid #0066cc;
-  box-shadow: none;
-  font-size: 15px;
-  font-weight: 600;
-}
-
-.transport-nav-btn-secondary:active {
-  background: #f0f7ff;
-}
-
-.parking-section-title {
-  font-size: 18px;
-  color: #333333;
-  margin: 20px 0 8px;
-  text-align: center;
-  font-weight: 700;
-}
-
-.parking-note {
-  font-size: 13px;
-  color: #666666;
-  text-align: center;
-  margin: 0 0 12px;
-  line-height: 1.5;
-}
-
-.parking-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.parking-item {
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 14px 16px;
-}
-
-.parking-item-recommended {
-  border-color: #0066cc;
-  background-color: #f0f7ff;
-}
-
-.parking-item-header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.parking-item-header strong {
-  color: #222222;
-  font-size: 16px;
-}
-
-.parking-subtitle {
-  font-size: 14px;
-  color: #555555;
-}
-
-.parking-badge {
-  font-size: 11px;
-  background: #0066cc;
-  color: #ffffff;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-weight: 600;
-}
-
-.parking-item p {
-  font-size: 14px;
-  color: #555555;
-  margin: 0 0 10px;
-  line-height: 1.6;
-  text-align: left;
-}
-
-.parking-nav-btn {
-  display: block;
-  width: 100%;
-  min-height: 44px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  background: #ffffff;
-  color: #0066cc !important;
-  border: 2px solid #0066cc;
-  font-size: 15px;
-  font-weight: 600;
-  text-align: center;
-  text-decoration: none;
-  line-height: 1.3;
-  touch-action: manipulation;
-}
-
-.parking-nav-btn:active {
-  background: #f0f7ff;
-}
-
-@media (max-width: 480px) {
-  .transport-title {
-    font-size: 20px;
-  }
-
-  .transport-grid {
-    grid-template-columns: 1fr;
-  }
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0A2540" />
+  <title>廣運時光探險｜企業家庭日</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <script src="./adventure.js"></script>
+  <style>
+    :root {
+      --bg-deep: #0a2540;
+      --bg-mid: #003366;
+      --accent: #00f2fe;
+      --accent-soft: #00d2c4;
+      --card: rgba(255, 255, 255, 0.06);
+      --card-border: rgba(0, 242, 254, 0.28);
+      --text: #e8f4ff;
+      --muted: #8eb4d4;
+      --danger: #ff6b8a;
+      --ok: #00f2fe;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --glow: 0 0 18px rgba(0, 242, 254, 0.45);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      min-height: 100dvh;
+      font-family: "Noto Sans TC", system-ui, -apple-system, sans-serif;
+      background: radial-gradient(ellipse at top, var(--bg-mid) 0%, var(--bg-deep) 58%);
+      color: var(--text);
+      overscroll-behavior: none;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      padding: calc(10px + var(--safe-top)) 12px calc(16px + var(--safe-bottom));
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hero {
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 242, 254, 0.35);
+      color: var(--accent);
+      background: rgba(0, 242, 254, 0.08);
+    }
+
+    .hero h1 {
+      margin: 8px 0 4px;
+      font-size: clamp(1.4rem, 6vw, 1.85rem);
+      text-shadow: var(--glow);
+    }
+
+    .hero-sub {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .nav-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .nav-row a, .nav-pill, .nav-pill-btn {
+      font-size: 0.78rem;
+      color: var(--text);
+      text-decoration: none;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-pill-btn {
+      cursor: pointer;
+      font-family: inherit;
+      touch-action: manipulation;
+    }
+
+    .nav-pill-btn[aria-pressed="true"] {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: var(--glow);
+    }
+
+    .level-nav {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 4px 2px 8px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .level-nav::-webkit-scrollbar { display: none; }
+
+    .level-nav button {
+      flex: 0 0 auto;
+      width: 52px;
+      min-height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .level-nav button.active {
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+      color: var(--accent);
+    }
+
+    .level-nav button.done {
+      background: rgba(0, 242, 254, 0.15);
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(8px);
+    }
+
+    .panel h2 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+      color: var(--accent);
+    }
+
+    .panel p {
+      margin: 0 0 12px;
+      line-height: 1.65;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .progress-line {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--accent-soft);
+      margin-bottom: 10px;
+    }
+
+    .level-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .level-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      text-align: left;
+      border: 1px solid rgba(0, 242, 254, 0.22);
+      background: rgba(0, 0, 0, 0.18);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--text);
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .level-card:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .level-card.done {
+      border-color: var(--accent-soft);
+      box-shadow: 0 0 12px rgba(0, 210, 196, 0.25);
+    }
+
+    .level-num {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      color: var(--bg-deep);
+      flex-shrink: 0;
+    }
+
+    .level-card.done .level-num {
+      background: linear-gradient(135deg, #22d3ee, #34d399);
+    }
+
+    .level-meta strong {
+      display: block;
+      font-size: 0.98rem;
+      margin-bottom: 2px;
+    }
+
+    .level-meta span {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .complete-banner {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--accent);
+      background: rgba(0, 242, 254, 0.1);
+      text-align: center;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      min-height: 48px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      touch-action: manipulation;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      color: var(--bg-deep);
+      box-shadow: var(--glow);
+      width: 100%;
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-sm {
+      min-height: 40px;
+      font-size: 0.88rem;
+      padding: 8px 14px;
+      width: auto;
+    }
+
+    .screen-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(0, 242, 254, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(5, 15, 30, 0.82);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 12px;
+      padding-bottom: calc(12px + var(--safe-bottom));
+    }
+
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      width: 100%;
+      max-width: 440px;
+      max-height: 88dvh;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #0d3052, #0a2540);
+      border: 1px solid var(--card-border);
+      border-radius: 20px 20px 16px 16px;
+      padding: 18px 16px;
+      box-shadow: 0 -8px 40px rgba(0, 242, 254, 0.15);
+    }
+
+    .modal h3 {
+      margin: 0 0 6px;
+      font-size: 1.15rem;
+      color: var(--accent);
+    }
+
+    .modal .intro {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .step-cards {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .step-card {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(0, 242, 254, 0.06);
+      border: 1px solid rgba(0, 242, 254, 0.18);
+    }
+
+    .step-card i {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: rgba(0, 242, 254, 0.15);
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .step-card p {
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: var(--text);
+    }
+
+    /* Level 1 conveyor */
+    .conveyor-wrap {
+      position: relative;
+      margin: 8px auto;
+      max-width: min(100%, 380px);
+    }
+
+    .conveyor-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+    }
+
+    .pipe-cell {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 242, 254, 0.28);
+      background: rgba(0, 10, 24, 0.85);
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+      display: block;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: box-shadow 0.2s, transform 0.15s;
+      user-select: none;
+    }
+
+    .pipe-cell:active { transform: scale(0.97); }
+
+    .pipe-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+    }
+
+    .pipe-svg .track {
+      fill: none;
+      stroke: #00f2fe;
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 5px rgba(0, 242, 254, 0.85));
+    }
+
+    .pipe-svg .track-collar {
+      fill: none;
+      stroke: #00f2fe;
+      stroke-width: 8;
+      stroke-linecap: round;
+      filter: drop-shadow(0 0 4px rgba(0, 242, 254, 0.75));
+    }
+
+    .pipe-svg .track-hub {
+      fill: rgba(0, 242, 254, 0.35);
+      stroke: #00f2fe;
+      stroke-width: 3;
+      filter: drop-shadow(0 0 4px rgba(0, 242, 254, 0.6));
+    }
+
+    .pipe-cell.start, .pipe-cell.end {
+      font-size: 1.55rem;
+      line-height: 1;
+      font-weight: 800;
+      color: var(--accent-soft);
+      background: rgba(0, 242, 254, 0.12);
+      display: grid;
+      place-items: center;
+    }
+
+    .cargo {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff7d6, #ffd166 45%, #ff9f1c);
+      box-shadow: 0 0 14px rgba(255, 209, 102, 0.95), 0 0 28px rgba(0, 242, 254, 0.55);
+      transition: left 0.42s ease, top 0.42s ease;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 20;
+    }
+
+    .cargo.run {
+      opacity: 1;
+      animation: cargoPulse 0.55s ease-in-out infinite alternate;
+    }
+
+    @keyframes cargoPulse {
+      from { box-shadow: 0 0 14px rgba(255, 209, 102, 0.9), 0 0 24px rgba(0, 242, 254, 0.45); }
+      to { box-shadow: 0 0 22px rgba(255, 209, 102, 1), 0 0 40px rgba(0, 242, 254, 0.75); }
+    }
+
+    /* Level 2 liquid cool — server rack frame */
+    .server-rack {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
+      padding: 12px 10px 10px;
+      background: linear-gradient(165deg, #454b52 0%, #2f3439 38%, #1c1f23 100%);
+      border: 2px solid #5c636b;
+      border-radius: 3px;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -2px 6px rgba(0, 0, 0, 0.35),
+        0 10px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    .server-rack-panel {
+      height: 14px;
+      margin: 0 18px 10px;
+      background: linear-gradient(180deg, #14171a, #23272c);
+      border: 1px solid #0a0c0e;
+      border-radius: 2px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .server-rack-grille {
+      margin-top: 8px;
+      height: 20px;
+      border-radius: 2px;
+      border: 1px solid #0a0c0e;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          #0c0e11 0,
+          #0c0e11 4px,
+          #252a30 4px,
+          #252a30 10px
+        );
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.55);
+    }
+
+    .server-rack-feet {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 16px 0;
+    }
+
+    .server-rack-feet span {
+      width: 14px;
+      height: 5px;
+      border-radius: 2px;
+      background: linear-gradient(180deg, #6a7078, #3a3f45);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .heat-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 300 / 220;
+      margin: 0 auto;
+      border-radius: 2px;
+      overflow: hidden;
+      border: 2px solid #0f1114;
+      box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.65);
+      touch-action: none;
+      background: #121416;
+    }
+
+    .heat-stage canvas {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    #heat-mask {
+      z-index: 1;
+    }
+
+    .coolant-block {
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.9), rgba(0, 210, 196, 0.85));
+      border: 2px solid #fff;
+      box-shadow: var(--glow);
+      display: grid;
+      place-items: center;
+      color: var(--bg-deep);
+      font-size: 1.4rem;
+      cursor: grab;
+      touch-action: none;
+      left: 12px;
+      top: 12px;
+      z-index: 2;
+    }
+
+    .coolant-block.dragging { cursor: grabbing; }
+
+    .reveal-btn {
+      display: none;
+      margin: 12px auto 0;
+      text-align: center;
+    }
+
+    .reveal-btn.show { display: block; }
+
+    .reveal-btn button {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 14px 28px;
+      border-radius: 14px;
+      border: 2px solid var(--accent);
+      background: rgba(0, 242, 254, 0.15);
+      color: var(--accent);
+      box-shadow: var(--glow);
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    /* Level 3 chat */
+    .chat-box {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 242, 254, 0.25);
+      background: rgba(0, 0, 0, 0.25);
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: rgba(0, 242, 254, 0.1);
+      border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+    }
+
+    .bot-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      display: grid;
+      place-items: center;
+      color: var(--bg-deep);
+      font-size: 1.2rem;
+      box-shadow: var(--glow);
+    }
+
+    .chat-messages {
+      min-height: 220px;
+      max-height: 42dvh;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bubble {
+      max-width: 88%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .bubble.bot {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.1);
+      border-bottom-left-radius: 4px;
+    }
+
+    .bubble.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      color: var(--bg-deep);
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .chat-input-row input {
+      flex: 1;
+      min-width: 0;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text);
+      padding: 12px;
+      font-size: 16px;
+    }
+
+    .chat-input-row button {
+      min-width: 52px;
+      border-radius: 12px;
+      border: none;
+      background: var(--accent);
+      color: var(--bg-deep);
+      font-weight: 800;
+      font-size: 1rem;
+      touch-action: manipulation;
+    }
+
+    /* Level 4 memory */
+    .memory-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      color: var(--accent-soft);
+      margin-bottom: 10px;
+    }
+
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    @media (max-width: 360px) {
+      .memory-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .mem-card {
+      aspect-ratio: 0.85;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      background: rgba(0, 0, 0, 0.35);
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      touch-action: manipulation;
+      transform-style: preserve-3d;
+      transition: transform 0.35s;
+      position: relative;
+    }
+
+    .mem-card.flipped { transform: rotateY(180deg); }
+
+    .mem-card .face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      padding: 6px;
+      text-align: center;
+    }
+
+    .mem-card .back {
+      background: linear-gradient(135deg, #0a2540, #003366);
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 0.85rem;
+    }
+
+    .mem-card .front {
+      transform: rotateY(180deg);
+      background: rgba(0, 242, 254, 0.12);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 4px;
+    }
+
+    .mem-card .mem-icon {
+      font-size: 3rem;
+      line-height: 1;
+      display: block;
+    }
+
+    .mem-card .mem-label {
+      font-size: 0.72rem;
+      line-height: 1.25;
+      font-weight: 700;
+    }
+
+    .mem-card.matched .front {
+      box-shadow: var(--glow);
+      border: 1px solid var(--accent);
+    }
+
+    .factory-merge {
+      display: none;
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 14px;
+      text-align: center;
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid var(--accent);
+      animation: pulseGlow 1.2s ease infinite alternate;
+    }
+
+    .factory-merge.show { display: block; }
+
+    @keyframes pulseGlow {
+      from { box-shadow: 0 0 8px rgba(0, 242, 254, 0.3); }
+      to { box-shadow: 0 0 24px rgba(0, 242, 254, 0.7); }
+    }
+
+    /* Level 5 vault */
+    .vault {
+      text-align: center;
+      position: relative;
+    }
+
+    .vault-door {
+      margin: 0 auto 16px;
+      width: 100%;
+      max-width: 300px;
+      padding: 20px 14px;
+      border-radius: 18px;
+      border: 2px solid rgba(0, 242, 254, 0.4);
+      background: rgba(0, 0, 0, 0.35);
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .vault-digit-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .vault-digit {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 242, 254, 0.35);
+      background: rgba(0, 0, 0, 0.35);
+      color: var(--accent);
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 12px 4px;
+      min-height: 52px;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .vault-digit:focus {
+      outline: none;
+      box-shadow: var(--glow);
+      border-color: var(--accent);
+    }
+
+    .vault-digit.ok {
+      border-color: var(--accent-soft);
+      background: rgba(0, 242, 254, 0.12);
+    }
+
+    .vault-door.vault-glow {
+      animation: vaultGlow 1s ease-in-out infinite alternate;
+      border-color: var(--accent);
+    }
+
+    @keyframes vaultGlow {
+      from { box-shadow: 0 0 12px rgba(0, 242, 254, 0.45); }
+      to { box-shadow: 0 0 28px rgba(0, 242, 254, 0.95), 0 0 56px rgba(0, 242, 254, 0.45); }
+    }
+
+    .vault-fireworks {
+      display: none;
+      position: absolute;
+      inset: -20px;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 3;
+    }
+
+    .vault-fireworks.show { display: block; }
+
+    .vault-firework {
+      position: absolute;
+      left: 50%;
+      top: 45%;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      animation: fireworkBurst 1.1s ease-out forwards;
+    }
+
+    @keyframes fireworkBurst {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(calc(-50% + var(--fx)), calc(-50% + var(--fy))) scale(0.2); opacity: 0; }
+    }
+
+    .vault-open {
+      display: none;
+      margin-top: 16px;
+      padding: 20px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(0, 210, 196, 0.15));
+      border: 1px solid var(--accent);
+      animation: vaultBurst 0.8s ease;
+    }
+
+    .vault-open.show { display: block; }
+
+    .vault-open h3 {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+
+    .vault-open .vision {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: #fff;
+      text-shadow: var(--glow);
+    }
+
+    @keyframes vaultBurst {
+      0% { transform: scale(0.9); opacity: 0; }
+      60% { transform: scale(1.03); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .success-box {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--accent);
+      background: rgba(0, 242, 254, 0.1);
+      text-align: center;
+    }
+
+    .success-box .code {
+      font-size: clamp(0.95rem, 4.5vw, 1.15rem);
+      font-weight: 800;
+      color: var(--accent);
+      margin: 8px 0;
+      letter-spacing: 0.04em;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    body { overflow-x: hidden; }
+
+    .app {
+      overflow-x: hidden;
+    }
+
+    #game-screen {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .chat-input-row button {
+      min-height: 44px;
+      min-width: 56px;
+      padding: 12px;
+    }
+
+    .reveal-btn button {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 380px) {
+      .pipe-cell.start, .pipe-cell.end {
+        font-size: clamp(0.62rem, 3vw, 0.82rem);
+        letter-spacing: -0.02em;
+      }
+
+      .conveyor-grid { gap: 3px; }
+
+      .reveal-btn button {
+        font-size: 1.05rem;
+        padding: 12px 14px;
+        width: 100%;
+      }
+
+      .mem-card .mem-icon { font-size: 2.2rem; }
+
+      .vault-digit {
+        font-size: 1.2rem;
+        padding: 10px 2px;
+        min-height: 48px;
+      }
+
+      .level-nav button { width: 46px; }
+
+      .app { padding-left: 8px; padding-right: 8px; }
+
+      .chat-messages { max-height: 36dvh; }
+    }
+
+    @media (max-width: 360px) {
+      .coolant-block {
+        width: 60px;
+        height: 60px;
+        font-size: 1.2rem;
+      }
+    }
+
+    .hidden { display: none !important; }
+  </style>
 </head>
 <body>
-<div class="page">
-<header class="hero"><div class="hero-badge">50th Anniversary</div><h1>廣運50週年慶</h1><p class="hero-sub" id="event-subtitle">智能客服 · 大量使用版</p></header>
-<main class="chat-card" aria-label="智能客服對話">
-<div class="chat-header"><div class="avatar" aria-hidden="true"><img src="messageImage_1779701547098.jpg" alt="" /></div><div><strong>活動小幫手</strong><span class="status"><span class="dot"></span> 線上服務中</span></div></div>
-<div id="messages" class="messages" role="log" aria-live="polite"></div>
-<div id="quick-replies" class="quick-replies"></div>
-<form id="chat-form" class="chat-form"><label class="sr-only" for="user-input">輸入問題</label><input id="user-input" type="text" enterkeyhint="send" placeholder="例如：要怎麼去？" autocomplete="off" maxlength="500" /><button type="submit" id="send-btn">送出</button></form>
-</main>
-<footer class="footer"><p>由活動知識庫驅動 · 有問題請洽「廣運福利委員會」或現場服務台</p></footer>
-</div>
-<script>
-const KNOWLEDGE = {"event":{"name":"廣運50週年慶活動","company":"廣運機械工程股份有限公司","venue":"國立臺灣大學綜合體育館","venueAddress":"台北市大安區羅斯福路四段1號（國立臺灣大學綜合體育館）","dates":{"setup":"2026年8月14日（五）進場佈置 07:00–22:00","eventDay":"2026年8月15日（六）活動日 07:00–22:00"},"serviceHours":"活動日 09:30–16:00（報至閉幕，詳見 Rundown）"},"rundown":{"summary":"2026年8月15日（六）國立臺灣大學綜合體育館 · 09:30 報到至 16:00 閉幕","opening":[{"time":"09:30–10:00","title":"報到進場"},{"time":"10:00–10:10","title":"主持人開場"},{"time":"10:10–10:25","title":"開場表演"},{"time":"10:25–10:45","title":"長官致詞"},{"time":"10:45–11:00","title":"50週年榮耀盛典儀式"}],"freeTime":{"time":"11:00–15:00","title":"自由闖關＆親子活動","activities":["廣運50闖關（五大關卡，任意完成3關）","廣運時光探險（五關實境解謎）","親子手作體驗（液壓機械爪、迷你輸送帶）","充氣城堡（天竺鼠樂園、歡樂球池，2–12 歲）","街頭互動表演（雜技、氣球、魔術）","ESG 愛心舒壓小站（視障按摩）","來賓餐盒（三樓報到處外走廊，11:30 起）","美食餐車（一樓，11:30 起，約 10 台）","飲料 BAR（可口可樂，每人可兌換 2 瓶小瓶）"]},"stageShows":[{"time":"12:00–12:30","title":"親子舞台競賽"},{"time":"12:30–13:00","title":"LIVE BAND（Hi-FIVE 國際流行樂團）"},{"time":"13:00–13:30","title":"MOMO兒童劇場"},{"time":"13:30–14:00","title":"LIVE BAND（Hi-FIVE 國際流行樂團）"},{"time":"14:00–14:30","title":"街頭藝人"},{"time":"14:30–15:00","title":"暖場音樂"}],"closing":[{"time":"15:00–15:30","title":"閉幕集合／摸彩 I"},{"time":"15:30–16:00","title":"頒獎／摸彩 II／閉幕"}]},"contacts":{"welfareCommittee":"廣運福利委員會","serviceDesk":"現場服務台（三樓報到處，報到處即救護站）","emergency":"身體不適或緊急狀況：請至三樓報到處／救護站（同一地點），或就近告知工作人員","helpMessage":"活動相關問題無法解決時，請洽 **廣運福利委員會**；現場亦可至服務台由專人協助。"},"amenities":{"water":"場地四處均設飲水機，可自由取用飲用水","massage":"ESG 愛心舒壓小站提供視障按摩（預計 8 位技師，每次約 15 分鐘，現場排隊）","participationGift":"每位參加之廣運員工可於三樓報到處掃描 QR Code 領取五十週年紀念禮（保溫瓶）及識別手環","challengeGift":"廣運50闖關：5 關任意完成 3 關可兌換紀念小禮；廣運時光探險：五關全數完成可至三樓服務台兌換 100 元禮券","craftWorkshop":"親子手作（液壓機械爪、迷你輸送帶等）限量 500 份，先到先得"},"faqs":[{"id":"when","category":"基本資訊","question":"活動什麼時候？幾點開始？","keywords":["時間","日期","幾點","什麼時候","何時","開始","結束","活動日","8/15","8月","09:30","幾點結束"],"answer":"廣運50週年慶主活動日為 **2026年8月15日（六）**。\n\n- **09:30–10:00** 報到進場（請務必於 10:00 前完成報到，以免錯過開場）\n- **10:00** 主持人開場\n- **15:00** 閉幕集合／摸彩\n- **16:00** 活動結束\n\n前一日的 **8月14日（五）** 為進場佈置日。完整流程請輸入「Rundown」或「活動流程」查詢。"},{"id":"traffic","category":"交通方式","question":"活動交通方式與停車資訊？","keywords":["交通","怎麼去","怎麼到","如何去","怎麼前往","交通方式","搭車","坐車","開車","停車","停車場","車位","有停車場嗎","可以停車嗎","停哪","附近停車","捷運","地鐵","公車","火車","高鐵","計程車","uber","導航","地址","位置","在哪裡","活動地點","會場在哪","台大","體育館","台大體育館","羅斯福路","開車怎麼去","搭捷運","坐捷運","公館站","台大醫院站","附近車站","附近捷運","怎麼搭","交通路線","怎麼過去","開車方便嗎","停車方便嗎","路線","map","google map","交通資訊","接駁","有接駁車嗎","附近有車位嗎","騎車","機車","機車停車","汽車停車","停車資訊","交通指引","導航位置","google maps","googlemap","導航","開地圖","地圖導航","城市車旅","CITY PARKING","辛亥路","高架橋","新南","新南停車場","地下停車","導航停車","停車導航","停車場導航","哪裡停","停車地點"],"answer":"**活動地點**：台北市大安區羅斯福路四段1號（**國立臺灣大學綜合體育館**）\n\n- **捷運**：公館站或台大醫院站，步行前往體育館\n- **公車**：羅斯福路沿線皆可抵達\n\n**停車場規劃（3 處）**（步行時間依 Google Maps 估算）\n1. **台大體育館地下停車場**（最近，步行約 2 分鐘）\n2. **CITY PARKING 城市車旅—辛亥路高架橋下站**（步行約 3–4 分鐘）\n3. **新南停車場—國立臺灣大學**（步行約 5–6 分鐘）\n\n點選快捷「**交通方式**」可查看停車場卡片及 **一鍵導航至停車場**；亦可導航至活動地點（體育館）。","answerHtml":"<div class=\"transport-container\"><h2 class=\"transport-title\">交通方式與停車</h2><div class=\"transport-grid\"><div class=\"transport-card\"><div class=\"transport-icon\" aria-hidden=\"true\">🚇</div><h3>捷運</h3><p>可搭乘至<strong>公館站</strong>或<strong>台大醫院站</strong>，步行前往<strong>國立臺灣大學綜合體育館</strong>。</p></div><div class=\"transport-card\"><div class=\"transport-icon\" aria-hidden=\"true\">🚌</div><h3>公車</h3><p><strong>羅斯福路</strong>沿線皆有公車可抵達，請留意站牌與班次。</p></div><div class=\"transport-card\"><div class=\"transport-icon\" aria-hidden=\"true\">🚗</div><h3>自行開車</h3><p>活動日建議停放下方 <strong>3 處停車場</strong>，車位有限請提早出發（實際車位以現場公告為準）。</p></div></div><h3 class=\"parking-section-title\">🅿️ 停車場規劃</h3><p class=\"parking-note\">步行時間依 Google Maps 路線估算，僅供參考；實際動線請依現場指引。</p><div class=\"parking-list\"><div class=\"parking-item parking-item-recommended\"><div class=\"parking-item-header\"><strong>台大體育館地下停車場</strong><span class=\"parking-badge\">最近</span></div><p>步行至體育館 <strong>約 2 分鐘</strong>（停車後搭電梯或走樓梯直達體育館，距離最近）</p><a class=\"parking-nav-btn\" href=\"https://maps.app.goo.gl/xXspaLSgEkRXQdng9\" target=\"_blank\" rel=\"noopener noreferrer\">🅿️ 一鍵導航至停車場</a></div><div class=\"parking-item\"><div class=\"parking-item-header\"><strong>CITY PARKING 城市車旅</strong><span class=\"parking-subtitle\">辛亥路高架橋下站</span></div><p>步行至體育館 <strong>約 3–4 分鐘</strong>（沿辛亥路二段步行前往國立臺灣大學綜合體育館）</p><a class=\"parking-nav-btn\" href=\"https://maps.app.goo.gl/iHj3NUZ8m1va5WBW8\" target=\"_blank\" rel=\"noopener noreferrer\">🅿️ 一鍵導航至停車場</a></div><div class=\"parking-item\"><div class=\"parking-item-header\"><strong>新南停車場</strong><span class=\"parking-subtitle\">國立臺灣大學</span></div><p>步行至體育館 <strong>約 5–6 分鐘</strong>（由新生南路入校園後步行前往體育館）</p><a class=\"parking-nav-btn\" href=\"https://maps.app.goo.gl/2u1JjhDycWKPmTpw5\" target=\"_blank\" rel=\"noopener noreferrer\">🅿️ 一鍵導航至停車場</a></div></div><p class=\"transport-address\">📍 <strong>活動地點</strong>：台北市大安區羅斯福路四段1號<br><strong>國立臺灣大學綜合體育館</strong></p><div class=\"transport-nav-actions\"><a class=\"transport-nav-btn\" href=\"https://www.google.com/maps/dir/?api=1&amp;destination=%E5%9C%8B%E7%AB%8B%E8%87%BA%E7%81%A3%E5%A4%A7%E5%AD%B8%E7%B7%9C%E5%90%88%E9%AB%94%E8%82%B2%E9%A4%A8&amp;travelmode=driving\" target=\"_blank\" rel=\"noopener noreferrer\">🗺️ 導航至活動地點（體育館）</a><a class=\"transport-nav-btn transport-nav-btn-secondary\" href=\"https://www.google.com/maps/search/?api=1&amp;query=%E5%9C%8B%E7%AB%8B%E8%87%BA%E7%81%A3%E5%A4%A7%E5%AD%B8%E7%B7%9C%E5%90%88%E9%AB%94%E8%82%B2%E9%A4%A8\" target=\"_blank\" rel=\"noopener noreferrer\">查看活動地點</a></div></div>"},{"id":"checkin","category":"報到","question":"如何報到？需要帶什麼？","keywords":["報到","簽到","入場","證件","員工證","眷屬","護照","QR","掃描","9:30","09:30","三樓","救護站","報到處","手環","識別手環","保溫瓶","五十週年紀念禮","紀念禮"],"answer":"**報到時段：09:30–10:00**（請準時，10:00 開場前完成報到）\n\n**報到地點：三樓報到處**（**報到處即救護站**，為同一地點）。請於 **10:00 開場前** 完成報到並入場就座。\n\n- 現場採 **數位報到**：請出示個人專屬 **QR Code**（手機顯示即可），由工作人員掃描完成報到\n- 報到時可領取 **識別手環**、**五十週年紀念禮**（**保溫瓶**；五十週年紀念禮就是保溫瓶，入場時領取，**非**活動結束後發放）\n- 另可領取 **活動護照／活動物資**（含園區地圖、餐券或餐點兌換資訊等；眷屬版本規則以現場公告為準）\n- 參加 **廣運時光探險** 者，報到時另可領取 **闖關地圖、闖關卡** 及第一份謎題\n- 請攜帶 **員工識別或主辦單位通知之證明文件**\n\n身體不適亦可至三樓報到處／救護站尋求協助。若有報到異常，請洽現場工作人員或 **廣運福利委員會**。"},{"id":"passport","category":"闖關","question":"活動護照與闖關怎麼玩？","keywords":["護照","闖關","關卡","集章","蓋章","兌換","抽獎券","五大關卡","時光探險","50闖關","三關","闖關地圖","100元","禮券","服務台","服務台兌換"],"answer":"**11:00–15:00** 為自由闖關＆親子活動時段。餐飲請留意：**來賓餐盒**於三樓報到處外走廊發放（**11:30 起**），**餐車**及其他可購買餐點飲料在一樓（**11:30 起**）。請持活動護照參與。\n\n**廣運50闖關**（互動體驗，共 5 關）\n- 任意完成 **3 關** 即可兌換紀念小禮（品項以現場公告為準）\n- 五關主題：創業起點（齒輪裝置）、輸送帶挑戰、全球擴張（國旗配對）、全球版圖擴張（按鈕挑戰）、AI 分辨找錯誤\n- 可自由選關、不限順序，分散人流\n\n**廣運時光探險**（實境解謎，共 5 關）\n- 報到時領取闖關地圖、闖關卡與謎題，於 **三樓場域** 依線索解謎\n- 解開謎題後向關主報通關密語並蓋章，取得下一關謎題\n- **五關全數完成**後回收闖關卡，請至 **三樓服務台**（報到處）兌換 **100 元禮券**（謎題可留作紀念）\n- 與廣運50闖關為 **不同活動**，可擇一或並行參加\n\n**其他園區體驗：** 親子手作、充氣城堡（2–12 歲）、街頭互動表演、ESG 視障按摩\n\n各關位置請參考護照地圖、闖關地圖或現場立牌；各區亦有小天使可協助解謎。"},{"id":"food","category":"餐飲","question":"餐飲怎麼安排？","keywords":["餐","吃","午餐","晚餐","餐盒","美食","攤位","飲料","素食","過敏","餐車","11:30","供餐","來賓餐盒","三樓","一樓","走廊","發放","購買","餐點"],"answer":"活動日餐飲分兩區，請留意樓層與時間：\n\n**來賓星級餐盒（三樓）**\n- **地點**：三樓 **報到處外的走廊**（領餐盒處）\n- **時間**：**11:30 開始**發放，數量有限兌完為止\n- 三款餐盒擇一（請依報名／現場公告）：\n  - **添好運**（約 $320，300 份）\n  - **勝博殿**（約 $250，1000 份）\n  - **瓦城**（約 $285，700 份）\n\n**美食餐車／其他餐點（一樓）**\n- **地點**：**一樓**周邊廣場\n- **時間**：**11:30 起** 約 **10 台**精選餐車供應小吃、炸物、甜點、冰品等\n- 可持 **餐點兌換券** 兌換指定品項（規則依活動護照及現場立牌）\n\n**飲料 BAR**\n- 可口可樂專屬飲料車進駐，每人可兌換 **2 瓶（小）** 軟性飲料（如可樂、雪碧、美粒果等，品項以現場為準）\n\n若有 **素食、過敏或特殊飲食** 需求，請於三樓報到時告知工作人員（請以現場實際供應為準）。"},{"id":"kids","category":"親子手作流程","question":"親子手作與DIY流程","keywords":["手作","DIY","親子手作","親子DIY","小朋友DIY","兒童手作","手工","手作課","手作體驗","DIY活動","怎麼參加","怎麼玩","在哪玩","手作流程","親子活動","小孩活動","兒童活動","小朋友可以玩什麼","親子區","DIY流程","手作時間","手作地點","限量","500份","先到先得","怎麼報名","要排隊嗎","體驗活動","手工藝","DIY教學","兒童DIY","小孩DIY","親子體驗","做東西","可以做什麼","手作區","DIY區","家長陪同","兒童體驗","手工活動","製作活動","親子課程","小孩課程","現場DIY","小朋友手作","親子遊戲","DIY體驗","製作流程","活動DIY","創作活動","親子","小孩","兒童","氣墊","城堡","街頭藝人","Lene","MOMO","競賽","500","手作課程","工坊體驗","材料包","現場報名","名額限制","創作工坊","互動體驗","手作紀念品","體驗場次","成品帶回家","親自手作","手做課程","材糧包","現廠報名","名額現制","手做","親自手做","才料包","手左","做手工","小孩子活動","孫子活動","現場報名嗎","還有名額嗎","做勞作","材料費","免費體驗","手作工坊","老人手作","銀髮手作","帶孫子做","手部運動","體驗課","DIY時間"],"answer":"**11:00–15:00** 自由活動時段親子項目：\n\n- **親子手作體驗（DIY）**：**液壓機械爪**、**迷你輸送帶** 等項目，**限量 500 份**，**先到先得**（建議提早前往）\n- **充氣城堡**（建議 **2–12 歲** 兒童，需家長陪同）：天竺鼠樂園、歡樂球池\n- **街頭互動表演**（定時出沒）：雜技（小綠人胡啟志）、氣球（DuDu）、魔術（林政德）\n\n**舞台親子節目：**\n- **12:00–12:30** 親子舞台競賽「褲勢英雄！大袋王接球賽」（親子組隊，每隊 60 秒）\n- **13:00–13:30** MOMO 兒童劇場\n- **14:00–14:30** 街頭藝人 Lene 駐唱\n\n請家長陪同幼童，並留意現場安全標示。"},{"id":"rundown","category":"活動流程","question":"活動流程與時間安排","keywords":["流程","活動流程","rundown","時間表","節目表","活動安排","活動時間","時程","時間","幾點","開始","結束","流程表","活動順序","今天流程","今日流程","活動內容","有什麼活動","行程","流程安排","活動 schedule","schedule","流程是什麼","完整流程","活動有哪些","活動有什麼","流程圖","活動節目","幾點開始","幾點結束","早上做什麼","下午做什麼","舞台時間","表演時間","幾點摸彩","報到時間","節目流程","活動規劃","活動順序表","今日活動","活動內容表","活動時段","活動安排表","活動 timeline","timeline","開場時間","閉幕時間","流程資訊","活動清單","當天流程","流程時刻","活動剪影","開幕儀式","活動動線","主舞台節目","當日行程","活動進度","時程規劃","活動亮點","現場導覽","活東流程","時兼表","活棟流程","時尖表","節木表","什麼時候開始","今天行程","時間流程","活東","留成","節木","時監","時件","活動表","節目時間","今天活動","散場時間"],"answer":"**廣運50週年活動流程（Rundown）**\n\n**上午｜開幕**\n- 09:30–10:00｜報到進場\n- 10:00–10:10｜主持人開場\n- 10:10–10:25｜開場表演（LED 旗幟 × 現代舞 × 科技視覺秀）\n- 10:25–10:45｜長官致詞\n- 10:45–11:00｜50 週年榮耀盛典儀式（齒輪啟動）\n\n**11:00–15:00｜自由闖關＆親子活動**\n・廣運50闖關（5 關任意完成 3 關）\n・廣運時光探險（5 關實境解謎）\n・親子手作體驗\n・充氣城堡\n・街頭互動表演\n・ESG 愛心舒壓小站（視障按摩）\n・來賓餐盒（三樓報到處外走廊，**11:30 起**）\n・美食餐車（一樓，**11:30 起**）\n・飲料 BAR\n\n**舞台表演時段**\n- 12:00–12:30｜親子舞台競賽\n- 12:30–13:00｜LIVE BAND（Hi-FIVE 國際流行樂團）\n- 13:00–13:30｜MOMO 兒童劇場\n- 13:30–14:00｜LIVE BAND（Hi-FIVE 國際流行樂團）\n- 14:00–14:30｜街頭藝人 Lene 駐唱\n- 14:30–15:00｜暖場音樂\n\n**閉幕**\n- 15:00–15:30｜閉幕集合／摸彩 I\n- 15:30–16:00｜頒獎／摸彩 II／閉幕\n\n※ 15:00 請依工作人員指引至指定區域集合，以免錯過摸彩。"},{"id":"stage","category":"舞台","question":"舞台表演有哪些？","keywords":["舞台","表演","開場","致詞","band","樂團","live","盛典","榮耀","Hi-FIVE","街頭藝人","Lene","齒輪"],"answer":"**開幕（10:00–11:00）**\n- **10:10–10:25** 開場表演：LED 旗幟 × 現代舞 × 科技視覺秀\n- **10:25–10:45** 長官致詞\n- **10:45–11:00** 50 週年榮耀盛典儀式（齒輪啟動：見證榮耀 → 感恩共榮 → 啟耀未來）\n\n**午間舞台（12:00–15:00）**\n- 12:00–12:30｜親子舞台競賽「褲勢英雄！大袋王接球賽」\n- 12:30–13:00｜LIVE BAND（**Hi-FIVE 國際流行樂團**）\n- 13:00–13:30｜MOMO 兒童劇場\n- 13:30–14:00｜LIVE BAND（**Hi-FIVE 國際流行樂團**）\n- 14:00–14:30｜街頭藝人 **Lene** 駐唱\n- 14:30–15:00｜暖場音樂\n\n**閉幕（15:00–16:00）**\n閉幕集合／摸彩 I → 頒獎／摸彩 II／閉幕\n\n輸入「Rundown」可查看完整一日流程。"},{"id":"lottery","category":"摸彩與閉幕","question":"摸彩與閉幕資訊","keywords":["摸彩","抽獎","抽獎券","中獎","領獎","摸彩時間","幾點摸彩","什麼時候抽","閉幕","閉幕典禮","頒獎","抽獎活動","抽什麼","大獎","有抽獎嗎","會抽獎嗎","幾點集合","集合","集合地點","閉幕時間","散場","活動結束","最後活動","抽獎資格","怎麼抽","抽獎規則","抽獎辦法","頒獎典禮","閉幕流程","摸彩流程","領獎方式","中獎名單","得獎","有禮物抽嗎","抽獎時間","閉幕活動","最後流程","三點","15:00","15點","閉幕集合","活動尾聲","抽獎區","大會抽獎","會後抽獎","抽獎券在哪","需要在場嗎","人要在嗎","最後環節","結尾活動","摸彩活動","福委會抽獎","領獎期限","大獎得主","存根聯","摸彩券","現場開獎","獎項公布","得獎公告","代領規則","摸才活動","抽講規則","福為會","領將期限","摸才券","摸才","抽將","福委","福委會","抽大獎","有沒有中","摸彩在哪","怎麼抽獎","存跟聯","沒抽到","幾點抽獎","福委抽獎","大獎是誰","中獎領取","領獎時間","代領摸彩","摸彩票","中獎查詢"],"answer":"**摸彩與閉幕流程：**\n\n- **15:00–15:30** 閉幕集合／摸彩 I\n- **15:30–16:00** 頒獎／摸彩 II／閉幕\n\n請於 **15:00 前** 依現場廣播與工作人員指引至指定區域集合。摸彩資格與抽獎券規則以主辦單位現場公告為準。"},{"id":"puzzle","category":"園區體驗","question":"廣運時光探險是什麼？","keywords":["解謎","實境","謎題","時光探險","廣運時光探險","探險","闖關地圖","通關密語","100元","禮券","服務台","服務台兌換","五關"],"answer":"**廣運時光探險** 為 11:00–15:00 自由活動時段的 **實境解謎** 體驗，範圍涵蓋 **台大體育館三樓場域**，與 **廣運50闖關**、親子手作等並行開放。\n\n**玩法流程：**\n1. **報到時**領取闖關地圖、闖關卡及第一份謎題\n2. 依謎題線索在 **三樓場域** 探索解謎（共 **5 關**）\n3. 解開後向關主報 **通關密語**，蓋章並取得下一關謎題\n4. **五關全數完成**後回收闖關卡，請至 **三樓服務台** 兌換 **100 元禮券**（謎題紙本可留作紀念）\n\n- 與 **廣運50闖關**（5 關任意完成 3 關）為 **不同活動**，可擇一或並行參加\n- 可自行解謎、若需全程引導；各區也有小天使可以協助喔\n\n[點我展開冒險](./time-adventure/index.html)\n\n如需其他說明請至活動區查看說明立牌，或詢問工作人員。"},{"id":"photo","category":"其他","question":"拍照與紀念？","keywords":["拍照","照片","攝影","相簿","雲端","上傳","紀念品"],"answer":"現場設有 **主視覺拍照牆**、**入口拱門** 及專業攝影／**雲攝影** 服務。\n\n- 活動各環節由攝影團隊穿梭拍攝\n- 掃描現場 QR Code 可連結雲端相簿\n- 上傳自拍照後，可透過 **AI 人臉辨識** 快速找到含有自己的照片並下載\n\n歡迎留下廣運 50 週年的美好回憶！"},{"id":"gift","category":"廣運50週年紀念品與闖關禮","question":"廣運50週年紀念品與闖關禮","keywords":["廣運50週年紀念品","50週年紀念品","50周年紀念品","參加禮","禮物","贈品","送什麼","有送東西嗎","有禮物嗎","紀念品","保溫杯","保溫瓶","禮品","拿禮物","領禮物","怎麼領","哪裡領","幾點領","闖關禮","完成禮","集章禮","活動禮","員工禮","參加送什麼","有紀念品嗎","活動送什麼","公司送什麼","有贈品嗎","抽獎禮","完成闖關","集章","蓋章","兌換","兌換禮物","領取地點","禮物在哪","散場禮","離場禮","活動禮物","完成關卡","有杯子嗎","50週年禮物","紀念保溫杯","紀念保溫瓶","五十週年紀念禮","五十周年紀念禮","參加獎","小禮物","伴手禮","兌換方式","怎麼換","活動獎品","禮物發放","領獎","領取方式","禮品資訊","發放","員工","QR","qrcode","報到處","入場領取","闖關贈品","報到禮","限量禮物","完賽獎勵","活動紀念品","兌換資格","闖關蓋章","集點兌換","好禮摸彩","現場好康","禮品發放","限量發送","參家禮","報島禮","闖關正品","紀年品","兌換自格","參家","報島","正品","季年品","集點","在哪裡領","紀念品怎麼領","換東西","過關禮","換禮物","去哪領","走完有禮物嗎","報到送什麼","闖關送什麼","限量贈品","小禮品"],"answer":"**五十週年紀念禮（廣運50週年紀念品）**\n**五十週年紀念禮就是保溫瓶**（480ml、316 不鏽鋼、深藍色瓶身，客製化廣運 Logo）。\n\n請於 **入場報到時**，至 **三樓報到處**（**報到處即救護站**）出示個人專屬 **QR Code** 完成掃描報到後，**當場領取**：\n- **識別手環**\n- **五十週年紀念禮（保溫瓶）**\n\n**並非**活動結束後才發放。\n\n**闖關禮／活動兌換**\n- **廣運50闖關**：5 關中任意完成 **3 關**，可兌換紀念小禮（品項以現場公告為準）\n- **廣運時光探險**：**五關全數完成**後，請持闖關卡至 **三樓服務台** 兌換 **100 元禮券**\n\n眷屬禮品規則以現場公告為準，若有疑問請洽廣運福利委員會。"},{"id":"toilet","category":"飲水與設施","question":"飲水、廁所與設施資訊","keywords":["飲水","喝水","水","開水","飲水機","有水嗎","哪裡喝水","裝水","補水","廁所","洗手間","WC","化妝室","休息區","休息","座位","冷氣","空調","救護站","醫護","醫療","身體不舒服","不舒服","急救","服務設施","場地設施","有沒有廁所","哪裡有廁所","有飲水機嗎","哪裡有水","休息空間","現場設備","設備","充電","插座","育嬰","親子廁所","尿布台","洗手","無障礙","輪椅","休息椅","醫護站","急診","醫療站","設施位置","場地","會場設備","服務台","現場服務","飲水設施","補水站","裝水地點","環保杯","免費飲水","遮陽避暑","防暑對策","降溫休息站","現場補給","降溫噴霧","引水設施","卜水站","裝水地電","飲水雞","遮洋避暑","引水","卜水","水機","哪裡裝水","口渴","沒水了","大熱天","太熱","休息的地方","坐一下","遮陽","吹冷氣","乘涼","找水喝","水站","飲水器","奉茶","避暑區","很熱去哪","三樓","報到處"],"answer":"**飲用水**\n場地 **四處均設飲水機**，可自由取用飲用水，建議自備環保杯。\n\n**其他設施**\n台大綜合體育館內設有廁所；活動另規劃流動廁所、工作人員休息區等（位置請見現場配置圖）。\n\n**救護站**：位於 **三樓報到處**（**報到處即救護站**，同一地點）。身體不適請至該處，或洽現場工作人員／廣運福利委員會。"},{"id":"massage","category":"園區服務","question":"視障按摩服務？","keywords":["按摩","視障","紓壓","ESG","放鬆"],"answer":"現場設有 **ESG 愛心舒壓小站**，提供 **視障按摩服務**（支持視障按摩師就業）。\n\n- 每次服務約 **15 分鐘**，採 **現場排隊** 方式，名額有限\n- 預計安排 **8 位**視障按摩師（每位技師每小時約服務 3 人次）\n- 實際時段與等候方式請依 **現場公告** 或詢問工作人員\n\n詳情亦可洽 **廣運福利委員會** 或服務台。"},{"id":"weather","category":"其他","question":"下雨怎麼辦？","keywords":["下雨","雨天","颱風","取消","延期","天氣"],"answer":"活動於室內體育館為主，多數節目不受小雨影響。若遇 **颱風、重大天災或不可抗力**，是否調整將由 **主辦單位** 另行公告，請留意公司官方通知與 EDM。"},{"id":"lost","category":"其他","question":"遺失物品怎麼辦？","keywords":["遺失","丟","失物","招領","掉了"],"answer":"遺失物品請至 **服務台** 登記；活動結束後之認領方式，將由主辦單位於公告中說明。"},{"id":"welfare","category":"聯絡福利委員會","question":"如何聯絡福利委員會","keywords":["福利委員會","福利","委員會","聯絡","聯繫","找誰","窗口","客服","真人客服","人工客服","有人嗎","幫忙","協助","求助","詢問","聯絡方式","電話","信箱","email","line","聯絡窗口","主辦單位","活動窗口","負責人","誰可以問","有問題","想問","客服電話","客服信箱","人工","真人","工作人員","服務台","現場服務","聯絡人","有專人嗎","客服中心","詢問窗口","問題反映","反應問題","申訴","協助窗口","活動問題","找工作人員","現場求助","誰負責","活動客服","找人","我有問題","無法解決","聯絡福利委員會","聯絡福委"],"answer":"活動相關問題，歡迎洽詢 **廣運福利委員會**。\n\n- **現場**：請至三樓報到處／服務台，工作人員將協助轉介或解答\n- **活動前後**：請依公司公告之福利委員會聯絡方式洽詢\n\n緊急醫療請至 **三樓報到處／救護站**（同一地點），或就近告知工作人員。"},{"id":"human","category":"轉人工","question":"我要找真人客服","keywords":["人工","真人","客服","找不到","聽不懂","轉人工","福利委員會","人工客服","真人客服","工作人員","服務台","我有問題","無法解決"],"answer":"若智能客服無法解答，請洽 **廣運福利委員會**，或至現場 **服務台** 由專人協助。\n\n我們會盡快為您處理，感謝您的耐心！"}],"quickReplies":["交通方式","活動流程 Rundown","親子手作體驗","飲水與設施","摸彩與閉幕","🕰️ 時光探險","聯絡福利委員會"],"fallback":"抱歉，我暫時無法確定這個問題的答案。您可以試試下方快捷問題，或輸入「福利委員會」了解聯絡方式。活動相關問題亦可洽 **廣運福利委員會** 或現場服務台。"};
-const QUICK_MAP = {'交通方式':'交通','活動流程 Rundown':'Rundown','🕰️ 時光探險':'時光探險','如何報到':'如何報到','參加禮與闖關禮':'紀念品','親子手作體驗':'親子手作','飲水與設施':'飲水','舞台表演時段':'舞台表演','餐飲安排':'餐飲','摸彩與閉幕':'摸彩','聯絡福利委員會':'福利委員會','轉人工客服':'福利委員會'};
-const QUICK_FAQ_MAP = {'交通方式':'traffic'};
-const QUICK_LINK_MAP = {'🕰️ 時光探險':'./time-adventure/index.html'};
-const messagesEl = document.getElementById('messages');
-const quickRepliesEl = document.getElementById('quick-replies');
-const form = document.getElementById('chat-form');
-const input = document.getElementById('user-input');
-function renderMarkdown(text) {
-  return String(text || "")
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, href) => {
-      const url = href.trim();
-      const safe = /^(?:\.\/|\/|https?:\/\/)/i.test(url) ? url : "#";
-      return `<a href="${safe}">${label}</a>`;
-    })
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/\n/g, "<br>");
-}
-// ===============================
-// Intent System v1
-// keyword + synonym + typo + fuzzy + scoring
-// ===============================
+  <div class="app" id="app">
+    <header class="hero">
+      <div class="hero-badge">KENMEC 50 · 家庭日實境解謎</div>
+      <h1>廣運時光探險</h1>
+      <p class="hero-sub">50年的啟程 · 五關解謎 · 完成可至服務台兌換 100 元禮券</p>
+      <nav class="nav-row">
+        <a href="../index.html">← 活動客服</a>
+        <button type="button" class="nav-pill-btn" id="bgm-toggle" aria-pressed="false" aria-label="背景音樂開關">🔇 音樂</button>
+      </nav>
+    </header>
 
-const SYNONYM_MAP = {
-  rundown: ["流程", "活動流程", "時間表", "節目表", "時程", "行程", "schedule", "timeline", "當天流程"],
-  traffic: ["交通", "怎麼去", "怎麼到", "開車", "停車", "捷運", "公車", "導航", "地址", "路線", "map", "googlemap", "google maps", "地圖", "導航"],
-  checkin: ["報到", "簽到", "入場", "qr", "qrcode", "掃描", "員工證", "證件", "入口"],
-  food: ["餐飲", "吃", "午餐", "餐盒", "美食", "餐車", "飲料", "素食", "過敏", "供餐"],
-  gift: ["禮物", "參加禮", "紀念品", "保溫杯", "保溫瓶", "闖關禮", "贈品", "領取", "兌換"],
-  kids: ["親子", "小孩", "兒童", "手作", "diy", "氣墊", "城堡", "momo", "泡泡", "競賽"],
-  facility: ["飲水", "喝水", "廁所", "洗手間", "化妝室", "休息", "座位", "救護", "醫療", "無障礙"],
-  lottery: ["摸彩", "抽獎", "中獎", "領獎", "頒獎", "閉幕", "集合", "抽獎券"],
-  welfare: ["福利委員會", "福委", "聯絡", "窗口", "找誰", "客服", "服務台", "工作人員", "人工"],
-  stage: ["舞台", "表演", "樂團", "band", "live", "開場", "致詞", "盛典"],
-  photo: ["拍照", "照片", "相簿", "雲攝影", "下載照片", "攝影", "合照"],
-  lost: ["遺失", "掉了", "失物", "招領", "撿到"],
-  weather: ["下雨", "雨天", "颱風", "延期", "取消", "天氣"],
-  puzzle: ["解謎", "實境", "謎題", "時光探險", "廣運時光探險", "探險", "闖關地圖"]
-};
+    <audio id="bgm" loop preload="metadata" playsinline>
+      <source src="./audio/bgm.mp3" type="audio/mpeg" />
+    </audio>
 
-const TYPO_MAP = {
-  "活東": "活動",
-  "活棟": "活動",
-  "留成": "流程",
-  "流成": "流程",
-  "節木": "節目",
-  "時兼": "時間",
-  "時尖": "時間",
-  "摸采": "摸彩",
-  "模彩": "摸彩",
-  "抽將": "抽獎",
-  "保溫平": "保溫瓶",
-  "福委會": "福利委員會",
-  "福委": "福利委員會",
-  "服務臺": "服務台",
-  "廁索": "廁所",
-  "飲水器": "飲水機",
-  "親自": "親子",
-  "手做": "手作",
-  "材糧": "材料",
-  "現廠": "現場",
-  "名額現制": "名額限制",
-  "qrcode": "qr",
-  "qr code": "qr",
-  "google map": "googlemap"
-};
+    <nav class="level-nav" id="level-nav" aria-label="關卡導覽"></nav>
 
-const FAQ_INTENT_MAP = {
-  when: "rundown",
-  rundown: "rundown",
-  traffic: "traffic",
-  where: "traffic",
-  checkin: "checkin",
-  food: "food",
-  gift: "gift",
-  passport: "gift",
-  kids: "kids",
-  toilet: "facility",
-  massage: "facility",
-  lottery: "lottery",
-  welfare: "welfare",
-  human: "welfare",
-  stage: "stage",
-  photo: "photo",
-  lost: "lost",
-  weather: "weather",
-  puzzle: "puzzle"
-};
+    <section id="hub" class="panel">
+      <h2>闖關地圖</h2>
+      <p>報到時領取闖關卡，依序解開五道謎題。解開後向關主報告<strong style="color:var(--accent)">通關密語</strong>並蓋章，取得下一關謎題。</p>
+      <p class="progress-line" id="progress-text">已完成 0 / 5 關</p>
+      <div class="level-list" id="level-list"></div>
+      <div id="complete-banner" class="complete-banner hidden">
+        <strong>🎉 五關全部完成！</strong><br />
+        請持闖關卡至 <strong>三樓服務台</strong>（報到處），回收卡片後領取 <strong>100 元禮券</strong>。
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" id="reset-btn" style="margin-top:12px;width:100%">重置進度（測試用）</button>
+    </section>
 
-function normalize(text) {
-  let value = String(text || "").toLowerCase();
+    <section id="game-screen" class="panel hidden"></section>
+  </div>
 
-  Object.keys(TYPO_MAP).forEach(wrong => {
-    value = value.split(wrong.toLowerCase()).join(TYPO_MAP[wrong].toLowerCase());
-  });
+  <div class="modal-overlay" id="rules-modal" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3 id="modal-title">關卡規則</h3>
+      <p class="intro" id="modal-intro"></p>
+      <div class="step-cards" id="modal-steps"></div>
+      <button type="button" class="btn btn-primary" id="modal-start">開始挑戰</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="modal-cancel" style="margin-top:10px;width:100%">返回</button>
+    </div>
+  </div>
 
-  return value
-    .replace(/[\s\u3000]+/g, "")
-    .replace(/[？?！!。．，,、；;：:「」『』【】（）()《》〈〉\[\]{}]/g, "")
-    .replace(/臺/g, "台");
-}
+  <script>
+    const STORAGE_KEY = "guangyun-time-adventure-v2";
+    const BGM_PREF_KEY = "guangyun-bgm-enabled";
+    let DATA = null;
+    let progress = loadProgress();
+    let pendingLevel = null;
+    let memoryTimer = null;
 
-function tokenize(text) {
-  const normalized = normalize(text);
-  const tokens = new Set();
+    const PIPE = {
+      H: [0, 1, 0, 1],
+      V: [1, 0, 1, 0],
+      L: [1, 1, 0, 0],
+      T: [1, 1, 1, 0]
+    };
 
-  (normalized.match(/[\u4e00-\u9fff]{2,}/g) || []).forEach(word => {
-    tokens.add(word);
-    for (let i = 0; i < word.length - 1; i++) tokens.add(word.slice(i, i + 2));
-    for (let i = 0; i < word.length - 2; i++) tokens.add(word.slice(i, i + 3));
-  });
-
-  (normalized.match(/[a-z0-9]+/gi) || []).forEach(word => tokens.add(word));
-  return tokens;
-}
-
-function expandBySynonyms(text) {
-  const norm = normalize(text);
-  const intents = [];
-
-  Object.entries(SYNONYM_MAP).forEach(([intent, words]) => {
-    if (words.some(word => norm.includes(normalize(word)))) {
-      intents.push(intent);
+    function loadProgress() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+      catch { return {}; }
     }
-  });
 
-  return intents;
-}
-
-function levenshtein(a, b) {
-  a = normalize(a);
-  b = normalize(b);
-
-  if (a === b) return 0;
-  if (!a.length) return b.length;
-  if (!b.length) return a.length;
-
-  const matrix = [];
-
-  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
-  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-
-  for (let i = 1; i <= b.length; i++) {
-    for (let j = 1; j <= a.length; j++) {
-      matrix[i][j] =
-        b.charAt(i - 1) === a.charAt(j - 1)
-          ? matrix[i - 1][j - 1]
-          : Math.min(
-              matrix[i - 1][j - 1] + 1,
-              matrix[i][j - 1] + 1,
-              matrix[i - 1][j] + 1
-            );
+    function saveProgress(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
-  }
 
-  return matrix[b.length][a.length];
-}
+    function markComplete(id) {
+      progress[id] = true;
+      progress.completedAt = progress.completedAt || {};
+      progress.completedAt[id] = new Date().toISOString();
+      saveProgress(progress);
+    }
 
-function similarity(a, b) {
-  a = normalize(a);
-  b = normalize(b);
+    function isUnlocked(id) {
+      return id === 1 || !!progress[id - 1];
+    }
 
-  if (!a || !b) return 0;
-  if (a === b) return 1;
+    function completedCount() {
+      return [1, 2, 3, 4, 5].filter((i) => progress[i]).length;
+    }
 
-  const maxLen = Math.max(a.length, b.length);
-  return 1 - levenshtein(a, b) / maxLen;
-}
+    function allComplete() {
+      return completedCount() === 5;
+    }
 
-function fuzzyIncludes(message, keyword) {
-  const msg = normalize(message);
-  const kw = normalize(keyword);
+    function rotateConn(conn, rot) {
+      const c = conn.slice();
+      for (let i = 0; i < rot % 4; i++) c.unshift(c.pop());
+      return c;
+    }
 
-  if (!msg || !kw) return false;
-  if (msg.includes(kw) || kw.includes(msg)) return true;
+    function pipeSvgHtml(type, rot) {
+      const conn = rotateConn(PIPE[type], rot);
+      const n = conn[0], e = conn[1], s = conn[2], w = conn[3];
+      const C = 50, O = 10, R = 12;
+      const xL = C - O, xR = C + O, yT = C - O, yB = C + O;
+      const paths = [];
+      const extras = [];
 
-  if (kw.length < 3 || msg.length < 3) return false;
+      function track(d) {
+        paths.push('<path class="track" d="' + d + '"/>');
+      }
 
-  if (similarity(msg, kw) >= 0.72) return true;
+      function hline(y, x1, x2) {
+        track("M" + x1 + "," + y + " L" + x2 + "," + y);
+      }
 
-  for (let i = 0; i <= msg.length - kw.length; i++) {
-    const part = msg.slice(i, i + kw.length);
-    if (similarity(part, kw) >= 0.78) return true;
-  }
+      function vline(x, y1, y2) {
+        track("M" + x + "," + y1 + " L" + x + "," + y2);
+      }
 
-  return false;
-}
+      function collarH(y) {
+        extras.push('<line class="track-collar" x1="30" y1="' + y + '" x2="70" y2="' + y + '"/>');
+      }
 
-function scoreFaq(message, faq) {
-  const normMsg = normalize(message);
-  const msgTokens = tokenize(message);
-  const faqIntent = faq.intent || FAQ_INTENT_MAP[faq.id] || normalize(faq.category || "");
-  const detectedIntents = expandBySynonyms(message);
-  const intentWords = SYNONYM_MAP[faqIntent] || [];
+      function collarV(x) {
+        extras.push('<line class="track-collar" x1="' + x + '" y1="30" x2="' + x + '" y2="70"/>');
+      }
 
-  let score = 0;
+      function drawL(nOpen, eOpen, sOpen, wOpen) {
+        if (nOpen && eOpen) {
+          track("M" + xL + ",0 L" + xL + "," + (yT - R) + " Q" + xL + "," + yB + " " + (xL + R) + "," + yB + " L100," + yB);
+          track("M" + xR + ",0 L" + xR + "," + (yT + R) + " Q" + xR + "," + yT + " " + (xR + R) + "," + yT + " L100," + yT);
+        } else if (eOpen && sOpen) {
+          track("M" + xL + ",100 L" + xL + "," + (yB + R) + " Q" + xL + "," + yT + " " + (xL + R) + "," + yT + " L100," + yT);
+          track("M" + xR + ",100 L" + xR + "," + (yB - R) + " Q" + xR + "," + yB + " " + (xR + R) + "," + yB + " L100," + yB);
+        } else if (sOpen && wOpen) {
+          track("M" + xR + ",100 L" + xR + "," + (yB - R) + " Q" + xR + "," + yT + " " + (xR - R) + "," + yT + " L0," + yT);
+          track("M" + xL + ",100 L" + xL + "," + (yB + R) + " Q" + xL + "," + yB + " " + (xL - R) + "," + yB + " L0," + yB);
+        } else if (wOpen && nOpen) {
+          track("M" + xR + ",0 L" + xR + "," + (yT - R) + " Q" + xR + "," + yB + " " + (xR - R) + "," + yB + " L0," + yB);
+          track("M" + xL + ",0 L" + xL + "," + (yT + R) + " Q" + xL + "," + yT + " " + (xL - R) + "," + yT + " L0," + yT);
+        }
+      }
 
-  if (faqIntent && detectedIntents.includes(faqIntent)) score += 12;
+      function drawT(nOpen, eOpen, sOpen, wOpen) {
+        if (nOpen && eOpen && sOpen && !wOpen) {
+          vline(xL, 0, 100);
+          vline(xR, 0, 100);
+          hline(yT, xR, 100);
+          hline(yB, xR, 100);
+        } else if (nOpen && eOpen && wOpen && !sOpen) {
+          hline(yT, 0, 100);
+          hline(yB, 0, 100);
+          vline(xL, 0, yT);
+          vline(xR, 0, yT);
+        } else if (eOpen && sOpen && wOpen && !nOpen) {
+          hline(yT, 0, 100);
+          hline(yB, 0, 100);
+          vline(xL, yB, 100);
+          vline(xR, yB, 100);
+        } else if (nOpen && sOpen && wOpen && !eOpen) {
+          vline(xL, 0, 100);
+          vline(xR, 0, 100);
+          hline(yT, 0, xL);
+          hline(yB, 0, xL);
+        }
+        extras.push('<circle class="track-hub" cx="' + C + '" cy="' + C + '" r="9"/>');
+      }
 
-  if (faq.question && fuzzyIncludes(normMsg, faq.question)) score += 8;
+      const openCount = n + e + s + w;
 
-  if (faq.category && fuzzyIncludes(normMsg, faq.category)) score += 6;
+      if (openCount === 2) {
+        if (n && s) {
+          vline(xL, 0, 100);
+          vline(xR, 0, 100);
+        } else if (e && w) {
+          hline(yT, 0, 100);
+          hline(yB, 0, 100);
+        } else {
+          drawL(n, e, s, w);
+        }
+      } else if (openCount === 3) {
+        drawT(n, e, s, w);
+      }
 
-  (faq.keywords || []).forEach(kw => {
-    const nKw = normalize(kw);
-    if (!nKw) return;
+      if (n) collarH(3);
+      if (s) collarH(97);
+      if (w) collarV(3);
+      if (e) collarV(97);
 
-    if (normMsg.includes(nKw)) score += 5;
-    else if (fuzzyIncludes(normMsg, nKw)) score += 3;
-  });
+      return (
+        '<svg class="pipe-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' +
+        paths.join("") +
+        extras.join("") +
+        "</svg>"
+      );
+    }
 
-  intentWords.forEach(word => {
-    if (fuzzyIncludes(normMsg, word)) score += 4;
-  });
+    function updatePipeVisual(el, cell) {
+      el.innerHTML = pipeSvgHtml(cell.type, cell.rot);
+    }
 
-  const faqTokens = tokenize([
-    faq.question,
-    faq.category,
-    ...(faq.keywords || []),
-    ...intentWords
-  ].join(" "));
+    async function init() {
+      const res = await fetch("./puzzles.json");
+      DATA = await res.json();
+      setupBgm();
+      renderLevelNav();
+      renderHub();
+    }
 
-  msgTokens.forEach(token => {
-    if (faqTokens.has(token)) score += 1;
-  });
+    function setupBgm() {
+      const bgm = document.getElementById("bgm");
+      const btn = document.getElementById("bgm-toggle");
+      if (!bgm || !btn) return;
 
-  if (normMsg.length <= 2 && score < 10) {
-    score = Math.floor(score * 0.4);
-  }
+      bgm.volume = 0.42;
+      const wantOn = localStorage.getItem(BGM_PREF_KEY) !== "off";
+      updateBgmButton(btn, wantOn && !bgm.paused);
 
-  return { faq, score };
-}
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (bgm.paused) {
+          startBgm();
+        } else {
+          bgm.pause();
+          localStorage.setItem(BGM_PREF_KEY, "off");
+          updateBgmButton(btn, false);
+        }
+      });
 
-function findBestFaq(message) {
-  const results = KNOWLEDGE.faqs
-    .map(faq => scoreFaq(message, faq))
-    .sort((a, b) => b.score - a.score);
+      document.getElementById("app").addEventListener(
+        "click",
+        () => {
+          if (localStorage.getItem(BGM_PREF_KEY) === "off") return;
+          if (bgm.paused) startBgm();
+        },
+        { passive: true }
+      );
+    }
 
-  const best = results[0];
-  const second = results[1];
+    function updateBgmButton(btn, playing) {
+      btn.textContent = playing ? "🔊 音樂" : "🔇 音樂";
+      btn.setAttribute("aria-pressed", playing ? "true" : "false");
+    }
 
-  console.log(
-    "FAQ scoring:",
-    results.slice(0, 5).map(r => ({
-      id: r.faq.id,
-      question: r.faq.question,
-      score: r.score
-    }))
-  );
+    function startBgm() {
+      const bgm = document.getElementById("bgm");
+      const btn = document.getElementById("bgm-toggle");
+      if (!bgm) return;
+      bgm.play().then(() => {
+        localStorage.setItem(BGM_PREF_KEY, "on");
+        updateBgmButton(btn, true);
+      }).catch(() => {
+        updateBgmButton(btn, false);
+      });
+    }
 
-  if (!best || best.score < 6) {
-    return { faq: null, score: best ? best.score : 0, confident: false };
-  }
+    function renderLevelNav() {
+      const nav = document.getElementById("level-nav");
+      nav.innerHTML = "";
+      DATA.levels.forEach((lv) => {
+        const btn = document.createElement("button");
+        btn.textContent = lv.id;
+        btn.title = lv.title;
+        btn.className = (progress[lv.id] ? "done " : "") + (pendingLevel === lv.id ? "active" : "");
+        btn.addEventListener("click", () => {
+          if (isUnlocked(lv.id)) openLevelModal(lv.id);
+        });
+        nav.appendChild(btn);
+      });
+    }
 
-  const gap = second ? best.score - second.score : best.score;
+    function renderHub() {
+      document.getElementById("hub").classList.remove("hidden");
+      document.getElementById("game-screen").classList.add("hidden");
+      document.getElementById("progress-text").textContent = "已完成 " + completedCount() + " / 5 關";
+      document.getElementById("complete-banner").classList.toggle("hidden", !allComplete());
 
-  return {
-    faq: best.faq,
-    score: best.score,
-    confident: best.score >= 10 && gap >= 3
-  };
-}
+      const list = document.getElementById("level-list");
+      list.innerHTML = "";
+      DATA.levels.forEach((lv) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "level-card" + (progress[lv.id] ? " done" : "");
+        btn.disabled = !isUnlocked(lv.id);
+        btn.innerHTML =
+          '<div class="level-num">' + lv.id + "</div>" +
+          '<div class="level-meta"><strong>' + lv.title + "</strong>" +
+          "<span>" + lv.theme + " · " + lv.location + "</span></div>";
+        btn.addEventListener("click", () => openLevelModal(lv.id));
+        list.appendChild(btn);
+      });
+      renderLevelNav();
+    }
 
-// ========================================
-// 活動倒數 ＋ 現在該做什麼 ＋ 猜你想問 ＋ AI 人格
-// ========================================
+    function openLevelModal(levelId) {
+      if (!isUnlocked(levelId)) return;
+      pendingLevel = levelId;
+      const lv = DATA.levels[levelId - 1];
+      const rules = DATA.levelRules[String(levelId)] || [];
+      document.getElementById("modal-title").textContent = "第 " + levelId + " 關｜" + lv.title;
+      document.getElementById("modal-intro").textContent = lv.intro || "";
+      const steps = document.getElementById("modal-steps");
+      steps.innerHTML = "";
+      rules.forEach((step, i) => {
+        const card = document.createElement("div");
+        card.className = "step-card";
+        card.innerHTML = '<i class="fa-solid ' + step.icon + '"></i><p><strong>步驟 ' + (i + 1) + ".</strong> " + step.text + "</p>";
+        steps.appendChild(card);
+      });
+      document.getElementById("rules-modal").classList.add("show");
+      renderLevelNav();
+    }
 
-const BOT_PERSONALITY = {
-  greetings: [
-    "🙌 我幫你看看！",
-    "✨ 好的～我幫你整理一下！",
-    "😄 這題很多人問，我來幫你！",
-    "🎉 沒問題！",
-    "💡 我找到相關資訊了！",
-    "🌟 我來協助你～",
-    "🫶 讓我幫你快速整理！",
-    "😎 交給我吧！",
-  ],
-  fallback: [
-    "🤔 我暫時找不到完全符合的資訊耶～",
-    "😅 這題有點超出我的知識庫了！",
-    "🥹 我還不太確定你的意思～",
-    "🧐 我目前沒有找到最精準的答案！",
-  ],
-  endings: [
-    "\n\n✨ 希望有幫到你！",
-    "\n\n🙌 有其他問題也可以再問我！",
-    "\n\n🎉 現場玩得開心唷！",
-    "\n\n😄 需要我再幫你查別的嗎？",
-    "\n\n🌟 祝你活動順利～",
-    "\n\n💖 廣運50週年玩得開心！",
-  ],
-};
+    function closeModal() {
+      document.getElementById("rules-modal").classList.remove("show");
+      pendingLevel = null;
+      renderLevelNav();
+    }
 
-function randomPick(arr) {
-  return arr[Math.floor(Math.random() * arr.length)];
-}
+    function startLevel(levelId) {
+      closeModal();
+      document.getElementById("hub").classList.add("hidden");
+      const screen = document.getElementById("game-screen");
+      screen.classList.remove("hidden");
+      const lv = DATA.levels[levelId - 1];
+      screen.innerHTML =
+        '<div class="screen-head">' +
+        '<button type="button" class="btn btn-ghost btn-sm" id="back-hub">← 地圖</button>' +
+        '<span class="tag">第 ' + levelId + " 關</span></div>" +
+        "<h2>" + lv.title + "</h2>" +
+        '<p style="color:var(--muted);font-size:0.88rem;margin:0 0 12px">📍 ' + lv.location + "</p>" +
+        '<div id="level-body"></div>' +
+        '<div id="level-success"></div>';
 
-function decorateBotReply(text) {
-  const greeting = randomPick(BOT_PERSONALITY.greetings);
-  const ending = randomPick(BOT_PERSONALITY.endings);
-  return `${greeting}\n\n${text}${ending}`;
-}
+      document.getElementById("back-hub").addEventListener("click", () => {
+        if (memoryTimer) clearInterval(memoryTimer);
+        renderHub();
+      });
 
-function decorateFallback(text) {
-  const intro = randomPick(BOT_PERSONALITY.fallback);
-  return `${intro}\n\n${text}\n\n🙌 你也可以直接詢問：\n・活動流程\n・交通方式\n・摸彩時間\n・親子活動`;
-}
+      if (levelId === 1) initLevel1();
+      if (levelId === 2) initLevel2();
+      if (levelId === 3) initLevel3();
+      if (levelId === 4) initLevel4();
+      if (levelId === 5) initLevel5();
+    }
 
-const EVENT_DATE = new Date("2026-08-15T09:30:00");
+    function showLevelSuccess(level) {
+      markComplete(level.id);
+      renderLevelNav();
+      const box = document.getElementById("level-success");
+      const nextId = level.id + 1;
+      box.innerHTML =
+        '<div class="success-box">' +
+        "<strong>✅ 解謎成功！</strong>" +
+        '<p style="margin:8px 0 4px;font-size:0.88rem;color:var(--muted)">請向關主報告通關密語：</p>' +
+        '<div class="code">' + level.password + "</div>" +
+        '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px">' +
+        '<button type="button" class="btn btn-ghost btn-sm" id="back-after-win">返回地圖</button>' +
+        (level.id < 5
+          ? '<button type="button" class="btn btn-primary btn-sm" id="next-level-btn">前往第 ' + nextId + " 關 →</button>"
+          : '<button type="button" class="btn btn-primary btn-sm" id="back-after-win-done">完成</button>') +
+        "</div></div>";
+      document.getElementById("back-after-win").addEventListener("click", () => {
+        if (memoryTimer) clearInterval(memoryTimer);
+        renderHub();
+      });
+      const nextBtn = document.getElementById("next-level-btn");
+      if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+          if (memoryTimer) clearInterval(memoryTimer);
+          startLevel(nextId);
+        });
+      }
+      const doneBtn = document.getElementById("back-after-win-done");
+      if (doneBtn) {
+        doneBtn.addEventListener("click", () => {
+          if (memoryTimer) clearInterval(memoryTimer);
+          renderHub();
+        });
+      }
+      box.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
 
-function isEventDay() {
-  const n = new Date();
-  return n.getFullYear() === 2026 && n.getMonth() === 7 && n.getDate() === 15;
-}
+    function scrollFieldIntoView(el) {
+      if (!el) return;
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 280);
+    }
 
-function getCountdownText() {
-  const now = new Date();
-  const diff = EVENT_DATE - now;
+    /* ===== Level 1: Conveyor (5×5) ===== */
+    const CONVEYOR_SIZE = 5;
+    const CONVEYOR_END = CONVEYOR_SIZE - 1;
 
-  if (diff <= 0 && isEventDay()) {
-    return "🎉 廣運50週年活動進行中！";
-  }
+    /* 五種正解路徑，每次隨機抽一種 */
+    const CONVEYOR_PATHS = [
+      [[0, 0], [0, 1], [0, 2], [1, 2], [2, 2], [2, 3], [2, 4], [3, 4], [4, 4]],
+      [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [4, 1], [4, 2], [4, 3], [4, 4]],
+      [[0, 0], [0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [4, 2], [4, 3], [4, 4]],
+      [[0, 0], [0, 1], [1, 1], [1, 2], [2, 2], [3, 2], [3, 3], [3, 4], [4, 4]],
+      [[0, 0], [1, 0], [1, 1], [2, 1], [2, 2], [3, 2], [3, 3], [4, 3], [4, 4]]
+    ];
 
-  if (diff <= 0) {
-    return "🎉 感謝參與廣運50週年慶活動！";
-  }
+    let activeConveyorPath = CONVEYOR_PATHS[0];
+    let level1Won = false;
 
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    function pipeForDirs(dirA, dirB) {
+      const dirs = [dirA, dirB].sort((a, b) => a - b);
+      const key = dirs[0] + "," + dirs[1];
+      const map = {
+        "0,2": { type: "V", rot: 0 },
+        "1,3": { type: "H", rot: 0 },
+        "0,1": { type: "L", rot: 0 },
+        "1,2": { type: "L", rot: 1 },
+        "2,3": { type: "L", rot: 2 },
+        "0,3": { type: "L", rot: 3 }
+      };
+      return map[key] || { type: "H", rot: 1 };
+    }
 
-  return `⏳ 距離廣運50週年還有 ${days} 天 ${hours} 小時`;
-}
+    const CONVEYOR_PIPE_MIX = { straight: 0.35, T: 0.2, L: 0.45 };
 
-function getCurrentSuggestion() {
-  if (!isEventDay()) {
-    return "請點選下方快捷按鈕，或直接輸入問題。";
-  }
+    function countPipeTypes(layout) {
+      const counts = { straight: 0, T: 0, L: 0 };
+      layout.forEach((cell) => {
+        if (!cell) return;
+        if (cell.type === "H" || cell.type === "V") counts.straight += 1;
+        else if (cell.type === "T") counts.T += 1;
+        else if (cell.type === "L") counts.L += 1;
+      });
+      return counts;
+    }
 
-  const now = new Date();
-  const hour = now.getHours();
-  const minute = now.getMinutes();
-  const current = hour * 60 + minute;
+    function mixTargets(totalPipes) {
+      const targets = {
+        straight: Math.round(totalPipes * CONVEYOR_PIPE_MIX.straight),
+        T: Math.round(totalPipes * CONVEYOR_PIPE_MIX.T),
+        L: Math.round(totalPipes * CONVEYOR_PIPE_MIX.L)
+      };
+      let sum = targets.straight + targets.T + targets.L;
+      while (sum > totalPipes) {
+        if (targets.L > 0) targets.L -= 1;
+        else if (targets.straight > 0) targets.straight -= 1;
+        else targets.T -= 1;
+        sum -= 1;
+      }
+      while (sum < totalPipes) {
+        targets.L += 1;
+        sum += 1;
+      }
+      return targets;
+    }
 
-  if (current >= 570 && current < 600) {
-    return `
-📍 現在建議：
-1. 前往三樓報到處（即救護站）完成 QR Code 報到
-2. 領取識別手環、五十週年紀念禮（保溫瓶）及活動護照
-3. 10:00 前入場就座
-`;
-  }
+    function safeDecoyRots(r, c, type, pathKeys) {
+      const rots = [];
+      for (let rot = 0; rot < 4; rot++) {
+        if (decoyIsSafe(r, c, type, rot, pathKeys)) rots.push(rot);
+      }
+      return rots;
+    }
 
-  if (current >= 600 && current < 660) {
-    return `
-🎤 現在正在進行開幕活動：
-・主持人開場
-・長官致詞
-・50週年榮耀盛典
+    function isolatedDecoyOfType(r, c, pathKeys, type) {
+      const rots = safeDecoyRots(r, c, type, pathKeys);
+      if (!rots.length) return null;
+      return { type: type, rot: rots[Math.floor(Math.random() * rots.length)] };
+    }
 
-建議先前往主舞台區。
-`;
-  }
+    function isolatedStraightDecoyAt(r, c, pathKeys) {
+      const order = Math.random() < 0.5 ? ["H", "V"] : ["V", "H"];
+      for (let i = 0; i < order.length; i++) {
+        const cell = isolatedDecoyOfType(r, c, pathKeys, order[i]);
+        if (cell) return cell;
+      }
+      return null;
+    }
 
-  if (current >= 660 && current < 720) {
-    return `
-🎮 自由活動時間開始！
-推薦：
-1. 先去闖關避免排隊
-2. 親子DIY限量500份
-3. 11:30 來賓餐盒（三樓走廊）／餐車（一樓）開始供應
-`;
-  }
+    function isolatedFallbackDecoyAt(r, c, pathKeys) {
+      const order = ["L", "T", "H", "V"].sort(() => Math.random() - 0.5);
+      for (let i = 0; i < order.length; i++) {
+        const cell = isolatedDecoyOfType(r, c, pathKeys, order[i]);
+        if (cell) return cell;
+      }
+      return { type: "L", rot: Math.floor(Math.random() * 4) };
+    }
 
-  if (current >= 720 && current < 870) {
-    return `
-🎪 活動熱門時段：
-・親子競賽
-・LIVE BAND
-・MOMO兒童劇場
-・街頭藝人 Lene 駐唱
+    function assignDecoyPipes(layout, pathKeys) {
+      const totalPipes = CONVEYOR_SIZE * CONVEYOR_SIZE - 2;
+      const targets = mixTargets(totalPipes);
+      const counts = countPipeTypes(layout);
+      const need = {
+        straight: Math.max(0, targets.straight - counts.straight),
+        T: Math.max(0, targets.T - counts.T),
+        L: Math.max(0, targets.L - counts.L)
+      };
 
-也可以趁空檔完成闖關。
-`;
-  }
+      const slots = [];
+      for (let idx = 0; idx < layout.length; idx++) {
+        if (idx === 0 || idx === layout.length - 1 || pathKeys.has(idx)) continue;
+        slots.push(idx);
+      }
+      slots.sort(() => Math.random() - 0.5);
 
-  if (current >= 870 && current < 900) {
-    return `
-🎁 摸彩即將開始！
+      const queue = [];
+      for (let i = 0; i < need.straight; i++) queue.push("straight");
+      for (let i = 0; i < need.T; i++) queue.push("T");
+      for (let i = 0; i < need.L; i++) queue.push("L");
+      while (queue.length < slots.length) queue.push("L");
+      queue.sort(() => Math.random() - 0.5);
 
-建議：
-1. 儘快回到主舞台區
-2. 準備抽獎券
-3. 留意集合廣播
-`;
-  }
+      slots.forEach((idx, i) => {
+        const r = Math.floor(idx / CONVEYOR_SIZE);
+        const c = idx % CONVEYOR_SIZE;
+        const want = queue[i] || "L";
+        let cell = null;
 
-  if (current >= 900 && current < 960) {
-    return `
-🎉 閉幕與摸彩進行中！
-請留在主舞台區附近，
-避免錯過中獎與頒獎。
-`;
-  }
+        if (want === "straight") {
+          cell = isolatedStraightDecoyAt(r, c, pathKeys);
+        } else if (want === "T") {
+          cell = isolatedDecoyOfType(r, c, pathKeys, "T");
+        } else {
+          cell = isolatedDecoyOfType(r, c, pathKeys, "L");
+        }
 
-  return "活動日尚未開始或已結束今日流程。請點選下方快捷按鈕或輸入問題。";
-}
+        if (!cell && want === "straight") {
+          cell = isolatedDecoyOfType(r, c, pathKeys, "T") || isolatedDecoyOfType(r, c, pathKeys, "L");
+        } else if (!cell && want === "T") {
+          cell = isolatedDecoyOfType(r, c, pathKeys, "L");
+        }
 
-function getSuggestions(message) {
-  const results = KNOWLEDGE.faqs
-    .map((faq) => scoreFaq(message, faq))
-    .sort((a, b) => b.score - a.score)
-    .filter((item) => item.faq && item.faq.question)
-    .slice(0, 3);
+        layout[idx] = cell || isolatedFallbackDecoyAt(r, c, pathKeys);
+      });
+    }
 
-  if (results.length > 0 && results[0].score > 0) {
-    return results.map((item) => item.faq.question);
-  }
+    function dirBetween(from, to) {
+      const dr = to[0] - from[0];
+      const dc = to[1] - from[1];
+      if (dr === -1) return 0;
+      if (dc === 1) return 1;
+      if (dr === 1) return 2;
+      return 3;
+    }
 
-  return ["活動流程與時間安排", "活動交通方式與停車資訊？", "如何聯絡福利委員會"];
-}
+    function scrambleRot(type, solvedRot) {
+      if (type === "H" || type === "V") {
+        const wrong = solvedRot % 2 === 0 ? [1, 3] : [0, 2];
+        return wrong[Math.floor(Math.random() * wrong.length)];
+      }
+      const offset = 1 + Math.floor(Math.random() * 3);
+      return (solvedRot + offset) % 4;
+    }
 
-function answer(message) {
-  const trimmed = message.trim();
-  const directId = QUICK_FAQ_MAP[trimmed];
-  if (directId) {
-    const faq = KNOWLEDGE.faqs.find((f) => f.id === directId);
-    if (faq) {
-      if (faq.answerHtml) {
+    function wrongRot(cell) {
+      if (cell.type === "H" || cell.type === "V") return 1;
+      return (cell.rot + 1) % 4;
+    }
+
+    function isIsolatedPipe(r, c, type, rot) {
+      const conn = rotateConn(PIPE[type], rot);
+      const checks = [[-1, 0, 0], [0, 1, 1], [1, 0, 2], [0, -1, 3]];
+      for (let i = 0; i < checks.length; i++) {
+        const dr = checks[i][0];
+        const dc = checks[i][1];
+        const dir = checks[i][2];
+        const nr = r + dr;
+        const nc = c + dc;
+        if (nr < 0 || nr > CONVEYOR_END || nc < 0 || nc > CONVEYOR_END) continue;
+        if (conn[dir]) return false;
+      }
+      return true;
+    }
+
+    function endpointConn(r, c, path) {
+      const idx = r * CONVEYOR_SIZE + c;
+      const lastIdx = CONVEYOR_SIZE * CONVEYOR_SIZE - 1;
+      const conn = [0, 0, 0, 0];
+      if (idx === 0 && path.length > 1) {
+        conn[dirBetween([0, 0], path[1])] = 1;
+        return conn;
+      }
+      if (idx === lastIdx && path.length > 1) {
+        const prev = path[path.length - 2];
+        conn[dirBetween([r, c], prev)] = 1;
+        return conn;
+      }
+      return null;
+    }
+
+    function decoyIsSafe(r, c, type, rot, pathKeys) {
+      if (!isIsolatedPipe(r, c, type, rot)) return false;
+      const conn = rotateConn(PIPE[type], rot);
+      const checks = [[-1, 0, 0], [0, 1, 1], [1, 0, 2], [0, -1, 3]];
+      for (let i = 0; i < checks.length; i++) {
+        const dr = checks[i][0];
+        const dc = checks[i][1];
+        const dir = checks[i][2];
+        if (!conn[dir]) continue;
+        const nr = r + dr;
+        const nc = c + dc;
+        if (nr < 0 || nr > CONVEYOR_END || nc < 0 || nc > CONVEYOR_END) continue;
+        const nIdx = nr * CONVEYOR_SIZE + nc;
+        if (pathKeys.has(nIdx) || nIdx === 0 || nIdx === CONVEYOR_SIZE * CONVEYOR_SIZE - 1) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+
+    function solvedLayoutFromPath(path) {
+      const total = CONVEYOR_SIZE * CONVEYOR_SIZE;
+      const layout = Array(total).fill(null);
+      const pathKeys = new Set(path.map(([r, c]) => r * CONVEYOR_SIZE + c));
+
+      for (let i = 1; i < path.length - 1; i++) {
+        const prev = path[i - 1];
+        const curr = path[i];
+        const next = path[i + 1];
+        const idx = curr[0] * CONVEYOR_SIZE + curr[1];
+        layout[idx] = pipeForDirs(
+          dirBetween(curr, prev),
+          dirBetween(curr, next)
+        );
+      }
+
+      assignDecoyPipes(layout, pathKeys);
+
+      return layout;
+    }
+
+    function buildConveyorLayout(path) {
+      const layout = solvedLayoutFromPath(path);
+      const pathKeys = new Set(path.map(([r, c]) => r * CONVEYOR_SIZE + c));
+      const lastIdx = CONVEYOR_SIZE * CONVEYOR_SIZE - 1;
+
+      for (let i = 1; i < path.length - 1; i++) {
+        const curr = path[i];
+        const idx = curr[0] * CONVEYOR_SIZE + curr[1];
+        const cell = layout[idx];
+        cell.rot = scrambleRot(cell.type, cell.rot);
+      }
+
+      for (let idx = 0; idx < layout.length; idx++) {
+        if (idx === 0 || idx === lastIdx || pathKeys.has(idx)) continue;
+        const r = Math.floor(idx / CONVEYOR_SIZE);
+        const c = idx % CONVEYOR_SIZE;
+        const cell = layout[idx];
+        const rots = safeDecoyRots(r, c, cell.type, pathKeys);
+        if (rots.length) {
+          cell.rot = rots[Math.floor(Math.random() * rots.length)];
+        }
+      }
+
+      return layout;
+    }
+
+    function conveyorConnForPlay(r, c, layout) {
+      const idx = r * CONVEYOR_SIZE + c;
+      const lastIdx = CONVEYOR_SIZE * CONVEYOR_SIZE - 1;
+      if (idx === 0 || idx === lastIdx) return [1, 1, 1, 1];
+
+      const cell = layout[idx];
+      if (!cell) return [0, 0, 0, 0];
+      return rotateConn(PIPE[cell.type], cell.rot);
+    }
+
+    function findConveyorRoute(layout) {
+      const size = CONVEYOR_SIZE;
+      const visited = Array.from({ length: size }, () => Array(size).fill(false));
+      const parent = {};
+      const queue = [[0, 0]];
+      visited[0][0] = true;
+      const dirs = [[-1, 0, 0, 2], [0, 1, 1, 3], [1, 0, 2, 0], [0, -1, 3, 1]];
+
+      function connAt(r, c) {
+        return conveyorConnForPlay(r, c, layout);
+      }
+
+      while (queue.length) {
+        const [r, c] = queue.shift();
+        if (r === CONVEYOR_END && c === CONVEYOR_END) {
+          const route = [[0, 0]];
+          let cr = CONVEYOR_END, cc = CONVEYOR_END;
+          while (cr !== 0 || cc !== 0) {
+            route.unshift([cr, cc]);
+            const prev = parent[cr + "," + cc];
+            cr = prev[0];
+            cc = prev[1];
+          }
+          return route;
+        }
+        const here = connAt(r, c);
+        dirs.forEach(([dr, dc, myDir, theirDir]) => {
+          const nr = r + dr, nc = c + dc;
+          if (nr < 0 || nr >= size || nc < 0 || nc >= size) return;
+          if (!here[myDir] || !connAt(nr, nc)[theirDir]) return;
+          if (!visited[nr][nc]) {
+            visited[nr][nc] = true;
+            parent[nr + "," + nc] = [r, c];
+            queue.push([nr, nc]);
+          }
+        });
+      }
+      return null;
+    }
+
+    function prepareConveyorLayout() {
+      const order = CONVEYOR_PATHS
+        .map((path, idx) => ({ path: path, idx: idx }))
+        .sort(() => Math.random() - 0.5);
+
+      for (let p = 0; p < order.length; p++) {
+        const path = order[p].path;
+        activeConveyorPath = path;
+        const solved = solvedLayoutFromPath(path);
+        if (!conveyorSolvable(solved, path)) continue;
+
+        for (let attempt = 0; attempt < 30; attempt++) {
+          const layout = buildConveyorLayout(path);
+          if (!conveyorSolvable(layout, path)) return layout;
+        }
+      }
+
+      activeConveyorPath = CONVEYOR_PATHS[0];
+      const layout = solvedLayoutFromPath(CONVEYOR_PATHS[0]);
+      for (let i = 1; i < activeConveyorPath.length - 1; i++) {
+        const idx = activeConveyorPath[i][0] * CONVEYOR_SIZE + activeConveyorPath[i][1];
+        layout[idx].rot = wrongRot(layout[idx]);
+      }
+      return layout;
+    }
+
+    function conveyorConnAt(r, c, layout, path) {
+      const route = path || activeConveyorPath;
+      const endpoint = endpointConn(r, c, route);
+      if (endpoint) return endpoint;
+
+      const size = CONVEYOR_SIZE;
+      const idx = r * size + c;
+      const cell = layout[idx];
+      if (!cell) return [0, 0, 0, 0];
+      return rotateConn(PIPE[cell.type], cell.rot);
+    }
+
+    function conveyorSolvable(layout, path) {
+      const route = path || activeConveyorPath;
+      const size = CONVEYOR_SIZE;
+      const visited = Array.from({ length: size }, () => Array(size).fill(false));
+      const queue = [[0, 0]];
+      visited[0][0] = true;
+      const dirs = [[-1, 0, 0, 2], [0, 1, 1, 3], [1, 0, 2, 0], [0, -1, 3, 1]];
+
+      while (queue.length) {
+        const [r, c] = queue.shift();
+        if (r === CONVEYOR_END && c === CONVEYOR_END) return true;
+        const here = conveyorConnAt(r, c, layout, route);
+        dirs.forEach(([dr, dc, myDir, theirDir]) => {
+          const nr = r + dr, nc = c + dc;
+          if (nr < 0 || nr >= size || nc < 0 || nc >= size) return;
+          if (!here[myDir]) return;
+          if (!conveyorConnAt(nr, nc, layout, route)[theirDir]) return;
+          if (!visited[nr][nc]) {
+            visited[nr][nc] = true;
+            queue.push([nr, nc]);
+          }
+        });
+      }
+      return false;
+    }
+
+    function initLevel1() {
+      level1Won = false;
+      const body = document.getElementById("level-body");
+      body.innerHTML =
+        '<p style="text-align:center;font-size:0.88rem;color:var(--muted);margin:0 0 10px">點選水管即可旋轉接通起點到終點即可過關</p>' +
+        '<div class="conveyor-wrap">' +
+        '<div class="conveyor-grid" id="conveyor-grid"></div>' +
+        '<div class="cargo" id="cargo"></div></div>';
+
+      const layout = prepareConveyorLayout();
+
+      const grid = document.getElementById("conveyor-grid");
+      layout.forEach((cell, idx) => {
+        const el = document.createElement("button");
+        el.type = "button";
+        el.className = "pipe-cell";
+        if (idx === 0) {
+          el.className += " start";
+          el.textContent = "起點";
+          el.disabled = true;
+        } else if (idx === CONVEYOR_SIZE * CONVEYOR_SIZE - 1) {
+          el.className += " end";
+          el.textContent = "終點";
+          el.disabled = true;
+        } else if (cell) {
+          el.dataset.type = cell.type;
+          el.dataset.rot = String(cell.rot);
+          updatePipeVisual(el, cell);
+          el.addEventListener("click", () => {
+            cell.rot = (parseInt(el.dataset.rot, 10) + 1) % 4;
+            el.dataset.rot = String(cell.rot);
+            updatePipeVisual(el, cell);
+            checkConveyor(layout);
+          });
+        }
+        grid.appendChild(el);
+      });
+    }
+
+    function checkConveyor(layout) {
+      if (level1Won) return;
+      const route = findConveyorRoute(layout);
+      if (!route) return;
+
+      level1Won = true;
+      animateCargo(route);
+      setTimeout(() => showLevelSuccess(DATA.levels[0]), route.length * 420 + 300);
+    }
+
+    function animateCargo(path) {
+      const cargo = document.getElementById("cargo");
+      const grid = document.getElementById("conveyor-grid");
+      const wrap = cargo.parentElement;
+
+      function posForCell(r, c) {
+        const cell = grid.children[r * CONVEYOR_SIZE + c];
+        const wrapRect = wrap.getBoundingClientRect();
+        const cellRect = cell.getBoundingClientRect();
+        const cargoSize = cargo.offsetWidth || 22;
         return {
-          faq: {
-            ...faq,
-            personalityLead: randomPick(BOT_PERSONALITY.greetings),
-          },
-          suggestions: [],
+          left: cellRect.left - wrapRect.left + (cellRect.width - cargoSize) / 2,
+          top: cellRect.top - wrapRect.top + (cellRect.height - cargoSize) / 2
         };
       }
-      return {
-        faq: {
-          ...faq,
-          answer: decorateBotReply(faq.answer || "目前沒有資料"),
-        },
-        suggestions: [],
-      };
+
+      const start = posForCell(0, 0);
+      cargo.style.left = start.left + "px";
+      cargo.style.top = start.top + "px";
+      cargo.classList.add("run");
+
+      path.forEach(([r, c], i) => {
+        setTimeout(() => {
+          const { left, top } = posForCell(r, c);
+          cargo.style.left = left + "px";
+          cargo.style.top = top + "px";
+        }, i * 420);
+      });
     }
-  }
 
-  const text = QUICK_MAP[trimmed] || trimmed;
-  const found = findBestFaq(text);
+    /* ===== Level 2: Liquid cooling ===== */
+    function initLevel2() {
+      const SECRET_CODE = "2010";
+      const body = document.getElementById("level-body");
+      body.innerHTML =
+        '<p style="text-align:center;font-size:0.88rem;color:var(--muted);margin:0 0 10px">拖曳藍色液冷方塊到發熱區，找出隱藏年份</p>' +
+        '<div class="server-rack">' +
+        '<div class="server-rack-panel" id="rack-code-panel" aria-hidden="true"></div>' +
+        '<div class="heat-stage" id="heat-stage">' +
+        '<canvas id="heat-base" width="300" height="220"></canvas>' +
+        '<canvas id="heat-mask" width="300" height="220"></canvas>' +
+        '<div class="coolant-block" id="coolant"><i class="fa-solid fa-snowflake"></i></div>' +
+        "</div>" +
+        '<div class="server-rack-grille" aria-hidden="true"></div>' +
+        '<div class="server-rack-feet" aria-hidden="true"><span></span><span></span></div>' +
+        "</div>" +
+        '<div class="reveal-btn" id="reveal-btn"><button type="button">找出密碼後點此通關</button></div>';
 
-  if (found.faq && found.score >= 6) {
-    const base = found.faq;
-    if (base.answerHtml) {
-      return {
-        faq: {
-          ...base,
-          personalityLead: randomPick(BOT_PERSONALITY.greetings),
-        },
-        suggestions: [],
-      };
+      const baseCanvas = document.getElementById("heat-base");
+      const maskCanvas = document.getElementById("heat-mask");
+      const baseCtx = baseCanvas.getContext("2d");
+      const maskCtx = maskCanvas.getContext("2d");
+      const secretX = 165, secretY = 105;
+      const W = 300, H = 220;
+      let revealed = 0;
+      let codeShown = false;
+      let level2Confirmed = false;
+
+      function confirmLevel2() {
+        if (level2Confirmed) return;
+        level2Confirmed = true;
+        showLevelSuccess(DATA.levels[1]);
+      }
+
+      function drawServerRackInterior(ctx) {
+        const bg = ctx.createLinearGradient(0, 0, 0, H);
+        bg.addColorStop(0, "#2a2f34");
+        bg.addColorStop(0.45, "#1a1d21");
+        bg.addColorStop(1, "#101214");
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.fillStyle = "#7a6548";
+        ctx.fillRect(10, 18, 5, H - 44);
+        ctx.fillRect(W - 15, 18, 5, H - 44);
+        ctx.fillStyle = "#5c4f68";
+        for (let y = 32; y < H - 36; y += 34) {
+          ctx.fillRect(8, y, 9, 7);
+          ctx.fillRect(W - 17, y, 9, 7);
+        }
+
+        ctx.strokeStyle = "rgba(90, 98, 108, 0.35)";
+        ctx.lineWidth = 1;
+        for (let y = 28; y < H; y += 22) {
+          ctx.beginPath();
+          ctx.moveTo(28, y);
+          ctx.lineTo(W - 28, y);
+          ctx.stroke();
+        }
+
+        const heat = ctx.createRadialGradient(secretX, secretY, 8, secretX, secretY, 95);
+        heat.addColorStop(0, "rgba(255,90,40,0.42)");
+        heat.addColorStop(0.45, "rgba(200,50,15,0.18)");
+        heat.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.fillStyle = heat;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.fillStyle = "rgba(255,130,60,0.14)";
+        for (let i = 0; i < 160; i++) {
+          const rw = 2 + Math.random() * 2;
+          const rh = 2 + Math.random() * 2;
+          ctx.fillRect(28 + Math.random() * (W - 56), 24 + Math.random() * (H - 48), rw, rh);
+        }
+      }
+
+      function drawBase() {
+        drawServerRackInterior(baseCtx);
+        baseCtx.font = "bold 36px sans-serif";
+        baseCtx.textAlign = "center";
+        baseCtx.textBaseline = "middle";
+        baseCtx.lineWidth = 4;
+        baseCtx.strokeStyle = "rgba(255, 255, 255, 0.95)";
+        baseCtx.strokeText(SECRET_CODE, secretX, secretY);
+        baseCtx.shadowColor = "#00f2fe";
+        baseCtx.shadowBlur = 16;
+        baseCtx.fillStyle = "#00f2fe";
+        baseCtx.fillText(SECRET_CODE, secretX, secretY);
+        baseCtx.shadowBlur = 0;
+      }
+
+      function drawMask() {
+        maskCtx.globalCompositeOperation = "source-over";
+        maskCtx.fillStyle = "rgba(6, 8, 10, 0.98)";
+        maskCtx.fillRect(0, 0, W, H);
+        const concealer = maskCtx.createRadialGradient(secretX, secretY, 6, secretX, secretY, 88);
+        concealer.addColorStop(0, "rgba(4, 6, 8, 1)");
+        concealer.addColorStop(0.55, "rgba(6, 8, 10, 0.99)");
+        concealer.addColorStop(1, "rgba(6, 8, 10, 0)");
+        maskCtx.fillStyle = concealer;
+        maskCtx.fillRect(0, 0, W, H);
+      }
+
+      function showSecretCode() {
+        if (codeShown) return;
+        codeShown = true;
+        const revealWrap = document.getElementById("reveal-btn");
+        const revealButton = revealWrap.querySelector("button");
+        revealButton.textContent = "確認 " + SECRET_CODE + " · 通關";
+        revealWrap.classList.add("show");
+      }
+
+      drawBase();
+      drawMask();
+
+      const block = document.getElementById("coolant");
+      const stage = document.getElementById("heat-stage");
+      let dragging = false, ox = 0, oy = 0, bl = 12, bt = 12;
+
+      function eraseAt(cx, cy) {
+        const rect = maskCanvas.getBoundingClientRect();
+        const x = (cx - rect.left) * (maskCanvas.width / rect.width);
+        const y = (cy - rect.top) * (maskCanvas.height / rect.height);
+        maskCtx.globalCompositeOperation = "destination-out";
+        maskCtx.beginPath();
+        maskCtx.arc(x, y, 38, 0, Math.PI * 2);
+        maskCtx.fill();
+        maskCtx.globalCompositeOperation = "source-over";
+        if (Math.hypot(x - secretX, y - secretY) < 58) {
+          revealed += 1;
+          if (revealed >= 3) showSecretCode();
+        }
+      }
+
+      function onStart(cx, cy) {
+        dragging = true;
+        block.classList.add("dragging");
+        ox = cx; oy = cy;
+        const r = block.getBoundingClientRect();
+        const sr = stage.getBoundingClientRect();
+        bl = r.left - sr.left; bt = r.top - sr.top;
+      }
+
+      function onMove(cx, cy) {
+        if (!dragging) return;
+        const sr = stage.getBoundingClientRect();
+        const bw = block.offsetWidth || 72;
+        const bh = block.offsetHeight || 72;
+        bl = Math.max(0, Math.min(sr.width - bw, bl + (cx - ox)));
+        bt = Math.max(0, Math.min(sr.height - bh, bt + (cy - oy)));
+        block.style.left = bl + "px";
+        block.style.top = bt + "px";
+        ox = cx; oy = cy;
+        eraseAt(cx, cy);
+      }
+
+      block.addEventListener("mousedown", (e) => onStart(e.clientX, e.clientY));
+      window.addEventListener("mousemove", (e) => onMove(e.clientX, e.clientY));
+      window.addEventListener("mouseup", () => { dragging = false; block.classList.remove("dragging"); });
+      block.addEventListener("touchstart", (e) => { e.preventDefault(); onStart(e.touches[0].clientX, e.touches[0].clientY); }, { passive: false });
+      window.addEventListener("touchmove", (e) => { if (dragging) { e.preventDefault(); onMove(e.touches[0].clientX, e.touches[0].clientY); } }, { passive: false });
+      window.addEventListener("touchend", () => { dragging = false; block.classList.remove("dragging"); });
+
+      const revealButton = document.querySelector("#reveal-btn button");
+      revealButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!codeShown) return;
+        confirmLevel2();
+      });
+      revealButton.addEventListener("touchend", (e) => {
+        e.stopPropagation();
+        if (!codeShown) return;
+        confirmLevel2();
+      });
     }
-    return {
-      faq: {
-        ...base,
-        answer: decorateBotReply(base.answer || "目前沒有資料"),
-      },
-      suggestions: [],
-    };
-  }
 
-  const suggestions = getSuggestions(text);
+    /* ===== Level 3: AI Chat — 歷史小測驗五題 ===== */
+    function initLevel3() {
+      const body = document.getElementById("level-body");
+      const quiz = DATA.quizQuestions || [];
+      let current = 0;
 
-  return {
-    faq: {
-      id: "suggestions",
-      category: "系統建議",
-      question: "猜你想問",
-      answer: decorateFallback("你可能想問下面這些："),
-    },
-    suggestions,
-  };
-}
+      body.innerHTML =
+        '<div class="chat-box">' +
+        '<div class="chat-header"><div class="bot-avatar"><i class="fa-solid fa-robot"></i></div>' +
+        '<div><strong>廣運 AI 小幫手</strong><br><small style="color:var(--muted)">線上協助中 · 歷史小測驗</small></div></div>' +
+        '<div class="chat-messages" id="chat-msgs"></div>' +
+        '<div class="chat-input-row">' +
+        '<input type="text" id="chat-input" placeholder="輸入答案…" autocomplete="off" maxlength="20" />' +
+        '<button type="button" id="chat-send"><i class="fa-solid fa-paper-plane"></i></button>' +
+        "</div></div>";
 
-function addMessage(role, content, options = {}) {
-  const faq = options.faq;
-  const plain = options.plain === true;
-  const msg = document.createElement("div");
+      const msgs = document.getElementById("chat-msgs");
+      const input = document.getElementById("chat-input");
 
-  if (role === "bot" && faq && faq.answerHtml) {
-    msg.className = "msg bot transport-msg";
-    if (faq.personalityLead) {
-      msg.innerHTML =
-        '<p class="bot-personality-lead">' +
-        renderMarkdown(faq.personalityLead) +
-        "</p>" +
-        faq.answerHtml;
-    } else {
-      msg.innerHTML = faq.answerHtml;
-    }
-  } else if (role === "bot") {
-    msg.className = "msg bot" + (plain ? " welcome-msg" : "");
-    msg.innerHTML = renderMarkdown(String(content || ""));
-  } else {
-    msg.className = "msg user";
-    msg.textContent = content;
-  }
+      function addBubble(text, who) {
+        const b = document.createElement("div");
+        b.className = "bubble " + who;
+        b.textContent = text;
+        msgs.appendChild(b);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
 
-  messagesEl.appendChild(msg);
+      function normalizeAnswer(text, question) {
+        const trimmed = text.trim();
+        if (question.caseInsensitive) {
+          return trimmed.replace(/\s+/g, "").toUpperCase();
+        }
+        return trimmed.replace(/\s+/g, "");
+      }
 
-  if (options.suggestions && options.suggestions.length) {
-    const suggestWrap = document.createElement("div");
-    suggestWrap.className = "quick-replies suggest-inline";
+      function isCorrect(text, question) {
+        const norm = normalizeAnswer(text, question);
+        return question.answers.some((answer) => {
+          const expected = question.caseInsensitive
+            ? answer.replace(/\s+/g, "").toUpperCase()
+            : answer.replace(/\s+/g, "");
+          return norm === expected;
+        });
+      }
 
-    options.suggestions.forEach((label) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.textContent = label;
-      btn.addEventListener("click", () => sendMessage(label));
-      suggestWrap.appendChild(btn);
-    });
+      function askQuestion(index) {
+        const q = quiz[index];
+        if (!q) return;
+        addBubble(
+          "💡 第 " + q.id + " 題：【" + (q.topic || q.subtitle) + "】\n\n" + q.prompt,
+          "bot"
+        );
+        input.placeholder = q.placeholder || "輸入答案…";
+        input.focus();
+      }
 
-    messagesEl.appendChild(suggestWrap);
-  }
-
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
-
-function showWelcomeMessage() {
-  const welcome = `您好，歡迎使用廣運50週年慶活動智能客服。
-
-${getCountdownText()}
-
-${getCurrentSuggestion().trim()}`;
-
-  addMessage("bot", welcome, { plain: true });
-}
-
-function sendMessage(text) {
-  const trimmed = String(text || "").trim();
-  if (!trimmed) return;
-
-  const quickLink = QUICK_LINK_MAP[trimmed];
-  if (quickLink) {
-    window.location.href = quickLink;
-    return;
-  }
-
-  addMessage("user", trimmed);
-  if (input) input.value = "";
-
-  const typing = document.createElement("div");
-  typing.className = "msg bot typing";
-  typing.textContent = "正在為您查詢…";
-  messagesEl.appendChild(typing);
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-
-  setTimeout(() => {
-    typing.remove();
-
-    const result = answer(trimmed);
-    const faq = result.faq;
-
-    if (!faq) {
-      addMessage(
-        "bot",
-        decorateFallback(
-          KNOWLEDGE.fallback || "目前找不到相關資訊，請洽服務台或福利委員會。"
-        )
+      addBubble(
+        "你好！我是廣運 AI 小幫手 🤖\n歡迎來到【歷史小測驗】！\n\n提示：答案都在歷史牆 🧩\n我會依序出題，請把從歷史牆解出的答案輸入給我。",
+        "bot"
       );
-      return;
+      setTimeout(() => askQuestion(0), 500);
+
+      function sendChat() {
+        const val = input.value.trim();
+        if (!val) return;
+        const q = quiz[current];
+        if (!q) return;
+
+        addBubble(val, "user");
+        input.value = "";
+
+        if (isCorrect(val, q)) {
+          if (current < quiz.length - 1) {
+            setTimeout(() => addBubble("✅ 答對了！", "bot"), 350);
+            current += 1;
+            setTimeout(() => askQuestion(current), 900);
+            return;
+          }
+          setTimeout(() => addBubble("✅ 答對了！", "bot"), 350);
+          setTimeout(() => addBubble("🎉 五題全部答對！通關密語驗證成功，請向關主報告並蓋章！", "bot"), 900);
+          setTimeout(() => showLevelSuccess(DATA.levels[2]), 1800);
+          input.disabled = true;
+          document.getElementById("chat-send").disabled = true;
+          return;
+        }
+
+        setTimeout(
+          () =>
+            addBubble(
+              (q.wrongHint || "嗯…好像還不太對耶 😅") + "\n再仔細看看歷史牆上的線索喔 🧩",
+              "bot"
+            ),
+          450
+        );
+      }
+
+      document.getElementById("chat-send").addEventListener("click", sendChat);
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") sendChat();
+      });
+      input.addEventListener("focus", () => scrollFieldIntoView(input));
     }
 
-    const body = faq.answerHtml ? faq.answer : faq.answer || "目前沒有資料";
-    addMessage("bot", body, {
-      faq: faq.answerHtml ? faq : null,
-      suggestions: result.suggestions || [],
+    /* ===== Level 4: Memory (6 組 × 12 張) ===== */
+    const MEMORY_PAIR_COUNT = 6;
+    const MEMORY_TIME_SEC = 90;
+
+    function initLevel4() {
+      const pairs = [
+        { id: "conveyor", label: "自動\n輸送機", icon: "⚙️" },
+        { id: "agv", label: "AGV\n無人搬運車", icon: "🤖" },
+        { id: "taiqi", label: "太極\n太陽能", icon: "☀️" },
+        { id: "warehouse", label: "自動\n倉儲", icon: "🏭" },
+        { id: "twin", label: "數位\n孿生", icon: "🔄" },
+        { id: "cooling", label: "浸沒式\n液冷", icon: "❄️" }
+      ];
+      let cards = pairs.concat(pairs).map((p, i) => ({ ...p, uid: i }));
+      cards.sort(() => Math.random() - 0.5);
+
+      const body = document.getElementById("level-body");
+      body.innerHTML =
+        '<p style="text-align:center;font-size:0.88rem;color:var(--muted);margin:0 0 10px">孿生記憶牆 · 用手指點選即可翻牌</p>' +
+        '<div class="memory-info"><span id="mem-time">⏱ ' + MEMORY_TIME_SEC + ' 秒</span>' +
+        '<span id="mem-pairs">配對 0 / ' + MEMORY_PAIR_COUNT + '</span></div>' +
+        '<div class="memory-grid" id="memory-grid"></div>' +
+        '<div class="factory-merge" id="factory-merge"><div style="font-size:2rem">🏭⚡🤖</div>' +
+        '<p style="margin:8px 0 0">數位孿生智慧工廠全景同步完成！</p></div>';
+
+      const grid = document.getElementById("memory-grid");
+      let flipped = [], matched = 0, timeLeft = MEMORY_TIME_SEC, lock = false;
+
+      cards.forEach((card) => {
+        const el = document.createElement("button");
+        el.type = "button";
+        el.className = "mem-card";
+        el.innerHTML =
+          '<div class="face back">50週年</div>' +
+          '<div class="face front"><span class="mem-icon">' + card.icon +
+          '</span><span class="mem-label">' + card.label.replace("\n", "<br>") + "</span></div>";
+        el.addEventListener("click", () => {
+          if (lock || el.classList.contains("flipped") || el.classList.contains("matched")) return;
+          el.classList.add("flipped");
+          flipped.push({ el, card });
+          if (flipped.length === 2) {
+            lock = true;
+            const [a, b] = flipped;
+            if (a.card.id === b.card.id) {
+              a.el.classList.add("matched");
+              b.el.classList.add("matched");
+              matched += 1;
+              document.getElementById("mem-pairs").textContent = "配對 " + matched + " / " + MEMORY_PAIR_COUNT;
+              flipped = [];
+              lock = false;
+              if (matched === MEMORY_PAIR_COUNT) {
+                clearInterval(memoryTimer);
+                document.getElementById("factory-merge").classList.add("show");
+                setTimeout(() => showLevelSuccess(DATA.levels[3]), 1200);
+              }
+            } else {
+              setTimeout(() => {
+                a.el.classList.remove("flipped");
+                b.el.classList.remove("flipped");
+                flipped = [];
+                lock = false;
+              }, 700);
+            }
+          }
+        });
+        grid.appendChild(el);
+      });
+
+      memoryTimer = setInterval(() => {
+        timeLeft -= 1;
+        document.getElementById("mem-time").textContent = "⏱ " + timeLeft + " 秒";
+        if (timeLeft <= 0) {
+          clearInterval(memoryTimer);
+          alert("時間到！再試一次吧～");
+          startLevel(4);
+        }
+      }, 1000);
+    }
+
+    /* ===== Level 5: Vault ===== */
+    function initLevel5() {
+      const VAULT_CODE = "2026";
+      const body = document.getElementById("level-body");
+      body.innerHTML =
+        '<div class="vault">' +
+        '<div class="vault-door" id="vault-door">' +
+        '<p style="font-size:0.88rem;color:var(--muted);margin:0 0 12px">輸入終極密碼，開啟百年願景</p>' +
+        '<div class="vault-digit-grid" id="vault-digit-grid">' +
+        '<input type="tel" class="vault-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" aria-label="密碼第 1 碼" />' +
+        '<input type="tel" class="vault-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" aria-label="密碼第 2 碼" />' +
+        '<input type="tel" class="vault-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" aria-label="密碼第 3 碼" />' +
+        '<input type="tel" class="vault-digit" maxlength="1" inputmode="numeric" pattern="[0-9]*" aria-label="密碼第 4 碼" />' +
+        "</div></div>" +
+        '<button type="button" class="btn btn-primary" id="vault-check">解鎖保險箱</button>' +
+        '<div class="vault-fireworks" id="vault-fireworks" aria-hidden="true"></div>' +
+        '<div class="vault-open" id="vault-open"><h3>🎆 保險箱已開啟！</h3>' +
+        '<p class="vision">前進下一世代：<br>FORWARD TO 50 YEARS</p></div></div>';
+
+      const digits = Array.from(body.querySelectorAll(".vault-digit"));
+      const door = document.getElementById("vault-door");
+      const fireworks = document.getElementById("vault-fireworks");
+      const checkBtn = document.getElementById("vault-check");
+
+      function currentCode() {
+        return digits.map((d) => d.value).join("");
+      }
+
+      function updateDigitState() {
+        const code = currentCode();
+        digits.forEach((d) => d.classList.toggle("ok", code === VAULT_CODE));
+      }
+
+      digits.forEach((inp, i) => {
+        inp.addEventListener("input", () => {
+          inp.value = inp.value.replace(/\D/g, "").slice(0, 1);
+          updateDigitState();
+          if (inp.value && i < digits.length - 1) digits[i + 1].focus();
+        });
+        inp.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" && !inp.value && i > 0) {
+            digits[i - 1].focus();
+          }
+          if (e.key === "Enter") tryUnlock();
+        });
+      });
+
+      function launchFireworks() {
+        fireworks.innerHTML = "";
+        const colors = ["#00f2fe", "#7df9ff", "#ffd166", "#ff9f1c", "#ffffff"];
+        for (let i = 0; i < 24; i++) {
+          const spark = document.createElement("span");
+          spark.className = "vault-firework";
+          const angle = (Math.PI * 2 * i) / 24;
+          const dist = 50 + Math.random() * 70;
+          spark.style.setProperty("--fx", Math.cos(angle) * dist + "px");
+          spark.style.setProperty("--fy", Math.sin(angle) * dist + "px");
+          spark.style.background = colors[i % colors.length];
+          spark.style.boxShadow = "0 0 10px " + colors[i % colors.length];
+          spark.style.animationDelay = (Math.random() * 0.25) + "s";
+          fireworks.appendChild(spark);
+        }
+        fireworks.classList.add("show");
+      }
+
+      function unlockSuccess() {
+        door.classList.add("vault-glow");
+        launchFireworks();
+        document.getElementById("vault-open").classList.add("show");
+        digits.forEach((d) => { d.disabled = true; });
+        checkBtn.disabled = true;
+        setTimeout(() => showLevelSuccess(DATA.levels[4]), 1200);
+      }
+
+      function tryUnlock() {
+        if (currentCode() === VAULT_CODE) {
+          unlockSuccess();
+        } else {
+          alert("密碼還不對喔！請再仔細想想線索～");
+        }
+      }
+
+      checkBtn.addEventListener("click", tryUnlock);
+    }
+
+    document.getElementById("modal-start").addEventListener("click", () => {
+      if (pendingLevel) startLevel(pendingLevel);
     });
-  }, 120);
-}
+    document.getElementById("modal-cancel").addEventListener("click", closeModal);
+    document.getElementById("reset-btn").addEventListener("click", () => {
+      if (confirm("確定重置所有闖關進度？")) {
+        localStorage.removeItem(STORAGE_KEY);
+        progress = {};
+        renderHub();
+      }
+    });
 
-function bindQuickReplies(items){quickRepliesEl.innerHTML='';items.forEach(label=>{const btn=document.createElement('button');btn.type='button';btn.textContent=label;btn.addEventListener('click',()=>sendMessage(label));quickRepliesEl.appendChild(btn)})}
-form.addEventListener('submit',e=>{e.preventDefault();sendMessage(input.value)});
-document.getElementById('event-subtitle').textContent = KNOWLEDGE.event.name + ' · 智能客服';
-bindQuickReplies(KNOWLEDGE.quickReplies||[]);
-showWelcomeMessage();
-
-(function setupMobileViewport() {
-  const chatCard = document.querySelector('.chat-card');
-  const userInput = document.getElementById('user-input');
-  if (!chatCard || !userInput) return;
-
-  function syncChatHeight() {
-    const vv = window.visualViewport;
-    if (!vv) return;
-    const keyboardOpen = window.innerHeight - vv.height > 80;
-    if (keyboardOpen) {
-      const heroH = document.querySelector('.hero')?.offsetHeight || 0;
-      const footerH = document.querySelector('.footer')?.offsetHeight || 0;
-      const pagePad = 24;
-      const maxH = Math.max(220, vv.height - heroH - footerH - pagePad);
-      chatCard.style.maxHeight = maxH + 'px';
-    } else {
-      chatCard.style.maxHeight = '';
-    }
-  }
-
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener('resize', syncChatHeight);
-    window.visualViewport.addEventListener('scroll', syncChatHeight);
-  }
-  userInput.addEventListener('focus', () => {
-    setTimeout(() => {
-      syncChatHeight();
-      userInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 300);
-  });
-  userInput.addEventListener('blur', () => {
-    setTimeout(syncChatHeight, 200);
-  });
-})();
-</script>
+    init();
+  </script>
 </body>
 </html>
