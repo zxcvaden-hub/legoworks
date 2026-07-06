@@ -37,6 +37,7 @@ body {
   background: radial-gradient(ellipse at top, #1e3a5f 0%, var(--bg) 55%);
   color: var(--text);
   overscroll-behavior: none;
+  overflow-x: hidden;
 }
 
 .page {
@@ -1165,6 +1166,41 @@ form.addEventListener('submit',e=>{e.preventDefault();sendMessage(input.value)})
 document.getElementById('event-subtitle').textContent = KNOWLEDGE.event.name + ' · 智能客服';
 bindQuickReplies(KNOWLEDGE.quickReplies||[]);
 showWelcomeMessage();
+
+(function setupMobileViewport() {
+  const chatCard = document.querySelector('.chat-card');
+  const userInput = document.getElementById('user-input');
+  if (!chatCard || !userInput) return;
+
+  function syncChatHeight() {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const keyboardOpen = window.innerHeight - vv.height > 80;
+    if (keyboardOpen) {
+      const heroH = document.querySelector('.hero')?.offsetHeight || 0;
+      const footerH = document.querySelector('.footer')?.offsetHeight || 0;
+      const pagePad = 24;
+      const maxH = Math.max(220, vv.height - heroH - footerH - pagePad);
+      chatCard.style.maxHeight = maxH + 'px';
+    } else {
+      chatCard.style.maxHeight = '';
+    }
+  }
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', syncChatHeight);
+    window.visualViewport.addEventListener('scroll', syncChatHeight);
+  }
+  userInput.addEventListener('focus', () => {
+    setTimeout(() => {
+      syncChatHeight();
+      userInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
+  });
+  userInput.addEventListener('blur', () => {
+    setTimeout(syncChatHeight, 200);
+  });
+})();
 </script>
 </body>
 </html>
