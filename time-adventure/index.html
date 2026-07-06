@@ -82,7 +82,7 @@
       margin-top: 10px;
     }
 
-    .nav-row a, .nav-pill {
+    .nav-row a, .nav-pill, .nav-pill-btn {
       font-size: 0.78rem;
       color: var(--text);
       text-decoration: none;
@@ -92,10 +92,23 @@
       background: rgba(255, 255, 255, 0.05);
     }
 
+    .nav-pill-btn {
+      cursor: pointer;
+      font-family: inherit;
+      touch-action: manipulation;
+    }
+
+    .nav-pill-btn[aria-pressed="true"] {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: var(--glow);
+    }
+
     .level-nav {
       display: flex;
-      gap: 6px;
-      overflow-x: auto;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
       padding: 4px 2px 8px;
       -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
@@ -105,7 +118,7 @@
 
     .level-nav button {
       flex: 0 0 auto;
-      min-width: 52px;
+      width: 52px;
       min-height: 44px;
       border-radius: 12px;
       border: 1px solid var(--card-border);
@@ -420,18 +433,26 @@
 
     .cargo {
       position: absolute;
-      width: 18px;
-      height: 18px;
-      border-radius: 6px;
-      background: linear-gradient(135deg, #ffd166, #ff9f1c);
-      box-shadow: 0 0 12px rgba(255, 209, 102, 0.8);
-      transition: left 0.5s ease, top 0.5s ease;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff7d6, #ffd166 45%, #ff9f1c);
+      box-shadow: 0 0 14px rgba(255, 209, 102, 0.95), 0 0 28px rgba(0, 242, 254, 0.55);
+      transition: left 0.42s ease, top 0.42s ease;
       pointer-events: none;
       opacity: 0;
-      z-index: 10;
+      z-index: 20;
     }
 
-    .cargo.run { opacity: 1; }
+    .cargo.run {
+      opacity: 1;
+      animation: cargoPulse 0.55s ease-in-out infinite alternate;
+    }
+
+    @keyframes cargoPulse {
+      from { box-shadow: 0 0 14px rgba(255, 209, 102, 0.9), 0 0 24px rgba(0, 242, 254, 0.45); }
+      to { box-shadow: 0 0 22px rgba(255, 209, 102, 1), 0 0 40px rgba(0, 242, 254, 0.75); }
+    }
 
     /* Level 2 liquid cool — server rack frame */
     .server-rack {
@@ -512,16 +533,6 @@
 
     #heat-mask {
       z-index: 1;
-    }
-
-    .server-rack-panel.has-code {
-      display: grid;
-      place-items: center;
-      font-size: 1.1rem;
-      font-weight: 800;
-      letter-spacing: 0.2em;
-      color: var(--accent);
-      text-shadow: var(--glow);
     }
 
     .coolant-block {
@@ -895,11 +906,74 @@
     }
 
     .success-box .code {
-      font-size: 1.15rem;
+      font-size: clamp(0.95rem, 4.5vw, 1.15rem);
       font-weight: 800;
       color: var(--accent);
       margin: 8px 0;
       letter-spacing: 0.04em;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    body { overflow-x: hidden; }
+
+    .app {
+      overflow-x: hidden;
+    }
+
+    #game-screen {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .chat-input-row button {
+      min-height: 44px;
+      min-width: 56px;
+      padding: 12px;
+    }
+
+    .reveal-btn button {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 380px) {
+      .pipe-cell.start, .pipe-cell.end {
+        font-size: clamp(0.62rem, 3vw, 0.82rem);
+        letter-spacing: -0.02em;
+      }
+
+      .conveyor-grid { gap: 3px; }
+
+      .reveal-btn button {
+        font-size: 1.05rem;
+        padding: 12px 14px;
+        width: 100%;
+      }
+
+      .mem-card .mem-icon { font-size: 2.2rem; }
+
+      .vault-digit {
+        font-size: 1.2rem;
+        padding: 10px 2px;
+        min-height: 48px;
+      }
+
+      .level-nav button { width: 46px; }
+
+      .app { padding-left: 8px; padding-right: 8px; }
+
+      .chat-messages { max-height: 36dvh; }
+    }
+
+    @media (max-width: 360px) {
+      .coolant-block {
+        width: 60px;
+        height: 60px;
+        font-size: 1.2rem;
+      }
     }
 
     .hidden { display: none !important; }
@@ -913,8 +987,13 @@
       <p class="hero-sub">50年的啟程 · 五關解謎 · 完成可至服務台兌換 100 元禮券</p>
       <nav class="nav-row">
         <a href="../index.html">← 活動客服</a>
+        <button type="button" class="nav-pill-btn" id="bgm-toggle" aria-pressed="false" aria-label="背景音樂開關">🔇 音樂</button>
       </nav>
     </header>
+
+    <audio id="bgm" loop preload="metadata" playsinline>
+      <source src="./audio/bgm.mp3" type="audio/mpeg" />
+    </audio>
 
     <nav class="level-nav" id="level-nav" aria-label="關卡導覽"></nav>
 
@@ -945,6 +1024,7 @@
 
   <script>
     const STORAGE_KEY = "guangyun-time-adventure-v2";
+    const BGM_PREF_KEY = "guangyun-bgm-enabled";
     let DATA = null;
     let progress = loadProgress();
     let pendingLevel = null;
@@ -1096,8 +1176,56 @@
     async function init() {
       const res = await fetch("./puzzles.json");
       DATA = await res.json();
+      setupBgm();
       renderLevelNav();
       renderHub();
+    }
+
+    function setupBgm() {
+      const bgm = document.getElementById("bgm");
+      const btn = document.getElementById("bgm-toggle");
+      if (!bgm || !btn) return;
+
+      bgm.volume = 0.42;
+      const wantOn = localStorage.getItem(BGM_PREF_KEY) !== "off";
+      updateBgmButton(btn, wantOn && !bgm.paused);
+
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (bgm.paused) {
+          startBgm();
+        } else {
+          bgm.pause();
+          localStorage.setItem(BGM_PREF_KEY, "off");
+          updateBgmButton(btn, false);
+        }
+      });
+
+      document.getElementById("app").addEventListener(
+        "click",
+        () => {
+          if (localStorage.getItem(BGM_PREF_KEY) === "off") return;
+          if (bgm.paused) startBgm();
+        },
+        { passive: true }
+      );
+    }
+
+    function updateBgmButton(btn, playing) {
+      btn.textContent = playing ? "🔊 音樂" : "🔇 音樂";
+      btn.setAttribute("aria-pressed", playing ? "true" : "false");
+    }
+
+    function startBgm() {
+      const bgm = document.getElementById("bgm");
+      const btn = document.getElementById("bgm-toggle");
+      if (!bgm) return;
+      bgm.play().then(() => {
+        localStorage.setItem(BGM_PREF_KEY, "on");
+        updateBgmButton(btn, true);
+      }).catch(() => {
+        updateBgmButton(btn, false);
+      });
     }
 
     function renderLevelNav() {
@@ -1192,26 +1320,63 @@
 
     function showLevelSuccess(level) {
       markComplete(level.id);
+      renderLevelNav();
       const box = document.getElementById("level-success");
+      const nextId = level.id + 1;
       box.innerHTML =
         '<div class="success-box">' +
         "<strong>✅ 解謎成功！</strong>" +
         '<p style="margin:8px 0 4px;font-size:0.88rem;color:var(--muted)">請向關主報告通關密語：</p>' +
         '<div class="code">' + level.password + "</div>" +
-        '<button type="button" class="btn btn-primary" id="back-after-win" style="margin-top:10px">' +
-        (level.id < 5 ? "返回地圖 · 下一關" : "返回地圖 · 完成") +
-        "</button></div>";
-      document.getElementById("back-after-win").addEventListener("click", renderHub);
+        '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px">' +
+        '<button type="button" class="btn btn-ghost btn-sm" id="back-after-win">返回地圖</button>' +
+        (level.id < 5
+          ? '<button type="button" class="btn btn-primary btn-sm" id="next-level-btn">前往第 ' + nextId + " 關 →</button>"
+          : '<button type="button" class="btn btn-primary btn-sm" id="back-after-win-done">完成</button>') +
+        "</div></div>";
+      document.getElementById("back-after-win").addEventListener("click", () => {
+        if (memoryTimer) clearInterval(memoryTimer);
+        renderHub();
+      });
+      const nextBtn = document.getElementById("next-level-btn");
+      if (nextBtn) {
+        nextBtn.addEventListener("click", () => {
+          if (memoryTimer) clearInterval(memoryTimer);
+          startLevel(nextId);
+        });
+      }
+      const doneBtn = document.getElementById("back-after-win-done");
+      if (doneBtn) {
+        doneBtn.addEventListener("click", () => {
+          if (memoryTimer) clearInterval(memoryTimer);
+          renderHub();
+        });
+      }
+      box.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function scrollFieldIntoView(el) {
+      if (!el) return;
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 280);
     }
 
     /* ===== Level 1: Conveyor (5×5) ===== */
     const CONVEYOR_SIZE = 5;
     const CONVEYOR_END = CONVEYOR_SIZE - 1;
 
-    /* 正解路徑：(0,0)→(0,1)→(0,2)→(1,2)→(2,2)→(2,3)→(2,4)→(3,4)→(4,4) */
-    const CONVEYOR_PATH = [
-      [0, 0], [0, 1], [0, 2], [1, 2], [2, 2], [2, 3], [2, 4], [3, 4], [4, 4]
+    /* 五種正解路徑，每次隨機抽一種 */
+    const CONVEYOR_PATHS = [
+      [[0, 0], [0, 1], [0, 2], [1, 2], [2, 2], [2, 3], [2, 4], [3, 4], [4, 4]],
+      [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [4, 1], [4, 2], [4, 3], [4, 4]],
+      [[0, 0], [0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [4, 2], [4, 3], [4, 4]],
+      [[0, 0], [0, 1], [1, 1], [1, 2], [2, 2], [3, 2], [3, 3], [3, 4], [4, 4]],
+      [[0, 0], [1, 0], [1, 1], [2, 1], [2, 2], [3, 2], [3, 3], [4, 3], [4, 4]]
     ];
+
+    let activeConveyorPath = CONVEYOR_PATHS[0];
+    let level1Won = false;
 
     function pipeForDirs(dirA, dirB) {
       const dirs = [dirA, dirB].sort((a, b) => a - b);
@@ -1227,6 +1392,119 @@
       return map[key] || { type: "H", rot: 1 };
     }
 
+    const CONVEYOR_PIPE_MIX = { straight: 0.35, T: 0.2, L: 0.45 };
+
+    function countPipeTypes(layout) {
+      const counts = { straight: 0, T: 0, L: 0 };
+      layout.forEach((cell) => {
+        if (!cell) return;
+        if (cell.type === "H" || cell.type === "V") counts.straight += 1;
+        else if (cell.type === "T") counts.T += 1;
+        else if (cell.type === "L") counts.L += 1;
+      });
+      return counts;
+    }
+
+    function mixTargets(totalPipes) {
+      const targets = {
+        straight: Math.round(totalPipes * CONVEYOR_PIPE_MIX.straight),
+        T: Math.round(totalPipes * CONVEYOR_PIPE_MIX.T),
+        L: Math.round(totalPipes * CONVEYOR_PIPE_MIX.L)
+      };
+      let sum = targets.straight + targets.T + targets.L;
+      while (sum > totalPipes) {
+        if (targets.L > 0) targets.L -= 1;
+        else if (targets.straight > 0) targets.straight -= 1;
+        else targets.T -= 1;
+        sum -= 1;
+      }
+      while (sum < totalPipes) {
+        targets.L += 1;
+        sum += 1;
+      }
+      return targets;
+    }
+
+    function safeDecoyRots(r, c, type, pathKeys) {
+      const rots = [];
+      for (let rot = 0; rot < 4; rot++) {
+        if (decoyIsSafe(r, c, type, rot, pathKeys)) rots.push(rot);
+      }
+      return rots;
+    }
+
+    function isolatedDecoyOfType(r, c, pathKeys, type) {
+      const rots = safeDecoyRots(r, c, type, pathKeys);
+      if (!rots.length) return null;
+      return { type: type, rot: rots[Math.floor(Math.random() * rots.length)] };
+    }
+
+    function isolatedStraightDecoyAt(r, c, pathKeys) {
+      const order = Math.random() < 0.5 ? ["H", "V"] : ["V", "H"];
+      for (let i = 0; i < order.length; i++) {
+        const cell = isolatedDecoyOfType(r, c, pathKeys, order[i]);
+        if (cell) return cell;
+      }
+      return null;
+    }
+
+    function isolatedFallbackDecoyAt(r, c, pathKeys) {
+      const order = ["L", "T", "H", "V"].sort(() => Math.random() - 0.5);
+      for (let i = 0; i < order.length; i++) {
+        const cell = isolatedDecoyOfType(r, c, pathKeys, order[i]);
+        if (cell) return cell;
+      }
+      return { type: "L", rot: Math.floor(Math.random() * 4) };
+    }
+
+    function assignDecoyPipes(layout, pathKeys) {
+      const totalPipes = CONVEYOR_SIZE * CONVEYOR_SIZE - 2;
+      const targets = mixTargets(totalPipes);
+      const counts = countPipeTypes(layout);
+      const need = {
+        straight: Math.max(0, targets.straight - counts.straight),
+        T: Math.max(0, targets.T - counts.T),
+        L: Math.max(0, targets.L - counts.L)
+      };
+
+      const slots = [];
+      for (let idx = 0; idx < layout.length; idx++) {
+        if (idx === 0 || idx === layout.length - 1 || pathKeys.has(idx)) continue;
+        slots.push(idx);
+      }
+      slots.sort(() => Math.random() - 0.5);
+
+      const queue = [];
+      for (let i = 0; i < need.straight; i++) queue.push("straight");
+      for (let i = 0; i < need.T; i++) queue.push("T");
+      for (let i = 0; i < need.L; i++) queue.push("L");
+      while (queue.length < slots.length) queue.push("L");
+      queue.sort(() => Math.random() - 0.5);
+
+      slots.forEach((idx, i) => {
+        const r = Math.floor(idx / CONVEYOR_SIZE);
+        const c = idx % CONVEYOR_SIZE;
+        const want = queue[i] || "L";
+        let cell = null;
+
+        if (want === "straight") {
+          cell = isolatedStraightDecoyAt(r, c, pathKeys);
+        } else if (want === "T") {
+          cell = isolatedDecoyOfType(r, c, pathKeys, "T");
+        } else {
+          cell = isolatedDecoyOfType(r, c, pathKeys, "L");
+        }
+
+        if (!cell && want === "straight") {
+          cell = isolatedDecoyOfType(r, c, pathKeys, "T") || isolatedDecoyOfType(r, c, pathKeys, "L");
+        } else if (!cell && want === "T") {
+          cell = isolatedDecoyOfType(r, c, pathKeys, "L");
+        }
+
+        layout[idx] = cell || isolatedFallbackDecoyAt(r, c, pathKeys);
+      });
+    }
+
     function dirBetween(from, to) {
       const dr = to[0] - from[0];
       const dc = to[1] - from[1];
@@ -1236,47 +1514,209 @@
       return 3;
     }
 
-    function buildConveyorLayout() {
+    function scrambleRot(type, solvedRot) {
+      if (type === "H" || type === "V") {
+        const wrong = solvedRot % 2 === 0 ? [1, 3] : [0, 2];
+        return wrong[Math.floor(Math.random() * wrong.length)];
+      }
+      const offset = 1 + Math.floor(Math.random() * 3);
+      return (solvedRot + offset) % 4;
+    }
+
+    function wrongRot(cell) {
+      if (cell.type === "H" || cell.type === "V") return 1;
+      return (cell.rot + 1) % 4;
+    }
+
+    function isIsolatedPipe(r, c, type, rot) {
+      const conn = rotateConn(PIPE[type], rot);
+      const checks = [[-1, 0, 0], [0, 1, 1], [1, 0, 2], [0, -1, 3]];
+      for (let i = 0; i < checks.length; i++) {
+        const dr = checks[i][0];
+        const dc = checks[i][1];
+        const dir = checks[i][2];
+        const nr = r + dr;
+        const nc = c + dc;
+        if (nr < 0 || nr > CONVEYOR_END || nc < 0 || nc > CONVEYOR_END) continue;
+        if (conn[dir]) return false;
+      }
+      return true;
+    }
+
+    function endpointConn(r, c, path) {
+      const idx = r * CONVEYOR_SIZE + c;
+      const lastIdx = CONVEYOR_SIZE * CONVEYOR_SIZE - 1;
+      const conn = [0, 0, 0, 0];
+      if (idx === 0 && path.length > 1) {
+        conn[dirBetween([0, 0], path[1])] = 1;
+        return conn;
+      }
+      if (idx === lastIdx && path.length > 1) {
+        const prev = path[path.length - 2];
+        conn[dirBetween([r, c], prev)] = 1;
+        return conn;
+      }
+      return null;
+    }
+
+    function decoyIsSafe(r, c, type, rot, pathKeys) {
+      if (!isIsolatedPipe(r, c, type, rot)) return false;
+      const conn = rotateConn(PIPE[type], rot);
+      const checks = [[-1, 0, 0], [0, 1, 1], [1, 0, 2], [0, -1, 3]];
+      for (let i = 0; i < checks.length; i++) {
+        const dr = checks[i][0];
+        const dc = checks[i][1];
+        const dir = checks[i][2];
+        if (!conn[dir]) continue;
+        const nr = r + dr;
+        const nc = c + dc;
+        if (nr < 0 || nr > CONVEYOR_END || nc < 0 || nc > CONVEYOR_END) continue;
+        const nIdx = nr * CONVEYOR_SIZE + nc;
+        if (pathKeys.has(nIdx) || nIdx === 0 || nIdx === CONVEYOR_SIZE * CONVEYOR_SIZE - 1) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+
+    function solvedLayoutFromPath(path) {
       const total = CONVEYOR_SIZE * CONVEYOR_SIZE;
       const layout = Array(total).fill(null);
-      const pathKeys = new Set(CONVEYOR_PATH.map(([r, c]) => r * CONVEYOR_SIZE + c));
+      const pathKeys = new Set(path.map(([r, c]) => r * CONVEYOR_SIZE + c));
 
-      for (let i = 1; i < CONVEYOR_PATH.length - 1; i++) {
-        const prev = CONVEYOR_PATH[i - 1];
-        const curr = CONVEYOR_PATH[i];
-        const next = CONVEYOR_PATH[i + 1];
+      for (let i = 1; i < path.length - 1; i++) {
+        const prev = path[i - 1];
+        const curr = path[i];
+        const next = path[i + 1];
         const idx = curr[0] * CONVEYOR_SIZE + curr[1];
-        const solved = pipeForDirs(dirBetween(curr, prev), dirBetween(curr, next));
-        layout[idx] = { type: solved.type, rot: (solved.rot + 1) % 4 };
+        layout[idx] = pipeForDirs(
+          dirBetween(curr, prev),
+          dirBetween(curr, next)
+        );
       }
 
-      const decoyPool = [
-        { type: "H", rot: 1 }, { type: "V", rot: 1 }, { type: "L", rot: 1 },
-        { type: "T", rot: 0 }, { type: "T", rot: 1 }, { type: "T", rot: 2 },
-        { type: "H", rot: 2 }, { type: "V", rot: 2 }, { type: "L", rot: 2 }
-      ];
-      let decoyIdx = 0;
-      for (let idx = 0; idx < total; idx++) {
-        if (idx === 0 || idx === total - 1 || pathKeys.has(idx)) continue;
-        layout[idx] = { ...decoyPool[decoyIdx % decoyPool.length] };
-        decoyIdx += 1;
+      assignDecoyPipes(layout, pathKeys);
+
+      return layout;
+    }
+
+    function buildConveyorLayout(path) {
+      const layout = solvedLayoutFromPath(path);
+      const pathKeys = new Set(path.map(([r, c]) => r * CONVEYOR_SIZE + c));
+      const lastIdx = CONVEYOR_SIZE * CONVEYOR_SIZE - 1;
+
+      for (let i = 1; i < path.length - 1; i++) {
+        const curr = path[i];
+        const idx = curr[0] * CONVEYOR_SIZE + curr[1];
+        const cell = layout[idx];
+        cell.rot = scrambleRot(cell.type, cell.rot);
+      }
+
+      for (let idx = 0; idx < layout.length; idx++) {
+        if (idx === 0 || idx === lastIdx || pathKeys.has(idx)) continue;
+        const r = Math.floor(idx / CONVEYOR_SIZE);
+        const c = idx % CONVEYOR_SIZE;
+        const cell = layout[idx];
+        const rots = safeDecoyRots(r, c, cell.type, pathKeys);
+        if (rots.length) {
+          cell.rot = rots[Math.floor(Math.random() * rots.length)];
+        }
       }
 
       return layout;
     }
 
-    function conveyorConnAt(r, c, layout) {
-      const size = CONVEYOR_SIZE;
-      const idx = r * size + c;
-      const lastIdx = size * size - 1;
-      if (idx === 0) return [0, 1, 0, 0];
-      if (idx === lastIdx) return [1, 0, 0, 0];
+    function conveyorConnForPlay(r, c, layout) {
+      const idx = r * CONVEYOR_SIZE + c;
+      const lastIdx = CONVEYOR_SIZE * CONVEYOR_SIZE - 1;
+      if (idx === 0 || idx === lastIdx) return [1, 1, 1, 1];
+
       const cell = layout[idx];
       if (!cell) return [0, 0, 0, 0];
       return rotateConn(PIPE[cell.type], cell.rot);
     }
 
-    function conveyorSolvable(layout) {
+    function findConveyorRoute(layout) {
+      const size = CONVEYOR_SIZE;
+      const visited = Array.from({ length: size }, () => Array(size).fill(false));
+      const parent = {};
+      const queue = [[0, 0]];
+      visited[0][0] = true;
+      const dirs = [[-1, 0, 0, 2], [0, 1, 1, 3], [1, 0, 2, 0], [0, -1, 3, 1]];
+
+      function connAt(r, c) {
+        return conveyorConnForPlay(r, c, layout);
+      }
+
+      while (queue.length) {
+        const [r, c] = queue.shift();
+        if (r === CONVEYOR_END && c === CONVEYOR_END) {
+          const route = [[0, 0]];
+          let cr = CONVEYOR_END, cc = CONVEYOR_END;
+          while (cr !== 0 || cc !== 0) {
+            route.unshift([cr, cc]);
+            const prev = parent[cr + "," + cc];
+            cr = prev[0];
+            cc = prev[1];
+          }
+          return route;
+        }
+        const here = connAt(r, c);
+        dirs.forEach(([dr, dc, myDir, theirDir]) => {
+          const nr = r + dr, nc = c + dc;
+          if (nr < 0 || nr >= size || nc < 0 || nc >= size) return;
+          if (!here[myDir] || !connAt(nr, nc)[theirDir]) return;
+          if (!visited[nr][nc]) {
+            visited[nr][nc] = true;
+            parent[nr + "," + nc] = [r, c];
+            queue.push([nr, nc]);
+          }
+        });
+      }
+      return null;
+    }
+
+    function prepareConveyorLayout() {
+      const order = CONVEYOR_PATHS
+        .map((path, idx) => ({ path: path, idx: idx }))
+        .sort(() => Math.random() - 0.5);
+
+      for (let p = 0; p < order.length; p++) {
+        const path = order[p].path;
+        activeConveyorPath = path;
+        const solved = solvedLayoutFromPath(path);
+        if (!conveyorSolvable(solved, path)) continue;
+
+        for (let attempt = 0; attempt < 30; attempt++) {
+          const layout = buildConveyorLayout(path);
+          if (!conveyorSolvable(layout, path)) return layout;
+        }
+      }
+
+      activeConveyorPath = CONVEYOR_PATHS[0];
+      const layout = solvedLayoutFromPath(CONVEYOR_PATHS[0]);
+      for (let i = 1; i < activeConveyorPath.length - 1; i++) {
+        const idx = activeConveyorPath[i][0] * CONVEYOR_SIZE + activeConveyorPath[i][1];
+        layout[idx].rot = wrongRot(layout[idx]);
+      }
+      return layout;
+    }
+
+    function conveyorConnAt(r, c, layout, path) {
+      const route = path || activeConveyorPath;
+      const endpoint = endpointConn(r, c, route);
+      if (endpoint) return endpoint;
+
+      const size = CONVEYOR_SIZE;
+      const idx = r * size + c;
+      const cell = layout[idx];
+      if (!cell) return [0, 0, 0, 0];
+      return rotateConn(PIPE[cell.type], cell.rot);
+    }
+
+    function conveyorSolvable(layout, path) {
+      const route = path || activeConveyorPath;
       const size = CONVEYOR_SIZE;
       const visited = Array.from({ length: size }, () => Array(size).fill(false));
       const queue = [[0, 0]];
@@ -1286,12 +1726,12 @@
       while (queue.length) {
         const [r, c] = queue.shift();
         if (r === CONVEYOR_END && c === CONVEYOR_END) return true;
-        const here = conveyorConnAt(r, c, layout);
+        const here = conveyorConnAt(r, c, layout, route);
         dirs.forEach(([dr, dc, myDir, theirDir]) => {
           const nr = r + dr, nc = c + dc;
           if (nr < 0 || nr >= size || nc < 0 || nc >= size) return;
           if (!here[myDir]) return;
-          if (!conveyorConnAt(nr, nc, layout)[theirDir]) return;
+          if (!conveyorConnAt(nr, nc, layout, route)[theirDir]) return;
           if (!visited[nr][nc]) {
             visited[nr][nc] = true;
             queue.push([nr, nc]);
@@ -1302,15 +1742,15 @@
     }
 
     function initLevel1() {
+      level1Won = false;
       const body = document.getElementById("level-body");
       body.innerHTML =
-        '<p style="text-align:center;font-size:0.88rem;color:var(--muted);margin:0 0 10px">啟航輸送機 · 用手指點選方塊旋轉水管</p>' +
+        '<p style="text-align:center;font-size:0.88rem;color:var(--muted);margin:0 0 10px">點選水管即可旋轉接通起點到終點即可過關</p>' +
         '<div class="conveyor-wrap">' +
-        '<div class="cargo" id="cargo"></div>' +
-        '<div class="conveyor-grid" id="conveyor-grid"></div></div>' +
-        '<p style="text-align:center;font-size:0.85rem;color:var(--muted);margin-top:8px">點選方塊旋轉水管，接通起點到終點</p>';
+        '<div class="conveyor-grid" id="conveyor-grid"></div>' +
+        '<div class="cargo" id="cargo"></div></div>';
 
-      const layout = buildConveyorLayout();
+      const layout = prepareConveyorLayout();
 
       const grid = document.getElementById("conveyor-grid");
       layout.forEach((cell, idx) => {
@@ -1341,48 +1781,13 @@
     }
 
     function checkConveyor(layout) {
-      const size = CONVEYOR_SIZE;
-      const lastIdx = size * size - 1;
+      if (level1Won) return;
+      const route = findConveyorRoute(layout);
+      if (!route) return;
 
-      function connAt(r, c) {
-        return conveyorConnAt(r, c, layout);
-      }
-
-      const visited = Array.from({ length: size }, () => Array(size).fill(false));
-      const parent = {};
-      const queue = [[0, 0]];
-      visited[0][0] = true;
-      const dirs = [[-1, 0, 0, 2], [0, 1, 1, 3], [1, 0, 2, 0], [0, -1, 3, 1]];
-
-      while (queue.length) {
-        const [r, c] = queue.shift();
-        if (r === CONVEYOR_END && c === CONVEYOR_END) {
-          const path = [[0, 0]];
-          let cr = CONVEYOR_END, cc = CONVEYOR_END;
-          while (cr !== 0 || cc !== 0) {
-            path.unshift([cr, cc]);
-            const prev = parent[cr + "," + cc];
-            cr = prev[0];
-            cc = prev[1];
-          }
-          animateCargo(path);
-          setTimeout(() => showLevelSuccess(DATA.levels[0]), path.length * 420 + 300);
-          return;
-        }
-        const here = connAt(r, c);
-        dirs.forEach(([dr, dc, myDir, theirDir]) => {
-          const nr = r + dr, nc = c + dc;
-          if (nr < 0 || nr >= size || nc < 0 || nc >= size) return;
-          if (!here[myDir]) return;
-          const there = connAt(nr, nc);
-          if (!there[theirDir]) return;
-          if (!visited[nr][nc]) {
-            visited[nr][nc] = true;
-            parent[nr + "," + nc] = [r, c];
-            queue.push([nr, nc]);
-          }
-        });
-      }
+      level1Won = true;
+      animateCargo(route);
+      setTimeout(() => showLevelSuccess(DATA.levels[0]), route.length * 420 + 300);
     }
 
     function animateCargo(path) {
@@ -1394,14 +1799,18 @@
         const cell = grid.children[r * CONVEYOR_SIZE + c];
         const wrapRect = wrap.getBoundingClientRect();
         const cellRect = cell.getBoundingClientRect();
-        const cargoSize = cargo.offsetWidth || 18;
+        const cargoSize = cargo.offsetWidth || 22;
         return {
           left: cellRect.left - wrapRect.left + (cellRect.width - cargoSize) / 2,
           top: cellRect.top - wrapRect.top + (cellRect.height - cargoSize) / 2
         };
       }
 
+      const start = posForCell(0, 0);
+      cargo.style.left = start.left + "px";
+      cargo.style.top = start.top + "px";
       cargo.classList.add("run");
+
       path.forEach(([r, c], i) => {
         setTimeout(() => {
           const { left, top } = posForCell(r, c);
@@ -1416,7 +1825,7 @@
       const SECRET_CODE = "2010";
       const body = document.getElementById("level-body");
       body.innerHTML =
-        '<p style="text-align:center;font-size:0.88rem;color:var(--muted);margin:0 0 10px">液冷尋密碼 · 用手指拖曳方塊</p>' +
+        '<p style="text-align:center;font-size:0.88rem;color:var(--muted);margin:0 0 10px">拖曳藍色液冷方塊到發熱區，找出隱藏年份</p>' +
         '<div class="server-rack">' +
         '<div class="server-rack-panel" id="rack-code-panel" aria-hidden="true"></div>' +
         '<div class="heat-stage" id="heat-stage">' +
@@ -1427,8 +1836,7 @@
         '<div class="server-rack-grille" aria-hidden="true"></div>' +
         '<div class="server-rack-feet" aria-hidden="true"><span></span><span></span></div>' +
         "</div>" +
-        '<p style="text-align:center;font-size:0.85rem;color:var(--muted);margin-top:8px">拖曳藍色液冷方塊到發熱區，找出隱藏年份</p>' +
-        '<div class="reveal-btn" id="reveal-btn"><button type="button">' + SECRET_CODE + '</button></div>';
+        '<div class="reveal-btn" id="reveal-btn"><button type="button">找出密碼後點此通關</button></div>';
 
       const baseCanvas = document.getElementById("heat-base");
       const maskCanvas = document.getElementById("heat-mask");
@@ -1438,6 +1846,13 @@
       const W = 300, H = 220;
       let revealed = 0;
       let codeShown = false;
+      let level2Confirmed = false;
+
+      function confirmLevel2() {
+        if (level2Confirmed) return;
+        level2Confirmed = true;
+        showLevelSuccess(DATA.levels[1]);
+      }
 
       function drawServerRackInterior(ctx) {
         const bg = ctx.createLinearGradient(0, 0, 0, H);
@@ -1497,18 +1912,23 @@
 
       function drawMask() {
         maskCtx.globalCompositeOperation = "source-over";
-        maskCtx.fillStyle = "rgba(8,10,12,0.93)";
+        maskCtx.fillStyle = "rgba(6, 8, 10, 0.98)";
+        maskCtx.fillRect(0, 0, W, H);
+        const concealer = maskCtx.createRadialGradient(secretX, secretY, 6, secretX, secretY, 88);
+        concealer.addColorStop(0, "rgba(4, 6, 8, 1)");
+        concealer.addColorStop(0.55, "rgba(6, 8, 10, 0.99)");
+        concealer.addColorStop(1, "rgba(6, 8, 10, 0)");
+        maskCtx.fillStyle = concealer;
         maskCtx.fillRect(0, 0, W, H);
       }
 
       function showSecretCode() {
         if (codeShown) return;
         codeShown = true;
-        const panel = document.getElementById("rack-code-panel");
-        panel.textContent = SECRET_CODE;
-        panel.classList.add("has-code");
-        panel.removeAttribute("aria-hidden");
-        document.getElementById("reveal-btn").classList.add("show");
+        const revealWrap = document.getElementById("reveal-btn");
+        const revealButton = revealWrap.querySelector("button");
+        revealButton.textContent = "確認 " + SECRET_CODE + " · 通關";
+        revealWrap.classList.add("show");
       }
 
       drawBase();
@@ -1545,8 +1965,10 @@
       function onMove(cx, cy) {
         if (!dragging) return;
         const sr = stage.getBoundingClientRect();
-        bl = Math.max(0, Math.min(sr.width - 72, bl + (cx - ox)));
-        bt = Math.max(0, Math.min(sr.height - 72, bt + (cy - oy)));
+        const bw = block.offsetWidth || 72;
+        const bh = block.offsetHeight || 72;
+        bl = Math.max(0, Math.min(sr.width - bw, bl + (cx - ox)));
+        bt = Math.max(0, Math.min(sr.height - bh, bt + (cy - oy)));
         block.style.left = bl + "px";
         block.style.top = bt + "px";
         ox = cx; oy = cy;
@@ -1560,12 +1982,20 @@
       window.addEventListener("touchmove", (e) => { if (dragging) { e.preventDefault(); onMove(e.touches[0].clientX, e.touches[0].clientY); } }, { passive: false });
       window.addEventListener("touchend", () => { dragging = false; block.classList.remove("dragging"); });
 
-      document.querySelector("#reveal-btn button").addEventListener("click", () => {
-        showLevelSuccess(DATA.levels[1]);
+      const revealButton = document.querySelector("#reveal-btn button");
+      revealButton.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!codeShown) return;
+        confirmLevel2();
+      });
+      revealButton.addEventListener("touchend", (e) => {
+        e.stopPropagation();
+        if (!codeShown) return;
+        confirmLevel2();
       });
     }
 
-    /* ===== Level 3: AI Chat — 圖形解未來五題 ===== */
+    /* ===== Level 3: AI Chat — 歷史小測驗五題 ===== */
     function initLevel3() {
       const body = document.getElementById("level-body");
       const quiz = DATA.quizQuestions || [];
@@ -1574,7 +2004,7 @@
       body.innerHTML =
         '<div class="chat-box">' +
         '<div class="chat-header"><div class="bot-avatar"><i class="fa-solid fa-robot"></i></div>' +
-        '<div><strong>廣運 AI 小幫手</strong><br><small style="color:var(--muted)">線上協助中 · 圖形解未來</small></div></div>' +
+        '<div><strong>廣運 AI 小幫手</strong><br><small style="color:var(--muted)">線上協助中 · 歷史小測驗</small></div></div>' +
         '<div class="chat-messages" id="chat-msgs"></div>' +
         '<div class="chat-input-row">' +
         '<input type="text" id="chat-input" placeholder="輸入答案…" autocomplete="off" maxlength="20" />' +
@@ -1622,7 +2052,7 @@
       }
 
       addBubble(
-        "你好！我是廣運 AI 小幫手 🤖\n歡迎來到【圖形解未來】！\n\n提示：答案都在歷史牆 🧩\n我會依序出題，請把從歷史牆解出的答案輸入給我。",
+        "你好！我是廣運 AI 小幫手 🤖\n歡迎來到【歷史小測驗】！\n\n提示：答案都在歷史牆 🧩\n我會依序出題，請把從歷史牆解出的答案輸入給我。",
         "bot"
       );
       setTimeout(() => askQuestion(0), 500);
@@ -1654,7 +2084,7 @@
         setTimeout(
           () =>
             addBubble(
-              (q.wrongHint || "嗯…好像還不太對耶 😅") + "\n再仔細看看歷史牆上的圖形線索喔 🧩",
+              (q.wrongHint || "嗯…好像還不太對耶 😅") + "\n再仔細看看歷史牆上的線索喔 🧩",
               "bot"
             ),
           450
@@ -1665,6 +2095,7 @@
       input.addEventListener("keydown", (e) => {
         if (e.key === "Enter") sendChat();
       });
+      input.addEventListener("focus", () => scrollFieldIntoView(input));
     }
 
     /* ===== Level 4: Memory (6 組 × 12 張) ===== */
@@ -1824,7 +2255,7 @@
         if (currentCode() === VAULT_CODE) {
           unlockSuccess();
         } else {
-          alert("密碼還不對喔！請輸入正確的終極密碼 2026。");
+          alert("密碼還不對喔！請再仔細想想線索～");
         }
       }
 
