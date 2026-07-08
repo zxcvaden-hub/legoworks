@@ -66,8 +66,7 @@
     countOverlapWhite,
     decodeCipher,
     isLevelUnlocked(progress, levelId) {
-      if (levelId === 1) return true;
-      return Boolean(progress[levelId - 1]);
+      return levelId >= 1 && levelId <= 5;
     },
     checkAnswer(level, userInput, data) {
       const expected = normalize(level.answer);

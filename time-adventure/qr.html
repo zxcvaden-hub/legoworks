@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0A2540" />
+<title>廣運時光探險｜QR Code</title>
+<style>
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse at top, #003366 0%, #0a2540 58%);
+  font-family: system-ui, "Noto Sans TC", sans-serif;
+  padding: 24px;
+  color: #e8f4ff;
+}
+.card {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(0, 242, 254, 0.28);
+  border-radius: 20px;
+  padding: 28px 24px;
+  width: min(360px, 100%);
+  text-align: center;
+  box-shadow: 0 0 24px rgba(0, 242, 254, 0.12);
+}
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #00f2fe;
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  border-radius: 999px;
+  padding: 5px 12px;
+  margin-bottom: 10px;
+}
+h1 {
+  font-size: 1.25rem;
+  margin: 0 0 8px;
+  color: #00f2fe;
+}
+p {
+  color: #8eb4d4;
+  line-height: 1.5;
+  margin: 0 0 14px;
+  font-size: 0.95rem;
+}
+.url {
+  word-break: break-all;
+  background: rgba(0, 0, 0, 0.22);
+  color: #00f2fe;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 12px;
+  font-size: 0.85rem;
+  border: 1px solid rgba(0, 242, 254, 0.18);
+}
+#qrcode {
+  display: flex;
+  justify-content: center;
+  margin: 18px 0;
+  padding: 12px;
+  background: #fff;
+  border-radius: 14px;
+}
+a {
+  display: block;
+  margin-top: 16px;
+  background: linear-gradient(135deg, #00d2c4, #00f2fe);
+  color: #0a2540;
+  text-decoration: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-weight: 700;
+}
+.note {
+  margin-top: 14px;
+  font-size: 12px;
+  color: #8eb4d4;
+  line-height: 1.5;
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="badge">Time Adventure</div>
+  <h1>廣運時光探險</h1>
+  <p>掃描 QR Code 直接進入五關實境解謎</p>
+  <div id="qrcode"></div>
+  <div id="url" class="url"></div>
+  <a id="open" href="./">直接開啟闖關</a>
+  <p class="note">此 QR 與智能客服分開。活動諮詢請掃客服 QR（根目錄 qr.html）。</p>
+</div>
+<script src="../qrcode.min.js"></script>
+<script>
+var url = location.origin + location.pathname.replace(/\/qr\.html$/, "/");
+document.getElementById("url").textContent = url;
+document.getElementById("open").href = url;
+new QRCode(document.getElementById("qrcode"), {
+  text: url,
+  width: 220,
+  height: 220,
+  colorDark: "#0a2540",
+  colorLight: "#ffffff",
+  correctLevel: QRCode.CorrectLevel.M
+});
+</script>
+</body>
+</html>

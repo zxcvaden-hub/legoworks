@@ -1,94 +1,105 @@
 # 廣運 50 週年慶 · 智能客服＋時光探險
 
-廣運 50 週年家庭日活動的 **靜態網站**，部署於 GitHub Pages，無需後端伺服器，可同時供大量來賓使用。
+廣運 50 週年家庭日活動的 **靜態網站**，部署於 GitHub Pages，無需後端伺服器。
 
-## 正式網址
+## 目前請用的網址（測試版）
+
+> **現階段請只使用 `legoworks` 測試。** `kenmec` 為活動正式上線預留，測試期間勿對外公布。
+
+| 用途 | 網址 |
+|------|------|
+| 智能客服 | https://zxcvaden-hub.github.io/legoworks/ |
+| 客服 QR | https://zxcvaden-hub.github.io/legoworks/qr.html |
+| 時光探險 | https://zxcvaden-hub.github.io/legoworks/time-adventure/ |
+| 闖關 QR | https://zxcvaden-hub.github.io/legoworks/time-adventure/qr.html |
+
+**上傳目標 repo：** `zxcvaden-hub/legoworks`
+
+## 正式版（活動日前上線，目前勿用於測試）
 
 | 用途 | 網址 |
 |------|------|
 | 智能客服 | https://zxcvaden-hub.github.io/kenmec/ |
-| QR 掃碼頁 | https://zxcvaden-hub.github.io/kenmec/qr.html |
-| 時光探險（五關解謎） | https://zxcvaden-hub.github.io/kenmec/time-adventure/ |
+| 客服 QR | https://zxcvaden-hub.github.io/kenmec/qr.html |
+| 時光探險 | https://zxcvaden-hub.github.io/kenmec/time-adventure/ |
+| 闖關 QR | https://zxcvaden-hub.github.io/kenmec/time-adventure/qr.html |
 
-測試版（樂高）：https://zxcvaden-hub.github.io/legoworks/
+**上傳目標 repo：** `zxcvaden-hub/kenmec`（活動正式對外前再部署）
 
 ## 功能簡介
 
 ### 智能客服（`index.html`）
 
 - 依關鍵字自動回答活動 FAQ（報到、交通、餐飲、闖關、摸彩等）
-- 快捷按鈕：**交通方式**、活動流程、親子手作、飲水設施、摸彩閉幕、**🕰️ 時光探險**、聯絡福利委員會
+- 快捷按鈕：交通方式、活動流程、親子手作、飲水設施、摸彩閉幕、聯絡福利委員會
 - 點 **交通方式** → 顯示捷運／公車／停車場卡片與一鍵導航
-- 點 **🕰️ 時光探險** → 直接進入闖關頁面
+- 時光探險已獨立為另一網頁，請掃 **闖關 QR** 進入
 - 純靜態運作，不呼叫 OpenAI、不需資料庫
 
 ### 時光探險（`time-adventure/`）
 
-五關實境解謎互動遊戲，進度儲存在使用者手機瀏覽器（localStorage）。
+五關實境解謎互動遊戲，**五關可任意選擇、不限順序**；通關後向關主報密語，在遊戲護照蓋章。
 
 1. 啟航輸送機（5×5 管道拼圖）
 2. 液冷尋密碼
-3. 智慧人對話（歷史牆五題問答）
+3. 歷史小測驗（歷史牆五題問答）
 4. 孿生記憶牆（翻牌配對）
-5. 百年願景鎖（終極密碼 **2026**）
+5. 廣運終極密碼（輸入 **2026**）
 
-五關全數完成可至 **三樓服務台** 兌換 **100 元禮券**。
+五關全數蓋章後可至 **三樓服務台** 兌換 **100 元禮券**。
 
-## 上傳至 GitHub 的檔案清單
+## 打包與上傳
 
-請上傳至 repo **根目錄**（`zxcvaden-hub/kenmec`）：
+```bash
+node pack-guangyun-deploy.js
+```
+
+輸出資料夾：`時光探險上傳0702/`
+
+### 必傳檔案（上傳至 repo 根目錄）
 
 ```
-kenmec/
-├── README.md
 ├── index.html
 ├── knowledge.json
-├── qr.html
+├── qr.html                    ← 智能客服 QR
 ├── qrcode.min.js
 ├── messageImage_1779701547098.jpg
 └── time-adventure/
     ├── index.html
     ├── puzzles.json
-    └── adventure.js
+    ├── adventure.js
+    ├── qr.html                ← 時光探險 QR
+    └── audio/bgm.mp3
 ```
 
-### 上傳步驟
+### 上傳步驟（測試期）
 
-1. 開啟 GitHub repo：`zxcvaden-hub/kenmec`
-2. **Add file** → **Upload files**
-3. 拖入上表所有檔案（含 `time-adventure/` 資料夾）
-4. Commit，例如：`deploy 廣運50週年客服與時光探險`
-5. **Settings** → **Pages** → Branch 選 `main`、資料夾選 `/ (root)` → Save
-6. 等待 1～3 分鐘後用正式網址測試
+1. 執行 `node pack-guangyun-deploy.js`
+2. 開啟 GitHub repo：**`zxcvaden-hub/legoworks`**
+3. 將 `時光探險上傳0702/` 內所有檔案上傳至 repo 根目錄（覆蓋同名檔）
+4. Commit：`deploy 廣運50週年測試版`
+5. 用 **legoworks** 網址測試（可加 `?v=日期` 避免快取）
 
 ### 若 repo 內仍有舊檔，請刪除
 
-- `time-adventure/print.html`（已停用）
-- `time-adventure/staff.html`（已停用）
+- `time-adventure/print.html`、`time-adventure/staff.html`（已停用）
+- `server.js`、`public/`、`data/` 等開發用檔案
 
-### 勿上傳至 GitHub Pages
+## 上傳後測試清單（legoworks）
 
-- `server.js`、`.env`（本機開發用）
-- `public/` 資料夾
-- `data/`、`build-pages.js`、`faq-admin.html` 等開發工具
-
-## 上傳後測試清單
-
-- [ ] 客服首頁可開啟
-- [ ] 點 **交通方式** → 出現停車場卡片與導航按鈕
-- [ ] 點 **🕰️ 時光探險** → 跳轉至 `time-adventure/`
-- [ ] 時光探險五關可正常遊玩
+- [ ] https://zxcvaden-hub.github.io/legoworks/ 客服首頁可開啟
+- [ ] 快捷按鈕**無**「時光探險」
+- [ ] `qr.html` 掃碼 → 進入客服
+- [ ] `time-adventure/qr.html` 掃碼 → 進入闖關
+- [ ] 五關可任意點選、通關後提示關主蓋章
 - [ ] 第五關輸入 `2026` 可通關
-- [ ] `qr.html` 可掃碼進入客服
 
-## 維護方式（開發專案）
-
-本機完整專案維護流程：
+## 維護方式（本機）
 
 1. 編輯 FAQ：`data/knowledge.json`
-2. 同步至 `index.html` 內嵌知識庫（或執行 `node build-pages.js`）
+2. 同步：`node inject-knowledge.js`（或手動更新 `index.html` 內嵌 KNOWLEDGE）
 3. 編輯闖關：`time-adventure/index.html`、`time-adventure/puzzles.json`
-4. 上傳變更檔案至 GitHub
+4. 打包後上傳至 **legoworks**（測試）或 **kenmec**（正式上線時）
 
 ## 活動重點（2026/8/15）
 

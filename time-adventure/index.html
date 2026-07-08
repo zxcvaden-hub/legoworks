@@ -984,7 +984,7 @@
     <header class="hero">
       <div class="hero-badge">KENMEC 50 · 家庭日實境解謎</div>
       <h1>廣運時光探險</h1>
-      <p class="hero-sub">50年的啟程 · 五關解謎 · 完成可至服務台兌換 100 元禮券</p>
+      <p class="hero-sub">50年的啟程 · 五關解謎 · 任意選關 · 完成可至服務台兌換 100 元禮券</p>
       <nav class="nav-row">
         <a href="../index.html">← 活動客服</a>
         <button type="button" class="nav-pill-btn" id="bgm-toggle" aria-pressed="false" aria-label="背景音樂開關">🔇 音樂</button>
@@ -999,12 +999,12 @@
 
     <section id="hub" class="panel">
       <h2>闖關地圖</h2>
-      <p>報到時領取闖關卡，依序解開五道謎題。解開後向關主報告<strong style="color:var(--accent)">通關密語</strong>並蓋章，取得下一關謎題。</p>
+      <p id="hub-rules">報到時領取<strong style="color:var(--accent)">遊戲護照</strong>與闖關地圖。五關可<strong style="color:var(--accent)">任意選擇、不限順序</strong>；解開謎題後向該關關主報告<strong style="color:var(--accent)">通關密語</strong>，由關主在遊戲護照蓋章，即可前往其他關卡。</p>
       <p class="progress-line" id="progress-text">已完成 0 / 5 關</p>
       <div class="level-list" id="level-list"></div>
       <div id="complete-banner" class="complete-banner hidden">
         <strong>🎉 五關全部完成！</strong><br />
-        請持闖關卡至 <strong>三樓服務台</strong>（報到處），回收卡片後領取 <strong>100 元禮券</strong>。
+        請持<strong>遊戲護照</strong>至 <strong>三樓服務台</strong>（報到處）兌換 <strong>100 元禮券</strong>。
       </div>
       <button type="button" class="btn btn-ghost btn-sm" id="reset-btn" style="margin-top:12px;width:100%">重置進度（測試用）</button>
     </section>
@@ -1054,7 +1054,7 @@
     }
 
     function isUnlocked(id) {
-      return id === 1 || !!progress[id - 1];
+      return id >= 1 && id <= 5;
     }
 
     function completedCount() {
@@ -1236,9 +1236,7 @@
         btn.textContent = lv.id;
         btn.title = lv.title;
         btn.className = (progress[lv.id] ? "done " : "") + (pendingLevel === lv.id ? "active" : "");
-        btn.addEventListener("click", () => {
-          if (isUnlocked(lv.id)) openLevelModal(lv.id);
-        });
+        btn.addEventListener("click", () => openLevelModal(lv.id));
         nav.appendChild(btn);
       });
     }
@@ -1255,7 +1253,6 @@
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "level-card" + (progress[lv.id] ? " done" : "");
-        btn.disabled = !isUnlocked(lv.id);
         btn.innerHTML =
           '<div class="level-num">' + lv.id + "</div>" +
           '<div class="level-meta"><strong>' + lv.title + "</strong>" +
@@ -1267,7 +1264,6 @@
     }
 
     function openLevelModal(levelId) {
-      if (!isUnlocked(levelId)) return;
       pendingLevel = levelId;
       const lv = DATA.levels[levelId - 1];
       const rules = DATA.levelRules[String(levelId)] || [];
@@ -1322,27 +1318,28 @@
       markComplete(level.id);
       renderLevelNav();
       const box = document.getElementById("level-success");
-      const nextId = level.id + 1;
+      const incomplete = DATA.levels.filter((lv) => !progress[lv.id]);
       box.innerHTML =
         '<div class="success-box">' +
         "<strong>✅ 解謎成功！</strong>" +
-        '<p style="margin:8px 0 4px;font-size:0.88rem;color:var(--muted)">請向關主報告通關密語：</p>' +
+        '<p style="margin:8px 0 4px;font-size:0.88rem;color:var(--muted)">請向<strong>本關關主</strong>報告通關密語，由關主在入場發放的<strong>遊戲護照</strong>蓋章：</p>' +
         '<div class="code">' + level.password + "</div>" +
+        '<p style="margin:8px 0 0;font-size:0.85rem;color:var(--muted)">蓋章後可返回地圖，自由選擇其他關卡（不限順序）。</p>' +
         '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px">' +
-        '<button type="button" class="btn btn-ghost btn-sm" id="back-after-win">返回地圖</button>' +
-        (level.id < 5
-          ? '<button type="button" class="btn btn-primary btn-sm" id="next-level-btn">前往第 ' + nextId + " 關 →</button>"
-          : '<button type="button" class="btn btn-primary btn-sm" id="back-after-win-done">完成</button>') +
+        '<button type="button" class="btn btn-primary btn-sm" id="back-after-win">返回地圖</button>' +
+        (incomplete.length
+          ? '<button type="button" class="btn btn-ghost btn-sm" id="pick-other-level">選擇其他關卡</button>'
+          : '<button type="button" class="btn btn-ghost btn-sm" id="back-after-win-done">五關完成</button>') +
         "</div></div>";
       document.getElementById("back-after-win").addEventListener("click", () => {
         if (memoryTimer) clearInterval(memoryTimer);
         renderHub();
       });
-      const nextBtn = document.getElementById("next-level-btn");
-      if (nextBtn) {
-        nextBtn.addEventListener("click", () => {
+      const pickBtn = document.getElementById("pick-other-level");
+      if (pickBtn) {
+        pickBtn.addEventListener("click", () => {
           if (memoryTimer) clearInterval(memoryTimer);
-          startLevel(nextId);
+          renderHub();
         });
       }
       const doneBtn = document.getElementById("back-after-win-done");
@@ -2052,7 +2049,7 @@
       }
 
       addBubble(
-        "你好！我是廣運 AI 小幫手 🤖\n歡迎來到【歷史小測驗】！\n\n提示：答案都在歷史牆 🧩\n我會依序出題，請把從歷史牆解出的答案輸入給我。",
+        "你好！我是廣運 AI 小幫手 🤖\n歡迎來到【歷史小測驗】！\n\n提示：答案都在歷史牆 🧩\n本關共有五道題，請把從歷史牆解出的答案輸入給我。",
         "bot"
       );
       setTimeout(() => askQuestion(0), 500);

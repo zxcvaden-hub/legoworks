@@ -1,33 +1,31 @@
 {
   "label": "時光探險上傳0702",
-  "packedAt": "2026-07-06T11:16:12.968658",
-  "faqCount": 18,
+  "packedAt": "2026-07-08T07:02:42.364Z",
+  "faqCount": 32,
   "quickReplies": [
     "交通方式",
     "活動流程 Rundown",
     "親子手作體驗",
     "飲水與設施",
     "摸彩與閉幕",
-    "🕰️ 時光探險",
     "聯絡福利委員會"
   ],
   "files": {
     "root": [
-      "MANIFEST.json",
-      "MOBILE-RWD-REPORT.md",
-      "README-上傳說明.md",
-      "README.md",
       "index.html",
       "knowledge.json",
       "messageImage_1779701547098.jpg",
       "qr.html",
-      "qrcode.min.js"
+      "qrcode.min.js",
+      "README-上傳說明.md",
+      "README.md"
     ],
     "timeAdventure": [
       "adventure.js",
       "audio/bgm.mp3",
       "index.html",
-      "puzzles.json"
+      "puzzles.json",
+      "qr.html"
     ]
   },
   "imageIncluded": true,
@@ -52,6 +50,5 @@
     "time-adventure/print.html",
     "time-adventure/staff.html",
     "time-adventure/adventure.css"
-  ],
-  "mobileRwdReport": true
+  ]
 }
