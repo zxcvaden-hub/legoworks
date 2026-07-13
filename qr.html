@@ -2,26 +2,157 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#c41e3a" />
 <title>廣運50週年慶｜QR Code</title>
 <style>
-body{margin:0;min-height:100dvh;display:grid;place-items:center;background:#0f172a;font-family:system-ui,'Noto Sans TC',sans-serif;padding:24px;color:#1e293b}.card{background:#fff;border-radius:20px;padding:28px 24px;width:min(360px,100%);text-align:center}h1{font-size:1.25rem;margin:0 0 8px;color:#c41e3a}p{color:#64748b;line-height:1.5;margin:0 0 14px}.url{word-break:break-all;background:#f1f5f9;color:#c41e3a;font-weight:700;border-radius:10px;padding:12px;margin-top:12px}#qrcode{display:flex;justify-content:center;margin:18px 0}a{display:block;margin-top:16px;background:#c41e3a;color:#fff;text-decoration:none;border-radius:12px;padding:12px;font-weight:700}
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(ellipse at top, #1e3a5f 0%, #0f172a 58%);
+  font-family: system-ui, "Noto Sans TC", -apple-system, sans-serif;
+  padding: 24px;
+  color: #1e293b;
+}
+.card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 24px;
+  width: min(360px, 100%);
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+}
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #c41e3a;
+  border: 1px solid rgba(196, 30, 58, 0.25);
+  border-radius: 999px;
+  padding: 5px 12px;
+  margin-bottom: 10px;
+}
+h1 {
+  font-size: 1.25rem;
+  margin: 0 0 8px;
+  color: #c41e3a;
+}
+p {
+  color: #64748b;
+  line-height: 1.5;
+  margin: 0 0 14px;
+  font-size: 0.95rem;
+}
+.url {
+  word-break: break-all;
+  background: #f1f5f9;
+  color: #c41e3a;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 12px;
+  margin-top: 12px;
+  font-size: 0.85rem;
+}
+#qrcode {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 18px auto;
+  padding: 12px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  width: 244px;
+  min-height: 244px;
+  box-sizing: border-box;
+}
+#qrcode img,
+#qrcode canvas {
+  display: block !important;
+  width: 220px !important;
+  height: 220px !important;
+  max-width: 100%;
+}
+#qrcode table {
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+.err {
+  color: #b91c1c;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 8px;
+}
+a.open-btn {
+  display: block;
+  margin-top: 16px;
+  background: #c41e3a;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 12px;
+  padding: 12px;
+  font-weight: 700;
+}
+.note {
+  margin-top: 14px;
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.5;
+}
 </style>
 </head>
 <body>
 <div class="card">
-<h1>廣運50週年慶智能客服</h1>
-<p>掃描 QR Code 開啟活動客服</p>
-<div id="qrcode"></div>
-<div id="url" class="url"></div>
-<a id="open" href="./">直接開啟</a>
+  <div class="badge">Customer Service</div>
+  <h1>廣運50週年慶智能客服</h1>
+  <p>掃描 QR Code 開啟活動客服</p>
+  <div id="qrcode" aria-label="QR Code">載入中…</div>
+  <div id="url" class="url"></div>
+  <a id="open" class="open-btn" href="./">直接開啟</a>
+  <p class="note">若 QR 無法顯示，請確認已上傳 <strong>qrcode.min.js</strong>，或點下方按鈕直接開啟。</p>
 </div>
 <script src="./qrcode.min.js"></script>
 <script>
-var url = location.origin + location.pathname.replace(/\/qr\.html$/, '/') ;
-document.getElementById('url').textContent = url;
-document.getElementById('open').href = url;
-new QRCode(document.getElementById('qrcode'), {text:url,width:220,height:220,colorDark:'#1e293b',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+(function () {
+  var targetUrl = location.origin + location.pathname.replace(/\/qr\.html$/, "/");
+  var box = document.getElementById("qrcode");
+  document.getElementById("url").textContent = targetUrl;
+  document.getElementById("open").href = targetUrl;
+
+  function showError(msg) {
+    box.innerHTML = '<p class="err">' + msg + "</p>";
+  }
+
+  try {
+    if (typeof QRCode === "undefined") {
+      showError("QR 程式未載入（請確認同目錄有 qrcode.min.js）");
+      return;
+    }
+    box.innerHTML = "";
+    new QRCode(box, {
+      text: targetUrl,
+      width: 220,
+      height: 220,
+      colorDark: "#1e293b",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+    setTimeout(function () {
+      var img = box.querySelector("img");
+      var canvas = box.querySelector("canvas");
+      if (img) img.style.display = "block";
+      if (canvas && !img) canvas.style.display = "block";
+      if (!img && !canvas && !box.querySelector("table")) {
+        showError("QR 產生失敗，請改用「直接開啟」按鈕");
+      }
+    }, 300);
+  } catch (e) {
+    showError("QR 產生失敗：" + (e.message || "未知錯誤"));
+  }
+})();
 </script>
 </body>
 </html>
