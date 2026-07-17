@@ -1,0 +1,23 @@
+.fa-solid {
+  display: inline-block;
+  font-family: system-ui, sans-serif;
+  font-style: normal;
+  line-height: 1;
+}
+
+.fa-solid::before { content: "•"; }
+.fa-rotate::before { content: "↻"; }
+.fa-puzzle-piece::before { content: "🧩"; }
+.fa-rocket::before { content: "🚀"; }
+.fa-server::before { content: "🖥"; }
+.fa-snowflake::before { content: "❄"; }
+.fa-magnifying-glass::before { content: "🔍"; }
+.fa-comments::before { content: "💬"; }
+.fa-keyboard::before { content: "⌨"; }
+.fa-clone::before { content: "🃏"; }
+.fa-bolt::before { content: "⚡"; }
+.fa-lock::before { content: "🔒"; }
+.fa-person-running::before { content: "🏃"; }
+.fa-unlock::before { content: "🔓"; }
+.fa-robot::before { content: "🤖"; }
+.fa-paper-plane::before { content: "➤"; }

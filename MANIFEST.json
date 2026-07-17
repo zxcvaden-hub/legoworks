@@ -1,6 +1,6 @@
 {
   "label": "時光探險上傳0702",
-  "packedAt": "2026-07-17T14:39:12.100573",
+  "packedAt": "2026-07-17T17:28:32.085971",
   "faqCount": 39,
   "quickReplies": [
     "交通方式",
@@ -19,11 +19,13 @@
       "knowledge.json",
       "messageImage_1779701547098.jpg",
       "qr.html",
-      "qrcode.min.js"
+      "qrcode.min.js",
+      "交叉檢查.zip"
     ],
     "timeAdventure": [
       "adventure.js",
       "audio/bgm.mp3",
+      "font-icons.css",
       "index.html",
       "puzzles.json",
       "qr.html"

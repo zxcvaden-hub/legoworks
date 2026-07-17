@@ -51,7 +51,7 @@
 ## 打包與上傳
 
 ```bash
-node pack-guangyun-deploy.js
+py scripts/pack-deploy.py
 ```
 
 輸出資料夾：`時光探險上傳0702/`
@@ -74,7 +74,7 @@ node pack-guangyun-deploy.js
 
 ### 上傳步驟（測試期）
 
-1. 執行 `node pack-guangyun-deploy.js`
+1. 執行 `py scripts/pack-deploy.py`
 2. 開啟 GitHub repo：**`zxcvaden-hub/legoworks`**
 3. 將 `時光探險上傳0702/` 內所有檔案上傳至 repo 根目錄（覆蓋同名檔）
 4. Commit：`deploy 廣運50週年測試版`
@@ -98,14 +98,14 @@ node pack-guangyun-deploy.js
 
 1. 編輯 FAQ：`data/knowledge.json`
 2. 同步：`node inject-knowledge.js`（或手動更新 `index.html` 內嵌 KNOWLEDGE）
-3. 編輯闖關：`time-adventure/index.html`、`time-adventure/puzzles.json`
+3. 編輯闖關題目：只修改 `time-adventure/puzzles.json`；打包時會自動內嵌至闖關頁
 4. 打包後上傳至 **legoworks**（測試）或 **kenmec**（正式上線時）
 
 ## 活動重點（2026/8/15）
 
 - 地點：國立臺灣大學綜合體育館
 - 報到：09:30–10:00，**三樓報到處（即救護站）**
-- 五十週年紀念禮：**保溫瓶**，報到掃 QR **當場**領取
+- 五十週年紀念禮：**保溫瓶**（員工限定、全程參加），**活動現場不發放**，於活動結束後回廠發放
 - 來賓餐盒：三樓報到處外走廊，11:30 起
 - 餐車：一樓，11:30 起
 - 現場問題：廣運福利委員會、三樓服務台
