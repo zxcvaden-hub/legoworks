@@ -1,15 +1,15 @@
-# GitHub Pages 上傳包（0716）
+# GitHub Pages 上傳包
 
-打包時間：2026/07/16 14:27  
-知識庫版本：**0716** · FAQ：**39 則**
+打包時間：2026/07/17 14:14
 
-## 上傳目標
+## 上傳目標（擇一）
 
 | 用途 | Repo | 網址 |
 |------|------|------|
-| **測試版（請用）** | `zxcvaden-hub/legoworks` | https://zxcvaden-hub.github.io/legoworks/ |
+| **測試版** | `zxcvaden-hub/legoworks` | https://zxcvaden-hub.github.io/legoworks/ |
+| **正式版** | `zxcvaden-hub/kenmec` | https://zxcvaden-hub.github.io/kenmec/ |
 
-客服 QR：`…/qr.html` · 時光探險：`…/time-adventure/` · 闖關 QR：`…/time-adventure/qr.html`
+時光探險：`…/time-adventure/` · QR：`…/qr.html`
 
 ## 必傳檔案（上傳至 repo 根目錄）
 
@@ -55,18 +55,20 @@
 - `time-adventure/staff.html`
 - `time-adventure/adventure.css`
 
-4. Commit：`deploy 廣運50週年客服 0716（39則FAQ）`
+4. Commit：`deploy 廣運50週年客服與時光探險（含手機 RWD 驗收）`
 5. Push 後等 1～3 分鐘，用無痕視窗測試
 
-## 0716 上傳後快速檢查
+## 上傳後快速檢查
 
-- [ ] 客服首頁可開、頭像有顯示（`?v=20260716`）
-- [ ] 問「電梯」→ 有無障礙電梯說明
-- [ ] 問「陶板屋」或「餐盒」→ 無份數／金額
-- [ ] 問「點券」→ 三樓服務台 $50／點
-- [ ] 問「保溫瓶」→ 活動結束後廠內發放、員工限定
-- [ ] `qr.html` 掃碼 → 進入智能客服
-- [ ] `time-adventure/qr.html` 掃碼 → 進入闖關頁
+- [ ] 客服首頁可開、頭像有顯示
+- [ ] 點「🕰️ 時光探險」→ 五關可玩
+- [ ] 第一關水管可通關、有光點動畫
+- [ ] 第二關擦除後點「確認 2010 · 通關」
+- [ ] 第三關歡迎語為【歷史小測驗】、通關密語「榮耀半世紀，百年展願景」
+- [ ] 第四關通關密語「數位孿生」
+- [ ] 第五關輸入正確終極密碼可通關
+- [ ] 背景音樂按鈕可開關
+- [ ] **手機實機**：鍵盤彈出時輸入框不被擋住
 
 ## 勿上傳
 

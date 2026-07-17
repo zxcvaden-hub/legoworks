@@ -991,7 +991,7 @@
       </nav>
     </header>
 
-    <audio id="bgm" loop preload="metadata" playsinline>
+    <audio id="bgm" loop preload="none" playsinline>
       <source src="./audio/bgm.mp3" type="audio/mpeg" />
     </audio>
 
@@ -1173,12 +1173,20 @@
       el.innerHTML = pipeSvgHtml(cell.type, cell.rot);
     }
 
-    async function init() {
-      const res = await fetch("./puzzles.json");
-      DATA = await res.json();
-      setupBgm();
-      renderLevelNav();
-      renderHub();
+    const INLINE_PUZZLES = {"title":"廣運時光探險","subtitle":"50年的啟程 · 五關實境解謎 · 任意選關","reward":"五關全數完成可至三樓服務台兌換 100 元禮券","playRules":"報到時領取遊戲護照與闖關地圖。五關可任意選擇、不限順序；解開謎題後向該關關主報告通關密語，由關主在遊戲護照蓋章，即可前往其他關卡。五關全數蓋章後至服務台兌換禮券。","levels":[{"id":1,"title":"啟航輸送機","theme":"自動化核心","location":"歷史牆展示區","intro":"致敬首台自動輸送機，開啟自動化核心基礎。","password":"第一台輸送機","hint":"用手指點選方塊旋轉水管，讓起點與終點接通。"},{"id":2,"title":"液冷尋密碼","theme":"熱傳投入","location":"303 號位置","intro":"滑動浸沒式液冷模組，為伺服器散熱顯現密碼。","password":"2010","hint":"拖曳藍色液冷方塊到發熱區，找出隱藏年份。"},{"id":3,"title":"歷史小測驗","theme":"歷史小測驗 · 五大歷史知識","location":"329 運動休息室","intro":"與 AI 小幫手對話，依序完成歷史牆上的五道歷史小測驗。","password":"榮耀半世紀，百年展願景","hint":"答案都在歷史牆；五題全部答對後向關主報告通關密語並蓋章。"},{"id":4,"title":"孿生記憶牆","theme":"數位孿生 · 智慧倉儲","location":"主視覺拍照背板區","intro":"翻轉記憶拼圖，同步數位孿生倉儲工廠圖景。","password":"數位孿生","hint":"用手指點選即可翻牌，在 90 秒內配對六組廣運科技主題卡片。"},{"id":5,"title":"廣運終極密碼","theme":"2026 · 迎向未來","location":"ESG 拍拍印旁","intro":"輸入五大歷史里程碑年份，開啟未來之城門。","password":"FORWARD TO 50 YEARS","hint":"輸入終極密碼 2026 解鎖保險箱。"}],"levelRules":{"1":[{"icon":"fa-rotate","text":"用手指點選畫面上的方塊。"},{"icon":"fa-puzzle-piece","text":"旋轉水管角度，將上下或左右管道接通。"},{"icon":"fa-rocket","text":"成功讓貨物從起點送達終點即可通關，向關主報告通關密語並在遊戲護照蓋章。"}],"2":[{"icon":"fa-server","text":"畫面上是一面發熱而模糊的伺服器機櫃牆。"},{"icon":"fa-snowflake","text":"用手指拖曳藍色的「液冷散熱方塊」。"},{"icon":"fa-magnifying-glass","text":"移動到發熱源散熱，隱藏的年份代碼就會顯現；向關主報告密語並蓋章。"}],"3":[{"icon":"fa-comments","text":"進入聊天室後，AI 會依序出五道歷史知識題。"},{"icon":"fa-puzzle-piece","text":"到現場歷史牆尋找線索，解出每題答案。"},{"icon":"fa-keyboard","text":"五題全部答對後，向關主報告通關密語並在遊戲護照蓋章。"}],"4":[{"icon":"fa-clone","text":"畫面上有 4×3 共 12 張覆蓋的數位孿生記憶卡片。"},{"icon":"fa-rotate","text":"用手指點選卡片即可翻牌，找出六組廣運科技主題的相同配對。"},{"icon":"fa-bolt","text":"在 90 秒內將全部六組配對成功即可通關，向關主報告密語並蓋章。"}],"5":[{"icon":"fa-lock","text":"畫面上是保險箱終極密碼輸入框。"},{"icon":"fa-person-running","text":"參考現場攤位或網頁提示，找出四位數終極密碼。"},{"icon":"fa-unlock","text":"輸入 2026 解鎖後，向關主報告通關密語並在遊戲護照蓋章。"}]},"quizQuestions":[{"id":1,"tag":"1976","topic":"廣運的傳承起點","subtitle":"廣運的傳承起點","prompt":"西元幾年，創辦人謝清福先生親手打造了第一台「自動輸送機」，正式奠定了廣運以自動化為核心的半世紀基石？請將圖形重疊運算，解出這組代表廣運起點的「四位數年份」。","answers":["1976"],"placeholder":"輸入四位數年份…","wrongHint":"這題是廣運創業起點的年份喔。"},{"id":2,"tag":"AGV","topic":"自主研發無人搬運車","subtitle":"自主研發無人搬運車","prompt":"1993 至 1998 年期間，廣運技術迎來重大突破，成功自主研發出哪一種「無人搬運車系統」，開啟了智慧物流的新篇章？請透過圖形邏輯組合，拼出這組「3 個字母的英文簡稱」。","answers":["AGV"],"caseInsensitive":true,"placeholder":"輸入 3 個英文字母…","wrongHint":"提示：無人搬運車的英文縮寫。"},{"id":3,"tag":"太極","topic":"跨足綠能太陽能產業","subtitle":"跨足綠能太陽能產業","prompt":"在 2000 年代的全球布局中，廣運於 2007 年正式成立了哪一家著名的「能源子公司」，宣告全面跨足太陽能與綠色能源產業？請重組黑白格子，拼出這家子公司的「2 字中文名稱」。","answers":["太極"],"placeholder":"輸入 2 字中文…","wrongHint":"提示：2007 年成立的能源子公司。"},{"id":4,"tag":"人工智慧新時代","topic":"人工智慧新時代","subtitle":"數位孿生與智慧物流","prompt":"邁入 2023 年後，廣運利用倉儲數位孿生模擬將時間大幅縮短至 3 分鐘，並引進高階應用，全面進入了什麼高新技術驅動的智慧製造新時代？請解開圖形密碼，拼出這組「2 個字母的科技核心簡稱」。","answers":["AI"],"caseInsensitive":true,"placeholder":"輸入 2 個英文字母…","wrongHint":"提示：人工智慧的英文縮寫。"},{"id":5,"tag":"跨越50，邁向百年","topic":"跨越50，邁向百年","subtitle":"五十周年的永續承諾","prompt":"廣運 50 週年的活動口號為：「榮耀半世紀，＿＿＿＿＿」。這象徵全體員工凝聚向心力、攜手共創永續未來。提示：本次活動口號，中文 5 個字。","answers":["百年展願景"],"placeholder":"輸入 5 字中文…","wrongHint":"提示：本次活動口號，中文 5 個字。"}]};
+
+    function init() {
+      try {
+        DATA = INLINE_PUZZLES;
+        if (!Array.isArray(DATA.levels) || DATA.levels.length !== 5) {
+          throw new Error("闖關資料格式不完整");
+        }
+        setupBgm();
+        renderLevelNav();
+        renderHub();
+      } catch (error) {
+        showLoadError();
+      }
     }
 
     function setupBgm() {
@@ -1187,8 +1195,7 @@
       if (!bgm || !btn) return;
 
       bgm.volume = 0.42;
-      const wantOn = localStorage.getItem(BGM_PREF_KEY) !== "off";
-      updateBgmButton(btn, wantOn && !bgm.paused);
+      updateBgmButton(btn, false);
 
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -1201,14 +1208,6 @@
         }
       });
 
-      document.getElementById("app").addEventListener(
-        "click",
-        () => {
-          if (localStorage.getItem(BGM_PREF_KEY) === "off") return;
-          if (bgm.paused) startBgm();
-        },
-        { passive: true }
-      );
     }
 
     function updateBgmButton(btn, playing) {
