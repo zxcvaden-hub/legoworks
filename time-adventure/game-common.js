@@ -263,8 +263,11 @@
   }
 
   function playCountdownSound() {
+    // 簡單逼逼聲：最後 10 秒每秒兩短音
     withAudio((ctx) => {
-      playToneAt(ctx, 880, 0.06, "square", 0.07, ctx.currentTime);
+      const t0 = ctx.currentTime;
+      playToneAt(ctx, 980, 0.07, "square", 0.13, t0);
+      playToneAt(ctx, 980, 0.07, "square", 0.13, t0 + 0.11);
     });
   }
 
