@@ -27,8 +27,9 @@ a.btn { display:block; margin-top:12px; background:linear-gradient(135deg,#00d2c
 <script src="../config.js"></script>
 <script src="../../qrcode.min.js"></script>
 <script>
-var key = "stage" + 1;
+var key = "stage1";
 var url = (typeof STAGE_URLS === "object" && STAGE_URLS[key]) ? STAGE_URLS[key] : "";
+if (!url) { console.warn("STAGE_URLS missing; check config.js"); }
 document.getElementById("url").textContent = url;
 document.getElementById("open").href = "./";
 new QRCode(document.getElementById("qrcode"), {

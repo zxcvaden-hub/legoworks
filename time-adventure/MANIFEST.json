@@ -1,0 +1,47 @@
+{
+  "packName": "廣運時光探險",
+  "knowledgeVersion": "0728",
+  "updatedAt": "2026-07-28",
+  "packedAt": "2026-07-28T18:20:00+08:00",
+  "purpose": "時光探險五關獨立頁（stage-*）＋共用計時／音效／規則流程",
+  "siteBaseUrl": "config.js → SITE_BASE_URL（唯一）",
+  "gameBasePath": "/time-adventure",
+  "gameDurationSeconds": 180,
+  "releaseNote": "僅 stage-1～stage-5；無 level-*；QR 由 STAGE_URLS 產生",
+  "files": {
+    "core": [
+      "time-adventure/config.js",
+      "time-adventure/game-common.js",
+      "time-adventure/puzzles.json",
+      "time-adventure/station-template.html",
+      "time-adventure/index.html",
+      "time-adventure/qr-codes.html",
+      "time-adventure/qr.html",
+      "time-adventure/README.md",
+      "time-adventure/font-icons.css",
+      "time-adventure/adventure.js"
+    ],
+    "stages": [
+      "time-adventure/stage-1/index.html",
+      "time-adventure/stage-1/qr.html",
+      "time-adventure/stage-2/index.html",
+      "time-adventure/stage-2/qr.html",
+      "time-adventure/stage-3/index.html",
+      "time-adventure/stage-3/qr.html",
+      "time-adventure/stage-4/index.html",
+      "time-adventure/stage-4/qr.html",
+      "time-adventure/stage-5/index.html",
+      "time-adventure/stage-5/qr.html"
+    ],
+    "assets": [
+      "time-adventure/assets/kenmec-50-main-visual.png",
+      "time-adventure/assets/kenmec-50-main-visual.jpg",
+      "time-adventure/audio/bgm.mp3"
+    ]
+  },
+  "switchToProduction": [
+    "只修改 time-adventure/config.js 的 SITE_BASE_URL",
+    "重新部署後用 qr-codes.html 下載正式 QR",
+    "不可沿用測試站 QR 交付客戶"
+  ]
+}

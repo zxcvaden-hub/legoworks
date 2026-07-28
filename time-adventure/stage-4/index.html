@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
   <meta name="theme-color" content="#0A2540" />
-  <title>廣運時光探險｜第4關 廣運AI智慧一點通</title>
+  <title>廣運時光探險｜第4關 修復智慧工廠</title>
   <link rel="stylesheet" href="../font-icons.css" />
   <script src="../adventure.js"></script>
   <style>
@@ -275,6 +275,7 @@
       justify-content: space-between;
       gap: 8px;
       margin-bottom: 12px;
+      flex-wrap: wrap;
     }
 
     .tag {
@@ -1020,19 +1021,99 @@
       animation: lc-flow 1.2s linear infinite;
     }
     @keyframes lc-flow { from { transform: translateX(-100%); } to { transform: translateX(350%); } }
+    .sf-shell { display: grid; gap: 14px; }
+    .sf-intro {
+      text-align: center; padding: 18px 14px; border-radius: 16px;
+      border: 1px solid rgba(255,120,120,.28); background: rgba(255,80,80,.08);
+      box-shadow: inset 0 0 18px rgba(255,80,80,.08);
+    }
+    .sf-intro .warn { font-size: 2rem; margin-bottom: 8px; }
+    .sf-intro strong { display: block; color: #ff8a8a; font-size: 1.18rem; margin-bottom: 8px; }
+    .sf-layout { display: grid; gap: 14px; }
+    .sf-status-panel {
+      display: grid; gap: 10px; padding: 12px; border-radius: 16px;
+      border: 1px solid rgba(0,242,254,.22); background: rgba(255,255,255,.04);
+    }
+    .sf-status-card {
+      padding: 10px 12px; border-radius: 12px; background: rgba(5,15,30,.45);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .sf-status-card.online-logistics { box-shadow: 0 0 0 1px rgba(34,197,94,.25), 0 0 18px rgba(34,197,94,.12); }
+    .sf-status-card.online-ai { box-shadow: 0 0 0 1px rgba(59,130,246,.25), 0 0 18px rgba(59,130,246,.12); }
+    .sf-status-card.online-energy { box-shadow: 0 0 0 1px rgba(34,197,94,.25), 0 0 18px rgba(34,197,94,.12); }
+    .sf-status-head { display:flex; justify-content:space-between; gap:8px; align-items:center; font-size:0.92rem; font-weight:700; }
+    .sf-bar { margin-top:8px; height:10px; border-radius:999px; overflow:hidden; background: rgba(255,255,255,.08); }
+    .sf-bar-fill { height:100%; width:0%; transition: width .35s ease, background .35s ease; background: #6b7280; }
+    .sf-status-meta { margin-top:6px; display:flex; justify-content:space-between; font-size:0.78rem; color:var(--muted); }
+    .sf-factory {
+      position: relative; min-height: 220px; border-radius: 18px; overflow: hidden;
+      background: linear-gradient(180deg, rgba(8,17,34,.96), rgba(19,55,92,.95));
+      border: 1px solid rgba(0,242,254,.22); padding: 14px;
+    }
+    .sf-factory::after {
+      content:""; position:absolute; inset:0; pointer-events:none;
+      background: radial-gradient(circle at top, rgba(0,242,254,.12), transparent 46%);
+    }
+    .sf-factory-title { text-align:center; font-size:0.78rem; letter-spacing:.12em; color:var(--accent); margin-bottom:10px; }
+    .sf-plant { display:grid; gap:10px; grid-template-columns:repeat(3,1fr); align-items:end; margin-top:8px; }
+    .sf-unit {
+      position: relative; min-height: 110px; border-radius: 16px; padding: 10px 8px;
+      border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.04);
+      display:flex; flex-direction:column; justify-content:space-between;
+      transition: box-shadow .35s ease, border-color .35s ease, transform .35s ease, filter .35s ease;
+      filter: grayscale(1) saturate(.55) brightness(.78);
+    }
+    .sf-unit.active { transform: translateY(-2px); }
+    .sf-unit.online-logistics { filter:none; border-color: rgba(34,197,94,.5); box-shadow: 0 0 18px rgba(34,197,94,.16); }
+    .sf-unit.online-ai { filter:none; border-color: rgba(59,130,246,.52); box-shadow: 0 0 18px rgba(59,130,246,.18); }
+    .sf-unit.online-energy { filter:none; border-color: rgba(250,204,21,.56); box-shadow: 0 0 18px rgba(250,204,21,.18); }
+    .sf-unit h4 { margin:0; font-size:0.84rem; text-align:center; }
+    .sf-unit-icon { text-align:center; font-size:1.45rem; }
+    .sf-dropzone {
+      min-height: 56px; border-radius: 12px; border: 1px dashed rgba(0,242,254,.28);
+      background: rgba(255,255,255,.04); display:grid; place-items:center; text-align:center;
+      padding: 8px; font-size:0.78rem; color:var(--muted); transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+    }
+    .sf-dropzone.targeting { border-color: var(--accent); background: rgba(0,242,254,.08); box-shadow: 0 0 0 1px rgba(0,242,254,.28); }
+    .sf-dropzone.ready { border-style: solid; color: var(--text); }
+    .sf-dropzone .installed-list { display:flex; flex-wrap:wrap; justify-content:center; gap:6px; }
+    .sf-dropnote { margin-top: 6px; font-size: 0.72rem; line-height: 1.4; color: var(--muted); }
+    .sf-chip {
+      display:inline-flex; align-items:center; gap:4px; padding:4px 8px; border-radius:999px;
+      background: rgba(0,242,254,.12); border:1px solid rgba(0,242,254,.25); color:var(--text); font-size:0.72rem;
+      animation: sf-chip-in .35s ease;
+    }
+    @keyframes sf-chip-in { from { opacity:0; transform: translateY(8px) scale(.95); } to { opacity:1; transform: translateY(0) scale(1); } }
     .sf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
     .sf-card {
       min-height: 72px; border-radius: 14px; border: 1px solid rgba(0,242,254,.25);
       background: rgba(255,255,255,.05); color: var(--text); padding: 10px 8px;
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-      font-size: 0.86rem; font-weight: 650; text-align: center;
+      font-size: 0.86rem; font-weight: 650; text-align: center; transition: transform .2s ease, opacity .2s ease, box-shadow .2s ease;
     }
     .sf-card .ico { font-size: 1.35rem; }
     .sf-card.selected { border-color: var(--accent); background: rgba(0,242,254,.14); box-shadow: 0 0 0 1px rgba(0,242,254,.35); }
+    .sf-card.dragging { opacity: .78; transform: scale(.97); }
+    .sf-card.installed { opacity: .32; filter: grayscale(.25); pointer-events:none; }
     .sf-card.wrong-flash { border-color: #ff6b6b; background: rgba(255,80,80,.18); }
     .sf-meta { text-align: center; color: var(--muted); font-size: 0.88rem; margin: 0 0 8px; }
+    .sf-center { padding: 12px; border-radius: 16px; background: rgba(255,255,255,.04); border: 1px solid rgba(0,242,254,.18); }
+    .sf-sequence { display:grid; gap:8px; margin-top:12px; }
+    .sf-sequence div {
+      padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.05); color: var(--muted);
+      border: 1px solid rgba(255,255,255,.06); opacity:.45;
+    }
+    .sf-sequence div.on { opacity:1; color:var(--text); border-color: rgba(0,242,254,.28); box-shadow: 0 0 16px rgba(0,242,254,.14); }
+    .sf-boot-success {
+      margin-top: 12px; text-align:center; padding: 14px; border-radius: 14px;
+      background: rgba(0,242,254,.1); border:1px solid rgba(0,242,254,.35); color: var(--accent);
+      font-weight: 800; animation: pulseGlow 1.2s ease infinite alternate;
+    }
+    @media (min-width: 820px) {
+      .sf-layout { grid-template-columns: minmax(220px, 260px) 1fr; align-items: start; }
+    }
     .puzzle-board {
-      width: min(100%, 360px); margin: 0 auto; aspect-ratio: 1 / 1;
+      width: min(100%, 420px); margin: 0 auto; aspect-ratio: 16 / 9;
       display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
       gap: 2px; background: rgba(0,242,254,.25); border-radius: 12px; overflow: hidden;
       touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
@@ -1045,8 +1126,9 @@
     .puzzle-tile.lifting { opacity: .85; transform: scale(1.04); box-shadow: 0 8px 18px rgba(0,0,0,.35); z-index: 2; }
     .puzzle-tile.selected { outline: 2px solid var(--accent); outline-offset: -2px; }
     .puzzle-preview {
-      width: min(100%, 360px); margin: 0 auto 12px; aspect-ratio: 1 / 1; border-radius: 12px;
-      background-size: cover; background-position: center; position: relative; overflow: hidden;
+      width: min(100%, 420px); margin: 0 auto 12px; aspect-ratio: 16 / 9; border-radius: 12px;
+      background-size: contain; background-position: center; background-repeat: no-repeat;
+      background-color: rgba(255,255,255,.04); position: relative; overflow: hidden;
     }
     .puzzle-countdown {
       position: absolute; inset: 0; display: grid; place-items: center;
@@ -1063,6 +1145,145 @@
       background: rgba(255,255,255,.06); color: var(--text); text-align: left; padding: 10px 12px;
       font-size: 0.95rem;
     }
+    .hq-head { text-align:center; margin: 0 0 10px; }
+    .hq-head strong { display:block; color: var(--accent); font-size: 1rem; margin-bottom: 6px; }
+    .hq-progress { color: var(--muted); font-size: 0.84rem; }
+    .hq-dots { display:flex; justify-content:center; gap:8px; margin: 10px 0 14px; }
+    .hq-dot { width: 18px; height: 18px; border-radius: 4px; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.05); }
+    .hq-dot.done { background: linear-gradient(135deg, var(--accent), var(--accent-soft)); border-color: transparent; box-shadow: 0 0 12px rgba(0,242,254,.22); }
+    .hq-prompt { text-align:center; font-size:0.98rem; line-height:1.7; margin: 0 0 12px; }
+    .hq-choice { min-height: 52px; text-align:left; font-size:0.96rem; line-height:1.45; }
+    .hq-choice.locked { pointer-events:none; opacity:.72; }
+    .hq-wrong { min-height: 1.4em; text-align:center; color:#ff7d7d; font-weight:700; margin-top:10px; }
+    .hq-timeline { display:grid; gap:8px; margin-top:12px; }
+    .hq-timeline div {
+      padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04); color: var(--muted); opacity:.42;
+    }
+    .hq-timeline div.on {
+      opacity:1; color:var(--text); border-color: rgba(0,242,254,.3);
+      box-shadow: 0 0 14px rgba(0,242,254,.16);
+    }
+
+    .global-progress {
+      position: fixed; top: calc(10px + var(--safe-top, 0px)); right: 10px; z-index: 90;
+      min-width: 108px; padding: 8px 10px; border-radius: 12px;
+      background: rgba(8, 28, 48, 0.88); border: 1px solid rgba(0,242,254,.28);
+      box-shadow: 0 8px 24px rgba(0,0,0,.28); text-align: center; backdrop-filter: blur(8px);
+    }
+    .global-progress .gp-title { font-size: 0.72rem; color: var(--accent); letter-spacing: 0.04em; }
+    .global-progress .gp-bars { margin: 4px 0 2px; font-size: 0.82rem; letter-spacing: 0.08em; color: #8eb4d4; }
+    .global-progress .gp-pct { font-size: 0.78rem; font-weight: 700; color: var(--text); }
+    .challenge-timer {
+      font-variant-numeric: tabular-nums; font-weight: 800; font-size: 0.95rem;
+      min-width: 64px; text-align: center; padding: 4px 10px; border-radius: 999px;
+      background: rgba(0,242,254,.12); border: 1px solid rgba(0,242,254,.35); color: var(--accent);
+    }
+    .challenge-timer.warn { color: #ffcf6b; border-color: rgba(255,207,107,.45); background: rgba(255,180,60,.12); }
+    .challenge-timer.danger { color: #ff7d7d; border-color: rgba(255,100,100,.45); background: rgba(255,80,80,.14); animation: pulseGlow 0.8s ease infinite alternate; }
+    .fail-box {
+      margin-top: 14px; text-align: center; padding: 22px 16px; border-radius: 16px;
+      background: rgba(80, 16, 24, 0.35); border: 1px solid rgba(255,120,120,.35);
+    }
+    .fail-box strong { display:block; font-size: 1.2rem; color: #ff9a9a; margin-bottom: 10px; }
+    .achievement-overlay, .finale-overlay {
+      position: fixed; inset: 0; z-index: 200; display: none; place-items: center;
+      background: rgba(4, 16, 32, 0.72); padding: 20px;
+    }
+    .achievement-overlay.show, .finale-overlay.show { display: grid; }
+    .achievement-card {
+      text-align: center; padding: 28px 24px; border-radius: 20px; min-width: min(280px, 86vw);
+      background: linear-gradient(160deg, rgba(13,48,82,.96), rgba(8,28,48,.96));
+      border: 1px solid rgba(0,242,254,.35); box-shadow: 0 0 40px rgba(0,242,254,.2);
+      animation: achIn 0.35s ease forwards;
+    }
+    .achievement-card.out { animation: achOut 0.35s ease forwards; }
+    .achievement-card .ach-emoji { font-size: 3rem; line-height: 1; margin-bottom: 8px; }
+    .achievement-card .ach-title { font-size: 1.35rem; font-weight: 800; color: var(--accent); }
+    .achievement-card .ach-sub { margin-top: 6px; color: var(--text); font-weight: 700; }
+    @keyframes achIn { from { opacity:0; transform: scale(.82); } to { opacity:1; transform: scale(1); } }
+    @keyframes achOut { from { opacity:1; transform: scale(1); } to { opacity:0; transform: scale(1.06); } }
+    .finale-stage {
+      width: min(420px, 92vw); min-height: 240px; text-align: center; position: relative;
+      padding: 24px 16px; border-radius: 20px;
+      background: linear-gradient(180deg, rgba(10,37,64,.95), rgba(5,18,34,.95));
+      border: 1px solid rgba(0,242,254,.3); overflow: hidden;
+    }
+    .finale-year {
+      font-size: clamp(2.2rem, 10vw, 3.4rem); font-weight: 900; color: #fff;
+      text-shadow: 0 0 24px rgba(0,242,254,.55); opacity: 0; transform: scale(.86);
+      transition: opacity .28s ease, transform .28s ease;
+    }
+    .finale-year.on { opacity: 1; transform: scale(1); }
+    .finale-logo-wrap {
+      position: relative; width: min(280px, 78vw); margin: 12px auto 0; aspect-ratio: 16/9;
+      border-radius: 12px; overflow: hidden; background: rgba(255,255,255,.04);
+      opacity: 0; transition: opacity .35s ease;
+    }
+    .finale-logo-wrap.on { opacity: 1; }
+    .finale-logo-wrap img { width: 100%; height: 100%; object-fit: contain; display:block; }
+    .finale-scan {
+      position: absolute; left: -20%; top: 0; width: 28%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0,242,254,.55), transparent);
+      animation: scanMove 1.1s ease-in-out infinite;
+    }
+    @keyframes scanMove { from { transform: translateX(0); } to { transform: translateX(420%); } }
+    .finale-fireworks { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .finale-fireworks span {
+      position: absolute; width: 6px; height: 6px; border-radius: 50%;
+      animation: fwBurst 1.2s ease-out forwards;
+    }
+    @keyframes fwBurst {
+      0% { transform: translate(0,0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(0.2); opacity: 0; }
+    }
+    .finale-congrats {
+      margin-top: 14px; opacity: 0; transform: translateY(8px);
+      transition: opacity .4s ease, transform .4s ease;
+    }
+    .finale-congrats.on { opacity: 1; transform: translateY(0); }
+    .finale-congrats strong { display:block; font-size: 1.25rem; color: var(--accent); line-height: 1.45; }
+    .finale-congrats p { margin: 10px 0 0; color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+
+
+    .challenge-timer.pulse { animation: timerPulse 1s ease infinite; }
+    @keyframes timerPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 rgba(255,120,120,0); }
+      50% { transform: scale(1.04); box-shadow: 0 0 12px rgba(255,120,120,.28); }
+    }
+    .global-progress .gp-stage { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .sound-toggle {
+      position: fixed; top: calc(10px + var(--safe-top, 0px)); left: 10px; z-index: 90;
+      min-height: 44px; padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(0,242,254,.28);
+      background: rgba(8, 28, 48, 0.88); color: var(--text); font-size: 0.82rem; font-weight: 700;
+    }
+    .ready-overlay {
+      position: fixed; inset: 0; z-index: 180; display: none; place-items: center;
+      background: rgba(4, 16, 32, 0.78);
+    }
+    .ready-overlay.show { display: grid; }
+    .ready-count {
+      font-size: clamp(3.5rem, 18vw, 5.5rem); font-weight: 900; color: #fff;
+      text-shadow: 0 0 28px rgba(0,242,254,.55);
+    }
+    .ready-count.pop { animation: readyPop .55s ease; }
+    @keyframes readyPop {
+      0% { opacity: 0; transform: scale(.7); }
+      40% { opacity: 1; transform: scale(1.08); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    .rules-tip {
+      margin: 12px 0 0; text-align: center; color: var(--muted); font-size: 0.84rem; line-height: 1.5;
+    }
+    .hq-choice.correct-flash {
+      border-color: #7CFFB2 !important; background: rgba(80, 220, 140, 0.18) !important; color: #b9ffd8;
+    }
+    .hq-ok { min-height: 1.4em; text-align:center; color:#7CFFB2; font-weight:700; margin-top:10px; }
+    .modal .limit-chip {
+      display:inline-block; margin: 6px 0 10px; padding: 4px 10px; border-radius: 999px;
+      background: rgba(0,242,254,.12); border: 1px solid rgba(0,242,254,.3); color: var(--accent); font-size: 0.8rem;
+    }
+
   </style>
 <style>
 #stage-nav, #hub, #modal-cancel { display: none !important; }
@@ -1073,7 +1294,7 @@
     <header class="hero">
       <div class="hero-badge">KENMEC 50 · 第 4 關</div>
       <h1>廣運時光探險</h1>
-      <p class="hero-sub">第 4 關｜廣運AI智慧一點通 · 📍 三樓活動現場後門</p>
+      <p class="hero-sub">第 4 關｜修復智慧工廠</p>
       <nav class="nav-row">
         <a href="../../index.html">← 活動客服</a>
         <button type="button" class="nav-pill-btn" id="bgm-toggle" aria-pressed="false" aria-label="背景音樂開關">🔇 音樂</button>
@@ -1102,16 +1323,52 @@
     <section id="game-screen" class="panel hidden"></section>
   </div>
 
+
+  <button type="button" class="sound-toggle" id="sound-toggle" aria-pressed="true">音效：開</button>
+  <div class="global-progress" id="global-progress" aria-live="polite">
+    <div class="gp-title">時光探險</div>
+    <div class="gp-stage" id="gp-stage">目前關卡：第 0 / 5 關</div>
+    <div class="gp-bars" id="gp-bars">□□□□□</div>
+    <div class="gp-pct" id="gp-pct">0%</div>
+  </div>
+  <div class="ready-overlay" id="ready-overlay" aria-hidden="true"><div class="ready-count">3</div></div>
+
+  <div class="achievement-overlay" id="achievement-overlay" aria-hidden="true">
+    <div class="achievement-card" id="achievement-card">
+      <div class="ach-emoji" id="ach-emoji">🏆</div>
+      <div class="ach-title" id="ach-title">成就</div>
+      <div class="ach-sub">獲得！</div>
+    </div>
+  </div>
+
+  <div class="finale-overlay" id="finale-overlay" aria-hidden="true">
+    <div class="finale-stage">
+      <div class="finale-fireworks" id="finale-fw"></div>
+      <div class="finale-year" id="finale-year"></div>
+      <div class="finale-logo-wrap" id="finale-logo-wrap">
+        <img id="finale-logo" alt="KENMEC 50" />
+        <div class="finale-scan" id="finale-scan"></div>
+      </div>
+      <div class="finale-congrats" id="finale-congrats">
+        <strong>恭喜完成<br>廣運50週年<br>時光探險</strong>
+        <p>完成五個關卡並集滿護照印章後，<br>請向各個關主出示護照確認通關，<br>即可領取禮券。</p>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="rules-modal" role="dialog" aria-modal="true">
     <div class="modal">
       <h3 id="modal-title">關卡規則</h3>
       <p class="intro" id="modal-intro"></p>
       <div class="step-cards" id="modal-steps"></div>
+      <p class="rules-tip">小提醒：按下「開始挑戰」後，倒數才會開始。</p>
       <button type="button" class="btn btn-primary" id="modal-start">開始挑戰</button>
       <button type="button" class="btn btn-ghost btn-sm" id="modal-cancel" style="margin-top:10px;width:100%">返回</button>
     </div>
   </div>
 
+  <script src="../config.js"></script>
+  <script src="../game-common.js"></script>
   <script>
     const STATION_LEVEL = 4;
     const STORAGE_KEY = "guangyun-time-adventure-v2-stage-4";
@@ -1122,6 +1379,246 @@
     let progress = loadProgress();
     let pendingLevel = null;
     let memoryTimer = null;
+
+
+    const GC = window.GameCommon;
+    const SUCCESS_HEADLINES = {
+      1: "歷史的大門已經開啟！",
+      2: "液冷核心修復完成！",
+      3: "你已掌握廣運的重要歷史！",
+      4: "智慧工廠重新啟動！",
+      5: "恭喜成為廣運時光探險家！"
+    };
+    const ACHIEVEMENTS = {
+      1: { emoji: "🏗️", title: "輸送工程師" },
+      2: { emoji: "❄️", title: "液冷工程師" },
+      3: { emoji: "📖", title: "歷史探索者" },
+      4: { emoji: "🏭", title: "智慧工廠工程師" },
+      5: { emoji: "🏆", title: "廣運時光探險家" }
+    };
+
+    let challengeFailed = false;
+    let levelCleared = false;
+    let activeLevelId = null;
+    let startLocked = false;
+    let runtimeGeneration = 0;
+
+    function updateGlobalProgress(levelId) {
+      const info = GC.progressBars(levelId);
+      const barsEl = document.getElementById("gp-bars");
+      const pctEl = document.getElementById("gp-pct");
+      const stageEl = document.getElementById("gp-stage");
+      if (barsEl) barsEl.textContent = info.bars;
+      if (pctEl) pctEl.textContent = info.pct + "%";
+      if (stageEl) stageEl.textContent = info.label;
+    }
+
+    function syncSoundButton() {
+      const btn = document.getElementById("sound-toggle");
+      if (!btn || !GC) return;
+      const on = GC.isSoundEnabled();
+      btn.textContent = on ? "音效：開" : "音效：關";
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    }
+
+    function pauseGameInteractions() {
+      const body = document.getElementById("stage-body");
+      if (body) body.style.pointerEvents = "none";
+    }
+
+    function resumeGameInteractions() {
+      const body = document.getElementById("stage-body");
+      if (body) body.style.pointerEvents = "";
+    }
+
+    function stopChallengeTimer() {
+      if (GC) GC.stopCountdown();
+    }
+
+    function updateTimerDisplay() {
+      if (!GC) return;
+      GC.updateTimerDisplay(document.getElementById("challenge-timer"));
+    }
+
+    function startCountdownForLevel(levelId) {
+      if (!GC) return;
+      GC.startCountdown({
+        onTick: function () {
+          updateTimerDisplay();
+        },
+        onTimeout: function () {
+          handleTimeout(levelId);
+        }
+      });
+      updateTimerDisplay();
+    }
+
+    function handleTimeout(levelId) {
+      if (levelCleared) return;
+      challengeFailed = true;
+      levelCleared = true;
+      if (GC) GC.markFailed();
+      if (memoryTimer) clearInterval(memoryTimer);
+      pauseGameInteractions();
+      const box = document.getElementById("stage-success");
+      if (!box) return;
+      box.innerHTML =
+        '<div class="fail-box">' +
+        "<strong>時間到，本關挑戰失敗</strong>" +
+        '<p style="margin:0 0 14px;color:var(--muted);font-size:0.92rem">再試一次，重新挑戰本關吧！</p>' +
+        '<button type="button" class="btn btn-primary" id="retry-challenge">重新挑戰</button>' +
+        "</div>";
+      document.getElementById("retry-challenge").addEventListener("click", () => {
+        restartChallenge(levelId);
+      });
+      box.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function restartChallenge(levelId) {
+      startLocked = false;
+      challengeFailed = false;
+      levelCleared = false;
+      runtimeGeneration += 1;
+      if (GC) GC.cancelAllRuntime();
+      if (memoryTimer) clearInterval(memoryTimer);
+      openLevelModal(levelId);
+    }
+
+    function showAchievementBadge(levelId, done) {
+      const ach = ACHIEVEMENTS[levelId] || { emoji: "🏆", title: "通關成就" };
+      const overlay = document.getElementById("achievement-overlay");
+      const card = document.getElementById("achievement-card");
+      document.getElementById("ach-emoji").textContent = ach.emoji;
+      document.getElementById("ach-title").textContent = ach.title;
+      card.classList.remove("out");
+      overlay.classList.add("show");
+      overlay.setAttribute("aria-hidden", "false");
+      const hold = (GC && GC.GAME_CONFIG.achievementHoldMs) || 1000;
+      if (GC) {
+        GC.trackTimeout(setTimeout(() => {
+          card.classList.add("out");
+          GC.trackTimeout(setTimeout(() => {
+            overlay.classList.remove("show");
+            overlay.setAttribute("aria-hidden", "true");
+            card.classList.remove("out");
+            if (typeof done === "function") done();
+          }, 320));
+        }, hold));
+      } else {
+        setTimeout(() => {
+          overlay.classList.remove("show");
+          if (typeof done === "function") done();
+        }, hold);
+      }
+    }
+
+    function spawnFireworks() {
+      const fw = document.getElementById("finale-fw");
+      if (!fw) return;
+      fw.innerHTML = "";
+      const colors = ["#00f2fe", "#ffd166", "#7CFFB2", "#ff7eb6", "#fff"];
+      for (let i = 0; i < 28; i++) {
+        const s = document.createElement("span");
+        const angle = (Math.PI * 2 * i) / 28;
+        const dist = 40 + Math.random() * 90;
+        s.style.left = "50%";
+        s.style.top = "42%";
+        s.style.background = colors[i % colors.length];
+        s.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+        s.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+        s.style.animationDelay = (Math.random() * 0.25) + "s";
+        fw.appendChild(s);
+      }
+    }
+
+    function playStage5Finale(done) {
+      const overlay = document.getElementById("finale-overlay");
+      const yearEl = document.getElementById("finale-year");
+      const logoWrap = document.getElementById("finale-logo-wrap");
+      const logo = document.getElementById("finale-logo");
+      const congrats = document.getElementById("finale-congrats");
+      const sequence = ["1976", "1986", "1996", "2006", "2016", "2026", "50", "KENMEC"];
+      const imgSrc = (typeof STATION_LEVEL === "number" ? "../" : "./") + "assets/kenmec-50-main-visual.png";
+      logo.src = imgSrc;
+      logoWrap.classList.remove("on");
+      congrats.classList.remove("on");
+      yearEl.classList.remove("on");
+      yearEl.textContent = "";
+      document.getElementById("finale-fw").innerHTML = "";
+      overlay.classList.add("show");
+      overlay.setAttribute("aria-hidden", "false");
+      let i = 0;
+      function next() {
+        if (i < sequence.length) {
+          yearEl.classList.remove("on");
+          GC.trackTimeout(setTimeout(() => {
+            yearEl.textContent = sequence[i];
+            yearEl.classList.add("on");
+            i += 1;
+            GC.trackTimeout(setTimeout(next, 220));
+          }, 30));
+          return;
+        }
+        yearEl.classList.remove("on");
+        GC.trackTimeout(setTimeout(() => {
+          yearEl.textContent = "";
+          logoWrap.classList.add("on");
+          GC.trackTimeout(setTimeout(() => {
+            spawnFireworks();
+            congrats.classList.add("on");
+            GC.trackTimeout(setTimeout(() => {
+              overlay.classList.remove("show");
+              overlay.setAttribute("aria-hidden", "true");
+              if (typeof done === "function") done();
+            }, 900));
+          }, 700));
+        }, 120));
+      }
+      next();
+    }
+
+    function renderSuccessBox(level) {
+      const box = document.getElementById("stage-success");
+      if (!box) return;
+      const headline = SUCCESS_HEADLINES[level.id] || "闖關成功";
+      const isStation = typeof STATION_LEVEL === "number";
+      const incomplete = DATA.levels.filter((lv) => !progress[lv.id]);
+      const rewardText =
+        "完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。";
+      box.innerHTML =
+        '<div class="success-box">' +
+        "<strong>" + headline + "</strong>" +
+        '<p style="margin:8px 0 4px;font-size:0.95rem">第 ' + level.id + " 關｜" + level.title + "</p>" +
+        '<p class="passphrase-label">關主通關密語</p>' +
+        '<div class="code">「' + level.passphrase + '」</div>' +
+        '<p style="margin:10px 0 0;font-size:0.88rem;color:var(--muted)">請前往指定地點找到關主，向關主說出通關密語，請關主於護照蓋章。</p>' +
+        '<p style="margin:8px 0 0;font-size:0.85rem;color:var(--muted)">' + rewardText + "</p>" +
+        storageWarningHtml() +
+        (isStation
+          ? '<button type="button" class="btn btn-primary btn-sm" id="retry-station" style="margin-top:12px">重新挑戰本關</button>' +
+            '<p style="margin:12px 0 0;text-align:center"><a href="../../index.html" style="color:var(--accent)">← 返回活動說明</a></p>'
+          : '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px">' +
+            '<button type="button" class="btn btn-primary btn-sm" id="back-after-win">返回五關總覽</button>' +
+            (incomplete.length
+              ? '<button type="button" class="btn btn-ghost btn-sm" id="pick-other-level">選擇其他關卡</button>'
+              : '<button type="button" class="btn btn-ghost btn-sm" id="back-after-win-done">五關完成</button>') +
+            "</div>") +
+        "</div>";
+
+      const retry = document.getElementById("retry-station");
+      if (retry) retry.addEventListener("click", () => restartChallenge(level.id));
+      ["back-after-win", "pick-other-level", "back-after-win-done"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.addEventListener("click", () => {
+            if (GC) GC.cancelAllRuntime();
+            renderHub();
+          });
+        }
+      });
+      box.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
 
     const PIPE = {
       H: [0, 1, 0, 1],
@@ -1303,7 +1800,7 @@
       el.innerHTML = pipeSvgHtml(cell.type, cell.rot);
     }
 
-    const INLINE_PUZZLES = {"title":"廣運時光探險","subtitle":"50年的啟程 · 五關獨立挑戰 · 現場掃 QR 完成","reward":"完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。實境解謎闖關禮每人兌換限 1 次，護照遺失恕不補發。","playRules":"闖關護照將於活動日前預先發送給來賓，無須報到時領取。到達各關現場後，掃描該關專屬 QR Code 開始本關挑戰；各關網頁互不相連。解開謎題後向該關關主報告通關密語並在闖關護照蓋章，再前往其他關卡現場掃描其專屬 QR Code。完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。","storyArc":"從1976年創業起點出發，進入2026年AI液冷技術，回顧廣運五十年發展歷史，認識智慧工廠核心技術，展望下一個五十年與百年企業願景。","levels":[{"id":1,"title":"啟航輸送機","theme":"1976 · 創業起點","location":"303運動休息室","headline":"一切故事，就從這裡開始。","story":"時間回到1976年，一台自動輸送機正式啟動，也開啟了廣運集團的第一步。從這裡出發，廣運一步步累積技術與經驗，為日後的成長奠定堅實基礎。","intro":"一切故事，就從這裡開始。時間回到1976年，一台自動輸送機正式啟動，也開啟了廣運集團的第一步。","passphrase":"第一台輸送機","hint":"用手指點選方塊旋轉水管，讓起點與終點接通。"},{"id":2,"title":"液冷尋密碼","theme":"2026 · AI液冷","location":"319運動休息室","headline":"解開AI時代的關鍵技術。","story":"從輸送設備到AI液冷散熱，廣運將四十多年累積的自動化與機電整合能力，延伸至智慧資料中心的關鍵技術領域，持續開拓更多可能。","intro":"解開AI時代的關鍵技術。請依序完成三個液冷模組的參數校正，找出液冷系統的啟動密碼。","passphrase":"AI液冷啟動成功","hint":"擦拭濾鏡顯現算式，完成三個模組後組合 2000＋30－4＝2026。"},{"id":3,"title":"廣運歷史小測驗","theme":"五十年發展歷程","location":"廣運歷史牆","headline":"回顧五十年，一起見證廣運成長。","story":"五十年來，廣運走過創業、研發、綠能、智慧製造等不同發展階段，每一個重要里程碑，都見證著企業一步步成長，紀錄下廣運五十年的精彩歷程。","intro":"回顧五十年，一起見證廣運成長。與 AI 小幫手對話，完成歷史牆上的五道歷史小測驗。","passphrase":"榮耀半世紀，百年展願景","hint":"答案都在歷史牆；五題全部答對後向關主報告通關密語並蓋章。"},{"id":4,"title":"廣運AI智慧一點通","theme":"智慧工廠核心技術","location":"三樓活動現場後門","headline":"認識智慧工廠的核心技術。","story":"智慧工廠並不是單靠一項技術運作，而是整合智慧物流、智慧製造與AI、綠能等不同領域的核心技術，共同打造高效、智慧的生產環境，展現廣運持續推動產業與技術整合的實力。","intro":"認識智慧工廠的核心技術。從六個技術選項中，依題目找出正確分類。","passphrase":"智慧整合成功","hint":"三題分別找出智慧物流、智慧製造與AI、綠能相關技術。"},{"id":5,"title":"廣運成功密碼","theme":"展望下一個五十年","location":"329運動休息室","headline":"展望下一個五十年","story":"廣運歷經五十年的深耕與創新，將持續以全球布局為發展方向，朝百年企業的願景穩健邁進，一起開啟廣運下一個五十年的新篇章！","intro":"展望下一個五十年。請完成九宮格拼圖，一起開啟廣運邁向百年企業的新篇章。","passphrase":"展望百年願景","hint":"完成 3×3 主視覺拼圖後，向關主報告通關密語並蓋章。"}],"levelRules":{"1":[{"icon":"fa-rotate","text":"用手指點選畫面上的方塊。"},{"icon":"fa-puzzle-piece","text":"旋轉水管角度，將上下或左右管道接通。"},{"icon":"fa-rocket","text":"成功讓貨物從起點送達終點即可通關，向關主報告通關密語並在闖關護照蓋章。"}],"2":[{"icon":"fa-server","text":"依序完成三個液冷模組：主冷卻系統、循環泵浦、溫度校正。"},{"icon":"fa-hand-pointer","text":"用手指或滑鼠擦拭濾鏡，讓隱藏算式逐漸顯現（約擦除六成後可作答）。"},{"icon":"fa-calculator","text":"取得參數 2000、30、4 後，組合成正確算式啟動液冷系統。"}],"3":[{"icon":"fa-comments","text":"進入聊天室後，AI 會依序出五道歷史知識題。"},{"icon":"fa-puzzle-piece","text":"到現場廣運歷史牆尋找線索，解出每題答案。"},{"icon":"fa-keyboard","text":"五題全部答對後，向關主報告通關密語並在闖關護照蓋章。"}],"4":[{"icon":"fa-cubes","text":"畫面固定顯示六個技術選項，共三題分類挑戰。"},{"icon":"fa-hand-pointer","text":"依題目點選正確技術卡片，選滿指定數量後按確認。"},{"icon":"fa-check-double","text":"三題全對後即可通關，向關主報告密語並蓋章。"}],"5":[{"icon":"fa-image","text":"先預覽完整活動主視覺，再開始 3×3 九宮格拼圖。"},{"icon":"fa-arrows-up-down-left-right","text":"拖曳或點選兩片圖片交換位置，拼回完整主視覺。"},{"icon":"fa-unlock","text":"完成後向關主報告通關密語「展望百年願景」並蓋章。"}]},"liquidCooling":{"introTitle":"AI伺服器溫度持續上升！","introText":"請依序完成三個液冷模組的參數校正，找出液冷系統的啟動密碼。","startButton":"開始校正","wipeHint":"請繼續擦拭，找出完整算式。","wipeThreshold":0.6,"modules":[{"id":"main-cooling","name":"主冷卻系統","filter":"red","equation":"50 × 40＝？","choices":["1800","2000","2400"],"answer":"2000","success":"主冷卻系統校正完成","valueLabel":"已取得參數：2000"},{"id":"pump","name":"循環泵浦","filter":"yellow","equation":"6 × 5＝？","choices":["25","30","35"],"answer":"30","success":"循環泵浦校正完成","valueLabel":"已取得參數：30"},{"id":"temp","name":"溫度校正","filter":"blue","equation":"12 ÷ 3＝？","choices":["3","4","6"],"answer":"4","success":"溫度校正完成","valueLabel":"已取得參數：4"}],"final":{"values":["2000","30","4"],"operators":["＋","－","×","÷"],"correct":["＋","－"],"result":"2026","wrongHint":"啟動參數不正確，請重新排列運算符號。","successTitle":"液冷系統啟動成功"}},"smartFactoryOptions":[{"id":"agv","label":"AGV無人搬運車","icon":"🤖"},{"id":"conveyor","label":"自動輸送機","icon":"⚙️"},{"id":"warehouse","label":"自動倉儲","icon":"🏭"},{"id":"digital-twin","label":"數位孿生","icon":"🖥️"},{"id":"immersion-cooling","label":"浸沒式液冷","icon":"❄️"},{"id":"taichi-solar","label":"太極太陽能","icon":"☀️"}],"smartFactoryQuestions":[{"id":"smart-logistics","title":"找出所有「智慧物流」技術","hint":"想一想，哪些設備負責搬運、輸送或儲存物品？","requiredCount":3,"answers":["agv","conveyor","warehouse"]},{"id":"smart-manufacturing-ai","title":"找出所有「智慧製造與AI」技術","hint":"想一想，哪些技術可以進行模擬運算，或協助AI設備高效散熱？","requiredCount":2,"answers":["digital-twin","immersion-cooling"]},{"id":"green-energy","title":"找出所有「綠能」技術","hint":"哪一項技術與太陽能源及再生能源有關？","requiredCount":1,"answers":["taichi-solar"]}],"quizQuestions":[{"id":1,"tag":"創立起點","topic":"廣運的創立起點","subtitle":"廣運的創立起點","prompt":"廣運集團公司創立的起點是哪一天？","choices":["1976年7月12日","1987年3月1日","1996年7月12日","2007年7月12日"],"answers":["1976年7月12日"],"placeholder":"請選擇答案","wrongHint":"請再看看歷史牆上的創立日期喔。"},{"id":2,"tag":"AGV","topic":"自主研發無人搬運車","subtitle":"自主研發無人搬運車","prompt":"1993 至 1998 年期間，廣運技術迎來重大突破，成功自主研發出哪一種「無人搬運車系統」，開啟了智慧物流的新篇章？請透過圖形邏輯組合，拼出這組「3 個字母的英文簡稱」。","answers":["AGV"],"caseInsensitive":true,"placeholder":"輸入 3 個英文字母…","wrongHint":"提示：無人搬運車的英文縮寫。"},{"id":3,"tag":"太極","topic":"跨足綠能太陽能產業","subtitle":"跨足綠能太陽能產業","prompt":"在 2000 年代的全球布局中，廣運於 2007 年正式成立了哪一家著名的「能源子公司」，宣告全面跨足太陽能與綠色能源產業？請重組黑白格子，拼出這家子公司的「2 字中文名稱」。","answers":["太極"],"placeholder":"輸入 2 字中文…","wrongHint":"提示：2007 年成立的能源子公司。"},{"id":4,"tag":"人工智慧新時代","topic":"人工智慧新時代","subtitle":"數位孿生與智慧物流","prompt":"邁入 2023 年後，廣運利用倉儲數位孿生模擬將時間大幅縮短至 3 分鐘，並引進高階應用，全面進入了什麼高新技術驅動的智慧製造新時代？請解開圖形密碼，拼出這組「2 個字母的科技核心簡稱」。","answers":["AI"],"caseInsensitive":true,"placeholder":"輸入 2 個英文字母…","wrongHint":"提示：人工智慧的英文縮寫。"},{"id":5,"tag":"跨越50，邁向百年","topic":"跨越50，邁向百年","subtitle":"五十周年的永續承諾","prompt":"廣運 50 週年的活動口號為：「榮耀半世紀，＿＿＿＿＿」。這象徵全體員工凝聚向心力、攜手共創永續未來。提示：本次活動口號，中文 5 個字。","answers":["百年展願景"],"placeholder":"輸入 5 字中文…","wrongHint":"提示：本次活動口號，中文 5 個字。"}]};
+    const INLINE_PUZZLES = {"title":"廣運時光探險","subtitle":"50年的啟程 · 五關獨立挑戰 · 現場掃 QR 完成","reward":"完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。實境解謎闖關禮每人兌換限 1 次，護照遺失恕不補發。","playRules":"闖關護照將於活動日前預先發送給來賓，無須報到時領取。到達各關現場後，掃描該關專屬 QR Code 開始本關挑戰；各關網頁互不相連。解開謎題後向該關關主報告通關密語並在闖關護照蓋章，再前往其他關卡現場掃描其專屬 QR Code。完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。","storyArc":"從1976年創業起點出發，進入2026年AI液冷技術，回顧廣運五十年發展歷史，認識智慧工廠核心技術，展望下一個五十年與百年企業願景。","levels":[{"id":1,"title":"啟航輸送機","theme":"1976 · 創業起點","location":"303運動休息室","headline":"一切故事，就從這裡開始。","story":"時間回到1976年，一台自動輸送機正式啟動，也開啟了廣運集團的第一步。從這裡出發，廣運一步步累積技術與經驗，為日後的成長奠定堅實基礎。","intro":"一切故事，就從這裡開始。時間回到1976年，一台自動輸送機正式啟動，也開啟了廣運集團的第一步。","passphrase":"第一台輸送機","hint":"用手指點選方塊旋轉水管，讓起點與終點接通。"},{"id":2,"title":"液冷尋密碼","theme":"2026 · AI液冷","location":"319運動休息室","headline":"解開AI時代的關鍵技術。","story":"從輸送設備到AI液冷散熱，廣運將四十多年累積的自動化與機電整合能力，延伸至智慧資料中心的關鍵技術領域，持續開拓更多可能。","intro":"解開AI時代的關鍵技術。請依序完成三個液冷模組的參數校正，找出液冷系統的啟動密碼。","passphrase":"AI液冷啟動成功","hint":"擦拭濾鏡顯現算式，完成三個模組後組合 2000＋30－4＝2026。"},{"id":3,"title":"廣運歷史快問快答","theme":"五十年發展歷程","location":"廣運歷史牆","headline":"回顧五十年，一起見證廣運成長。","story":"五十年來，廣運走過創業、研發、綠能、智慧製造等不同發展階段，每一個重要里程碑，都見證著企業一步步成長，紀錄下廣運五十年的精彩歷程。","intro":"回顧五十年，一起見證廣運成長。完成五題歷史快問快答。","passphrase":"榮耀半世紀，百年展願景","hint":"五題四選一；全部答對後向關主報告通關密語並蓋章。"},{"id":4,"title":"修復智慧工廠","theme":"智慧工廠核心技術","location":"三樓活動現場後門","headline":"修復智慧工廠","story":"玩家抵達廣運智慧工廠時，系統因核心模組遺失而無法啟動。請協助重新配置智慧物流、智慧製造與AI、綠能三大系統，讓整座智慧工廠重新啟動。","intro":"智慧工廠系統故障，核心模組遺失。請重新配置三大系統，完成後讓整座工廠重新啟動。","passphrase":"智慧整合成功","hint":"依序修復智慧物流、智慧製造與AI、綠能三大系統。"},{"id":5,"title":"廣運成功密碼","theme":"展望下一個五十年","location":"329運動休息室","headline":"展望下一個五十年","story":"廣運歷經五十年的深耕與創新，將持續以全球布局為發展方向，朝百年企業的願景穩健邁進，一起開啟廣運下一個五十年的新篇章！","intro":"展望下一個五十年。請完成九宮格拼圖，一起開啟廣運邁向百年企業的新篇章。","passphrase":"展望百年願景","hint":"完成 3×3 主視覺拼圖後，向關主報告通關密語並蓋章。"}],"levelRules":{"1":[{"icon":"fa-eye","text":"觀察輸送機與物件的運作方式"},{"icon":"fa-list-ol","text":"依照畫面提示完成正確操作"},{"icon":"fa-stamp","text":"在時間內完成即可通過本關"}],"2":[{"icon":"fa-eraser","text":"用手指刮開畫面上的銀色區域"},{"icon":"fa-key","text":"找出隱藏在液冷畫面中的正確密碼"},{"icon":"fa-check","text":"輸入正確密碼即可通過本關"}],"3":[{"icon":"fa-list","text":"本關共有五題四選一題目"},{"icon":"fa-check-double","text":"選出正確答案後即可進入下一題"},{"icon":"fa-rotate-left","text":"五題全部答對即可通過本關"}],"4":[{"icon":"fa-industry","text":"依序修復智慧工廠的三大系統"},{"icon":"fa-gears","text":"將六項技術配置到正確的系統"},{"icon":"fa-bolt","text":"完成後按下「啟動智慧工廠」即可通關"}],"5":[{"icon":"fa-border-all","text":"移動九宮格拼圖完成正確圖像"},{"icon":"fa-image","text":"從完成的圖片中找出通關線索"},{"icon":"fa-unlock","text":"輸入正確通關密語即可完成挑戰"}]},"liquidCooling":{"introTitle":"AI伺服器溫度持續上升！","introText":"請依序完成三個液冷模組的參數校正，找出液冷系統的啟動密碼。","startButton":"開始校正","wipeHint":"請繼續擦拭，找出完整算式。","wipeThreshold":0.6,"modules":[{"id":"main-cooling","name":"主冷卻系統","filter":"red","equation":"50 × 40＝？","choices":["1800","2000","2400"],"answer":"2000","success":"主冷卻系統校正完成","valueLabel":"已取得參數：2000"},{"id":"pump","name":"循環泵浦","filter":"yellow","equation":"6 × 5＝？","choices":["25","30","35"],"answer":"30","success":"循環泵浦校正完成","valueLabel":"已取得參數：30"},{"id":"temp","name":"溫度校正","filter":"blue","equation":"12 ÷ 3＝？","choices":["3","4","6"],"answer":"4","success":"溫度校正完成","valueLabel":"已取得參數：4"}],"final":{"values":["2000","30","4"],"operators":["＋","－","×","÷"],"correct":["＋","－"],"result":"2026","wrongHint":"啟動參數不正確，請重新排列運算符號。","successTitle":"液冷系統啟動成功"}},"smartFactoryOptions":[{"id":"agv","label":"AGV無人搬運車","icon":"🤖"},{"id":"conveyor","label":"自動輸送機","icon":"⚙️"},{"id":"warehouse","label":"自動倉儲","icon":"🏭"},{"id":"digital-twin","label":"數位孿生","icon":"🖥️"},{"id":"immersion-cooling","label":"浸沒式液冷","icon":"❄️"},{"id":"taichi-solar","label":"太極太陽能","icon":"☀️"}],"smartFactoryQuestions":[{"id":"smart-logistics","title":"修復智慧物流系統","hint":"請將正確設備安裝至物流系統。","requiredCount":3,"answers":["agv","conveyor","warehouse"]},{"id":"smart-manufacturing-ai","title":"修復智慧製造與AI系統","hint":"請將正確模組安裝至智慧製造與AI系統。","requiredCount":2,"answers":["digital-twin","immersion-cooling"]},{"id":"green-energy","title":"修復綠能系統","hint":"請將正確模組安裝至綠能系統。","requiredCount":1,"answers":["taichi-solar"]}],"quizQuestions":[{"id":1,"tag":"創立起點","topic":"廣運的創立起點","subtitle":"廣運的創立起點","prompt":"廣運集團公司創立的起點是哪一天？","choices":["1976年7月12日","1978年7月12日","1980年7月12日","1976年12月7日"],"answers":["1976年7月12日"],"placeholder":"請選擇答案","wrongHint":"再想想！"},{"id":2,"tag":"海外布局","topic":"2006 年海外布局","subtitle":"2006 年海外布局","prompt":"2006 年，廣運海外布局拓展至哪一個國家？","choices":["越南","日本","美國","德國"],"answers":["越南"],"placeholder":"請選擇答案","wrongHint":"再想想！"},{"id":3,"tag":"核心技術","topic":"創立初期核心技術","subtitle":"創立初期核心技術","prompt":"廣運創立初期主要投入哪一項核心技術？","choices":["自動輸送設備","智慧醫療設備","電動車製造","金融科技"],"answers":["自動輸送設備"],"placeholder":"請選擇答案","wrongHint":"再想想！"},{"id":4,"tag":"生產基地","topic":"主要生產基地","subtitle":"主要生產基地","prompt":"除了台灣之外，廣運目前的主要生產基地位於哪些地區？","choices":["中國、越南","日本、韓國","美國、加拿大","德國、新加坡"],"answers":["中國、越南"],"placeholder":"請選擇答案","wrongHint":"再想想！"},{"id":5,"tag":"跨越50，邁向百年","topic":"AGV 應用場景","subtitle":"AGV 應用場景","prompt":"AGV（無人搬運車）主要應用於哪一種場景？","choices":["工廠物流搬運","餐廳送餐","飛機駕駛","家庭清潔"],"answers":["工廠物流搬運"],"placeholder":"請選擇答案","wrongHint":"再想想！"}]};
 
     function init() {
       try {
@@ -1312,7 +1809,8 @@
           throw new Error("闖關資料格式不完整");
         }
         setupBgm();
-        startLevel(STATION_LEVEL);
+        openLevelModal(STATION_LEVEL);
+        updateGlobalProgress(STATION_LEVEL);
       } catch (error) {
         showLoadError();
       }
@@ -1371,6 +1869,7 @@
     function renderHub() {
       document.getElementById("hub").classList.remove("hidden");
       document.getElementById("game-screen").classList.add("hidden");
+      if (typeof STATION_LEVEL === "number") updateGlobalProgress(STATION_LEVEL);
       document.getElementById("progress-text").textContent = "已完成 " + completedCount() + " / 5 關";
       document.getElementById("complete-banner").classList.toggle("hidden", !allComplete());
       const hubRules = document.getElementById("hub-rules");
@@ -1399,19 +1898,32 @@
 
     function openLevelModal(levelId) {
       pendingLevel = levelId;
+      startLocked = false;
+      challengeFailed = false;
+      levelCleared = false;
+      if (GC) GC.cancelAllRuntime();
+      if (memoryTimer) clearInterval(memoryTimer);
+      updateGlobalProgress(levelId);
       const lv = DATA.levels[levelId - 1];
       const rules = DATA.levelRules[String(levelId)] || [];
-      document.getElementById("modal-title").textContent = "第 " + levelId + " 關｜" + lv.title;
-      document.getElementById("modal-intro").innerHTML = (lv.headline ? "<strong>" + lv.headline + "</strong><br>" : "") + (lv.story || lv.intro || "");
+      const dur = (typeof GAME_DURATION_SECONDS === "number" ? GAME_DURATION_SECONDS : 180);
+      document.getElementById("modal-title").textContent = "遊戲規則";
+      document.getElementById("modal-intro").innerHTML =
+        "<strong>第 " + levelId + " 關｜" + lv.title + "</strong>" +
+        '<div class="limit-chip">本關限時 ' + dur + " 秒</div>";
       const steps = document.getElementById("modal-steps");
       steps.innerHTML = "";
       rules.forEach((step, i) => {
         const card = document.createElement("div");
         card.className = "step-card";
-        card.innerHTML = '<i class="fa-solid ' + step.icon + '"></i><p><strong>步驟 ' + (i + 1) + ".</strong> " + step.text + "</p>";
+        card.innerHTML =
+          '<i class="fa-solid ' + (step.icon || "fa-circle") + '"></i>' +
+          "<p><strong>" + (i + 1) + ".</strong> " + step.text + "</p>";
         steps.appendChild(card);
       });
       document.getElementById("rules-modal").classList.add("show");
+      const startBtn = document.getElementById("modal-start");
+      if (startBtn) startBtn.disabled = false;
       renderLevelNav();
     }
 
@@ -1421,54 +1933,91 @@
       renderLevelNav();
     }
 
-    function startLevel(levelId) {
-      closeModal();
+    function beginChallengeAfterReady(levelId) {
+      document.getElementById("rules-modal").classList.remove("show");
+      pendingLevel = levelId;
+      activeLevelId = levelId;
       document.getElementById("hub").classList.add("hidden");
       const screen = document.getElementById("game-screen");
       screen.classList.remove("hidden");
       const lv = DATA.levels[levelId - 1];
+      const gen = runtimeGeneration;
+      updateGlobalProgress(levelId);
+      const dur = (typeof GAME_DURATION_SECONDS === "number" ? GAME_DURATION_SECONDS : 180);
+      const mm = String(Math.floor(dur / 60)).padStart(2, "0");
+      const ss = String(dur % 60).padStart(2, "0");
       screen.innerHTML =
         '<div class="screen-head">' +
         '<button type="button" class="btn btn-ghost btn-sm" id="back-hub">← 本關說明</button>' +
+        '<span class="challenge-timer" id="challenge-timer">' + mm + ":" + ss + "</span>" +
         '<span class="tag">第 ' + levelId + " 關</span></div>" +
         "<h2>" + lv.title + "</h2>" +
         (lv.headline ? '<p class="story-headline">' + lv.headline + "</p>" : "") +
         (lv.story ? '<p class="story-body">' + lv.story + "</p>" : "") +
-        '<p style="color:var(--muted);font-size:0.88rem;margin:0 0 12px">📍 ' + lv.location + "</p>" +
         '<div id="stage-body"></div>' +
         '<div id="stage-success"></div>';
 
       document.getElementById("back-hub").addEventListener("click", () => {
+        if (GC) GC.cancelAllRuntime();
         if (memoryTimer) clearInterval(memoryTimer);
-        openLevelModal(STATION_LEVEL);
+        if (typeof STATION_LEVEL === "number") openLevelModal(STATION_LEVEL);
+        else renderHub();
       });
 
+      // Init game only after ready countdown finishes; then start timer.
       if (levelId === 1) initLevel1();
       if (levelId === 2) initLevel2();
       if (levelId === 3) initLevel3();
       if (levelId === 4) initLevel4();
       if (levelId === 5) initLevel5();
+      if (gen !== runtimeGeneration) return;
+      startCountdownForLevel(levelId);
+      startLocked = false;
+    }
+
+    function startLevel(levelId) {
+      if (startLocked) return;
+      startLocked = true;
+      const startBtn = document.getElementById("modal-start");
+      if (startBtn) startBtn.disabled = true;
+      challengeFailed = false;
+      levelCleared = false;
+      if (GC) {
+        GC.initAudio();
+        GC.playStartSound();
+        GC.cancelAllRuntime();
+      }
+      document.getElementById("rules-modal").classList.remove("show");
+      const ready = document.getElementById("ready-overlay");
+      if (GC && ready) {
+        GC.startReadyCountdown(ready, () => beginChallengeAfterReady(levelId));
+      } else {
+        beginChallengeAfterReady(levelId);
+      }
     }
 
     function showLevelSuccess(level) {
+      if (challengeFailed || levelCleared) return;
+      if (GC && !GC.canContinue() && GC.getTimerState().failed) return;
+      levelCleared = true;
+      challengeFailed = false;
+      if (GC) {
+        GC.markCleared();
+        GC.playSuccessSound();
+      }
+      if (memoryTimer) clearInterval(memoryTimer);
       markComplete(level.id);
-      const box = document.getElementById("stage-success");
-      box.innerHTML =
-        '<div class="success-box">' +
-        "<strong>✅ 闖關成功</strong>" +
-        '<p style="margin:8px 0 4px;font-size:0.95rem">第 ' + level.id + " 關｜" + level.title + "</p>" +
-        '<p class="passphrase-label">關主通關密語</p>' +
-        '<div class="code">「' + level.passphrase + '」</div>' +
-        '<p style="margin:10px 0 0;font-size:0.88rem;color:var(--muted)">請前往指定地點找到關主，向關主說出通關密語，請關主於護照蓋章。</p>' +
-        '<p style="margin:8px 0 0;font-size:0.85rem;color:var(--muted)">完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。</p>' +
-        storageWarningHtml() +
-        '<button type="button" class="btn btn-primary btn-sm" id="retry-station" style="margin-top:12px">重新挑戰本關</button>' +
-        '<p style="margin:12px 0 0;text-align:center"><a href="../index.html" style="color:var(--accent)">← 返回活動說明</a></p>' +
-        "</div>";
-      document.getElementById("retry-station").addEventListener("click", () => {
-        window.location.reload();
+      updateGlobalProgress(level.id);
+      renderLevelNav();
+      pauseGameInteractions();
+
+      showAchievementBadge(level.id, () => {
+        if (level.id === 5) {
+          playStage5Finale(() => renderSuccessBox(level));
+        } else {
+          renderSuccessBox(level);
+        }
       });
-      box.scrollIntoView({ behavior: "smooth", block: "center" });
     }
 
     function scrollFieldIntoView(el) {
@@ -1903,7 +2452,7 @@
 
       level1Won = true;
       animateCargo(route);
-      setTimeout(() => showLevelSuccess(DATA.levels[0]), route.length * 420 + 300);
+      GC.trackTimeout(setTimeout(() => { if (!challengeFailed) showLevelSuccess(DATA.levels[0]); }, route.length * 420 + 300));
     }
 
     function animateCargo(path) {
@@ -2037,14 +2586,16 @@
             btn.textContent = c;
             btn.disabled = !on;
             btn.addEventListener("click", () => {
-              if (!unlocked || liquidCoolingState.completedModules[index]) return;
+              if (!unlocked || liquidCoolingState.completedModules[index] || challengeFailed) return;
               if (String(c) === String(mod.answer)) {
                 liquidCoolingState.completedModules[index] = true;
                 liquidCoolingState.moduleValues[index] = mod.answer;
                 document.getElementById("lc-feedback").textContent = mod.success + " · " + mod.valueLabel;
-                setTimeout(() => renderModule(index + 1), 700);
+                if (GC) GC.playCorrectSound();
+                GC.trackTimeout(setTimeout(() => renderModule(index + 1), 700));
               } else {
                 document.getElementById("lc-feedback").textContent = "參數錯誤，請重新計算。";
+                if (GC) GC.playWrongSound();
                 btn.classList.remove("shake");
                 void btn.offsetWidth;
                 btn.classList.add("shake");
@@ -2079,6 +2630,10 @@
 
         function onDown(e) {
           drawing = true;
+          // 保證觸控按下後移動事件持續被接收，避免擦拭完成後仍無法解鎖選項
+          try {
+            stage.setPointerCapture(e.pointerId);
+          } catch (err) {}
           const p = e.touches ? e.touches[0] : e;
           erase(p.clientX, p.clientY);
           e.preventDefault();
@@ -2089,7 +2644,12 @@
           erase(p.clientX, p.clientY);
           e.preventDefault();
         }
-        function onUp() { drawing = false; }
+        function onUp(e) {
+          drawing = false;
+          try {
+            stage.releasePointerCapture(e.pointerId);
+          } catch (err) {}
+        }
 
         stage.addEventListener("pointerdown", onDown);
         stage.addEventListener("pointermove", onMove);
@@ -2125,14 +2685,16 @@
           const correct = fin.correct || ["＋", "－"];
           if (o1 === correct[0] && o2 === correct[1]) {
             liquidCoolingState.isCompleted = true;
+            if (GC) GC.playCorrectSound();
             root.innerHTML =
               '<div class="lc-status" style="color:var(--accent)">黃色警示解除 · 系統轉為藍色穩定</div>' +
               '<div class="lc-stage cool" style="display:grid;place-items:center;color:var(--accent);font-weight:700">伺服器溫度下降中</div>' +
               '<div class="lc-flow"></div>' +
               "<h3 style='text-align:center;color:var(--accent)'>" + (fin.successTitle || "液冷系統啟動成功") + "</h3>" +
               '<p class="story-body">闖關成功</p>';
-            setTimeout(() => showLevelSuccess(DATA.levels[1]), 1100);
+            GC.trackTimeout(setTimeout(() => { if (!challengeFailed) showLevelSuccess(DATA.levels[1]); }, 1100));
           } else {
+            if (GC) GC.playWrongSound();
             document.getElementById("lc-final-hint").textContent = fin.wrongHint || "啟動參數不正確，請重新排列運算符號。";
           }
         });
@@ -2141,201 +2703,352 @@
       renderIntro();
     }
 
-    /* ===== Level 3: AI Chat quiz (supports choices) ===== */
+    /* ===== Level 3: History quick quiz ===== */
     function initLevel3() {
       const body = document.getElementById("stage-body");
       const quiz = DATA.quizQuestions || [];
       let current = 0;
+      let locked = false;
+      const gen = runtimeGeneration;
 
-      body.innerHTML =
-        '<div class="chat-box">' +
-        '<div class="chat-header"><div class="bot-avatar"><i class="fa-solid fa-robot"></i></div>' +
-        '<div><strong>廣運 AI 小幫手</strong><br><small style="color:var(--muted)">線上協助中 · 廣運歷史小測驗</small></div></div>' +
-        '<div class="chat-messages" id="chat-msgs"></div>' +
-        '<div id="chat-choice-area"></div>' +
-        '<div class="chat-input-row" id="chat-input-row">' +
-        '<input type="text" id="chat-input" placeholder="輸入答案…" autocomplete="off" maxlength="40" />' +
-        '<button type="button" id="chat-send"><i class="fa-solid fa-paper-plane"></i></button>' +
-        "</div></div>";
+      function renderQuestion() {
+        if (gen !== runtimeGeneration) return;
+        const q = quiz[current];
+        if (!q) return;
+        const choices = GC ? GC.shuffle(q.choices || []) : (q.choices || []).slice();
+        body.innerHTML =
+          '<div class="chat-box">' +
+          '<div class="chat-header"><div class="bot-avatar"><i class="fa-solid fa-landmark"></i></div>' +
+          '<div><strong>廣運歷史快問快答</strong><br><small style="color:var(--muted)">第 ' + (current + 1) + " / " + quiz.length + ' 題</small></div></div>' +
+          '<div style="padding:14px">' +
+          '<div class="hq-dots">' + quiz.map((_, index) => '<div class="hq-dot' + (index < current ? " done" : "") + '"></div>').join("") + "</div>" +
+          '<p class="hq-prompt">' + q.prompt + "</p>" +
+          '<div class="chat-choices" id="hq-choices"></div>' +
+          '<div class="hq-ok" id="hq-ok"></div>' +
+          '<div class="hq-wrong" id="hq-wrong"></div>' +
+          "</div></div>";
 
-      const msgs = document.getElementById("chat-msgs");
-      const input = document.getElementById("chat-input");
-      const inputRow = document.getElementById("chat-input-row");
-      const choiceArea = document.getElementById("chat-choice-area");
-
-      function addBubble(text, who) {
-        const b = document.createElement("div");
-        b.className = "bubble " + who;
-        b.textContent = text;
-        msgs.appendChild(b);
-        msgs.scrollTop = msgs.scrollHeight;
-      }
-
-      function normalizeAnswer(text, question) {
-        const trimmed = text.trim();
-        if (question.caseInsensitive) return trimmed.replace(/\s+/g, "").toUpperCase();
-        return trimmed.replace(/\s+/g, "");
-      }
-
-      function isCorrect(text, question) {
-        const norm = normalizeAnswer(text, question);
-        return question.answers.some((answer) => {
-          const expected = question.caseInsensitive
-            ? answer.replace(/\s+/g, "").toUpperCase()
-            : answer.replace(/\s+/g, "");
-          return norm === expected;
+        const wrap = document.getElementById("hq-choices");
+        choices.forEach((choice) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "hq-choice";
+          btn.textContent = choice;
+          btn.addEventListener("click", () => {
+            if (locked || challengeFailed || levelCleared) return;
+            if (q.answers.includes(choice)) {
+              locked = true;
+              btn.classList.add("correct-flash");
+              document.getElementById("hq-ok").textContent = "正確！";
+              if (GC) GC.playCorrectSound();
+              wrap.querySelectorAll("button").forEach((node) => node.classList.add("locked"));
+              GC.trackTimeout(setTimeout(() => {
+                if (gen !== runtimeGeneration) return;
+                current += 1;
+                locked = false;
+                if (current >= quiz.length) {
+                  showLevelSuccess(DATA.levels[2]);
+                } else {
+                  renderQuestion();
+                }
+              }, 600));
+              return;
+            }
+            locked = true;
+            document.getElementById("hq-wrong").textContent = q.wrongHint || "再想想！";
+            if (GC) GC.playWrongSound();
+            wrap.querySelectorAll("button").forEach((node) => node.classList.add("locked"));
+            btn.classList.add("wrong-flash");
+            GC.trackTimeout(setTimeout(() => {
+              if (gen !== runtimeGeneration) return;
+              document.getElementById("hq-wrong").textContent = "";
+              wrap.querySelectorAll("button").forEach((node) => node.classList.remove("locked", "wrong-flash"));
+              locked = false;
+            }, 800));
+          });
+          wrap.appendChild(btn);
         });
       }
 
-      function handleAnswer(val) {
-        const q = quiz[current];
-        if (!q || !val) return;
-        addBubble(val, "user");
-        if (isCorrect(val, q)) {
-          if (current < quiz.length - 1) {
-            setTimeout(() => addBubble("✅ 答對了！", "bot"), 350);
-            current += 1;
-            setTimeout(() => askQuestion(current), 900);
-            return;
-          }
-          setTimeout(() => addBubble("✅ 答對了！", "bot"), 350);
-          setTimeout(() => addBubble("🎉 五題全部答對！請向關主報告通關密語並蓋章！", "bot"), 900);
-          setTimeout(() => showLevelSuccess(DATA.levels[2]), 1800);
-          input.disabled = true;
-          const sendBtn = document.getElementById("chat-send");
-          if (sendBtn) sendBtn.disabled = true;
-          choiceArea.innerHTML = "";
-          return;
-        }
-        setTimeout(
-          () => addBubble((q.wrongHint || "好像還不太對耶") + "\n再仔細看看歷史牆上的線索喔。", "bot"),
-          450
-        );
-      }
-
-      function askQuestion(index) {
-        const q = quiz[index];
-        if (!q) return;
-        addBubble("💡 第 " + q.id + " 題：【" + (q.topic || q.subtitle) + "】\n\n" + q.prompt, "bot");
-        choiceArea.innerHTML = "";
-        if (q.choices && q.choices.length) {
-          inputRow.classList.add("hidden");
-          const wrap = document.createElement("div");
-          wrap.className = "chat-choices";
-          q.choices.forEach((c) => {
-            const btn = document.createElement("button");
-            btn.type = "button";
-            btn.textContent = c;
-            btn.addEventListener("click", () => handleAnswer(c));
-            wrap.appendChild(btn);
-          });
-          choiceArea.appendChild(wrap);
-        } else {
-          inputRow.classList.remove("hidden");
-          input.placeholder = q.placeholder || "輸入答案…";
-          input.focus();
-        }
-      }
-
-      addBubble(
-        "你好！我是廣運 AI 小幫手\n歡迎來到【廣運歷史小測驗】！\n\n提示：答案都在廣運歷史牆\n本關共有五道題。",
-        "bot"
-      );
-      setTimeout(() => askQuestion(0), 500);
-
-      document.getElementById("chat-send").addEventListener("click", () => {
-        const val = input.value.trim();
-        if (!val) return;
-        input.value = "";
-        handleAnswer(val);
-      });
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          const val = input.value.trim();
-          if (!val) return;
-          input.value = "";
-          handleAnswer(val);
-        }
-      });
-      input.addEventListener("focus", () => scrollFieldIntoView(input));
+      renderQuestion();
     }
 
-    /* ===== Level 4: Smart factory classification ===== */
+    /* ===== Level 4: Smart factory repair ===== */
     function initLevel4() {
       const options = DATA.smartFactoryOptions || [];
       const questions = DATA.smartFactoryQuestions || [];
-      let qIndex = 0;
-      let selected = new Set();
       const body = document.getElementById("stage-body");
+      const systemLabels = {
+        "smart-logistics": "智慧物流",
+        "smart-manufacturing-ai": "智慧製造與AI",
+        "green-energy": "綠能系統"
+      };
+      const systemClasses = {
+        "smart-logistics": "online-logistics",
+        "smart-manufacturing-ai": "online-ai",
+        "green-energy": "online-energy"
+      };
+      const systemIcons = {
+        "smart-logistics": "🚚",
+        "smart-manufacturing-ai": "🧠",
+        "green-energy": "☀️"
+      };
+      const completeMessages = {
+        "smart-logistics": "智慧物流系統修復完成",
+        "smart-manufacturing-ai": "智慧製造與AI系統修復完成",
+        "green-energy": "綠能系統修復完成"
+      };
+      const bootSteps = [
+        "物流輸送帶開始運轉",
+        "AGV 開始移動",
+        "AI 液冷亮起",
+        "液冷管開始流動",
+        "太陽能板發光",
+        "整座工廠由灰色變成藍色"
+      ];
+      const state = {
+        qIndex: -1,
+        selectedCard: null,
+        draggingId: null,
+        installedBySystem: {},
+        installedOptions: new Set(),
+        finishedSystems: new Set(),
+        booting: false
+      };
+      questions.forEach((q) => {
+        state.installedBySystem[q.id] = [];
+      });
 
-      function render() {
-        const q = questions[qIndex];
-        if (!q) {
-          body.innerHTML = '<p class="story-headline">智慧工廠核心技術整合完成</p>';
-          setTimeout(() => showLevelSuccess(DATA.levels[3]), 900);
+      function playSystemCue(systemId) {
+        const cue = {
+          "smart-logistics": "物流模組已接線",
+          "smart-manufacturing-ai": "AI 模組已接線",
+          "green-energy": "綠能模組已接線"
+        }[systemId];
+        if (cue) console.info("[SFX placeholder]", cue);
+      }
+
+      function statusCardHtml(id) {
+        const total = (questions.find((q) => q.id === id) || {}).requiredCount || 1;
+        const done = (state.installedBySystem[id] || []).length;
+        const percent = Math.round(done / total * 100);
+        const online = state.finishedSystems.has(id);
+        return (
+          '<div class="sf-status-card ' + (online ? systemClasses[id] : "") + '">' +
+          '<div class="sf-status-head"><span>' + systemLabels[id] + '</span><span>' + percent + "%</span></div>" +
+          '<div class="sf-bar"><div class="sf-bar-fill" style="width:' + percent + '%;background:' + (online ? (id === "smart-manufacturing-ai" ? "#3b82f6" : "#22c55e") : "#6b7280") + '"></div></div>' +
+          '<div class="sf-status-meta"><span>' + "█".repeat(Math.max(1, Math.round(percent / 10))) + '</span><span>' + (online ? (id === "smart-manufacturing-ai" ? "🔵 ONLINE" : "🟢 ONLINE") : "⚫ OFFLINE") + "</span></div>" +
+          "</div>"
+        );
+      }
+
+      function factoryUnitHtml(q) {
+        const installed = state.installedBySystem[q.id] || [];
+        const online = state.finishedSystems.has(q.id);
+        return (
+          '<div class="sf-unit ' + (online ? systemClasses[q.id] : "") + '">' +
+          "<h4>" + systemLabels[q.id] + "</h4>" +
+          '<div class="sf-unit-icon">' + systemIcons[q.id] + "</div>" +
+          '<div class="sf-dropzone ' + (installed.length ? "ready " : "") + '" id="drop-' + q.id + '" data-system="' + q.id + '">' +
+          '<div class="installed-list">' + installed.map((id) => {
+            const opt = options.find((item) => item.id === id);
+            return '<span class="sf-chip">' + (opt ? opt.icon : "⚙️") + " " + (opt ? opt.label : id) + "</span>";
+          }).join("") + "</div>" +
+          '<div class="sf-dropnote">' +
+          (installed.length
+            ? "已安裝 " + installed.length + " / " + q.requiredCount + "，點這裡繼續安裝"
+            : "拖曳卡片到這裡，或點卡片後再點此安裝") +
+          "</div>" +
+          "</div></div>"
+        );
+      }
+
+      function showFactorySuccess() {
+        showLevelSuccess(DATA.levels[3]);
+        setTimeout(() => {
+          const box = document.querySelector("#stage-success .success-box");
+          if (!box || box.querySelector(".sf-extra-line")) return;
+          const note = document.createElement("p");
+          note.className = "sf-extra-line";
+          note.style.margin = "8px 0 0";
+          note.style.fontSize = "0.92rem";
+          note.style.color = "var(--text)";
+          note.textContent = "你成功修復了廣運智慧工廠！";
+          box.insertBefore(note, box.querySelector(".passphrase-label"));
+        }, 30);
+      }
+
+      function renderIntro() {
+        body.innerHTML =
+          '<div class="sf-shell">' +
+          '<div class="sf-intro">' +
+          '<div class="warn">⚠️</div>' +
+          "<strong>智慧工廠系統故障</strong>" +
+          '<p class="story-body" style="margin-bottom:8px">核心模組遺失</p>' +
+          '<p class="story-body">請重新配置三大系統</p>' +
+          '<button type="button" class="btn btn-primary" id="sf-start" style="margin-top:10px">開始修復</button>' +
+          "</div>" +
+          '<div class="sf-status-panel">' +
+          statusCardHtml("smart-logistics") +
+          statusCardHtml("smart-manufacturing-ai") +
+          statusCardHtml("green-energy") +
+          "</div></div>";
+        document.getElementById("sf-start").addEventListener("click", () => {
+          state.qIndex = 0;
+          renderSystem();
+        });
+      }
+
+      function installOption(systemId, optionId) {
+        const q = questions.find((item) => item.id === systemId);
+        const installed = state.installedBySystem[systemId];
+        if (!q || !installed || state.installedOptions.has(optionId)) return;
+        const hint = document.getElementById("sf-hint");
+        if (!q.answers.includes(optionId)) {
+          hint.textContent = "模組不相容，請重新配置。";
+          if (GC) GC.playWrongSound();
+          const card = document.querySelector('.sf-card[data-id="' + optionId + '"]');
+          if (card) {
+            card.classList.add("wrong-flash");
+            const clearWrong = () => card.classList.remove("wrong-flash", "selected");
+            if (GC) GC.trackTimeout(setTimeout(clearWrong, 420));
+            else setTimeout(clearWrong, 420);
+          }
+          state.selectedCard = null;
           return;
         }
-        selected = new Set();
+        installed.push(optionId);
+        state.installedOptions.add(optionId);
+        state.selectedCard = null;
+        if (installed.length === q.requiredCount) state.finishedSystems.add(systemId);
+        if (GC) GC.playCorrectSound();
+        playSystemCue(systemId);
+        renderSystem(true, completeMessages[systemId]);
+      }
+
+      function renderBootSequence() {
+        if (GC) GC.playFactoryBootSound();
         body.innerHTML =
+          '<div class="sf-shell">' +
+          '<div class="sf-factory">' +
+          '<div class="sf-factory-title">SMART FACTORY CONTROL CENTER</div>' +
+          '<div class="sf-plant">' +
+          questions.map((q) => factoryUnitHtml(q)).join("") +
+          "</div>" +
+          '<div class="sf-boot-success">智慧工廠啟動成功！</div>' +
+          "</div>" +
+          '<div class="sf-center">' +
+          '<p class="story-headline">工廠啟動程序執行中</p>' +
+          '<div class="sf-sequence" id="sf-sequence">' + bootSteps.map((step) => "<div>" + step + "</div>").join("") + "</div>" +
+          "</div></div>";
+        const nodes = [...document.querySelectorAll("#sf-sequence div")];
+        nodes.forEach((node, index) => {
+          GC.trackTimeout(setTimeout(() => node.classList.add("on"), index * 280));
+        });
+        GC.trackTimeout(setTimeout(() => {
+          if (!challengeFailed) showFactorySuccess();
+        }, 2000));
+      }
+
+      function renderSystem(showFlash, doneMessage) {
+        const q = questions[state.qIndex];
+        if (!q) {
+          renderBootSequence();
+          return;
+        }
+        const systemId = q.id;
+        const installed = state.installedBySystem[systemId] || [];
+        const canComplete = installed.length === q.requiredCount;
+        body.innerHTML =
+          '<div class="sf-shell">' +
+          '<div class="sf-layout">' +
+          '<div class="sf-status-panel">' +
+          statusCardHtml("smart-logistics") +
+          statusCardHtml("smart-manufacturing-ai") +
+          statusCardHtml("green-energy") +
+          "</div>" +
+          '<div class="sf-center">' +
           '<p class="story-headline">' + q.title + "</p>" +
           '<p class="sf-meta">' + q.hint + "</p>" +
-          '<p class="sf-meta" id="sf-count">已選 0 / ' + q.requiredCount + "</p>" +
+          '<p class="sf-meta">STEP ' + (state.qIndex + 1) + " / 3 ・ 已安裝 " + installed.length + " / " + q.requiredCount + "</p>" +
+          '<div class="sf-factory">' +
+          '<div class="sf-factory-title">SMART FACTORY CONTROL CENTER</div>' +
+          '<div class="sf-plant">' +
+          questions.map((item) => factoryUnitHtml(item)).join("") +
+          "</div></div>" +
+          (doneMessage ? '<p class="story-headline" style="margin-top:12px">' + doneMessage + "</p>" : "") +
           '<div class="sf-grid" id="sf-grid"></div>' +
-          '<p class="lc-hint" id="sf-hint"></p>' +
-          '<button type="button" class="btn btn-primary" id="sf-confirm" disabled>確認答案</button>';
+          '<p class="lc-hint" id="sf-hint">' + (state.selectedCard
+            ? ("已選擇「" + ((options.find((opt) => opt.id === state.selectedCard) || {}).label || "") + "」，請點目前系統框安裝。")
+            : "拖曳卡片到目標框，或點選卡片後再點目標框。") + "</p>" +
+          '<button type="button" class="btn btn-primary" id="sf-next" ' + (canComplete ? "" : "disabled") + ">" +
+          (state.qIndex === questions.length - 1 ? "啟動智慧工廠" : "修復下一個系統") +
+          "</button>" +
+          "</div></div></div>";
 
         const grid = document.getElementById("sf-grid");
         options.forEach((opt) => {
           const btn = document.createElement("button");
           btn.type = "button";
-          btn.className = "sf-card";
+          btn.className = "sf-card" + (state.selectedCard === opt.id ? " selected" : "") + (state.installedOptions.has(opt.id) ? " installed" : "");
           btn.dataset.id = opt.id;
+          btn.draggable = !state.installedOptions.has(opt.id);
           btn.innerHTML = '<span class="ico">' + (opt.icon || "") + '</span><span>' + opt.label + "</span>";
           btn.addEventListener("click", () => {
-            if (selected.has(opt.id)) {
-              selected.delete(opt.id);
-              btn.classList.remove("selected");
-            } else {
-              if (selected.size >= q.requiredCount) {
-                document.getElementById("sf-hint").textContent = "本題只需要選擇" + q.requiredCount + "個答案。";
-                return;
-              }
-              selected.add(opt.id);
-              btn.classList.add("selected");
-              document.getElementById("sf-hint").textContent = "";
-            }
-            document.getElementById("sf-count").textContent = "已選 " + selected.size + " / " + q.requiredCount;
-            document.getElementById("sf-confirm").disabled = selected.size !== q.requiredCount;
+            if (state.installedOptions.has(opt.id)) return;
+            state.selectedCard = state.selectedCard === opt.id ? null : opt.id;
+            renderSystem(false, doneMessage);
+          });
+          btn.addEventListener("dragstart", (e) => {
+            if (state.installedOptions.has(opt.id)) return;
+            state.draggingId = opt.id;
+            btn.classList.add("dragging");
+            e.dataTransfer.setData("text/plain", opt.id);
+          });
+          btn.addEventListener("dragend", () => {
+            state.draggingId = null;
+            btn.classList.remove("dragging");
+          });
+          btn.addEventListener("pointerdown", () => {
+            if (state.installedOptions.has(opt.id)) return;
+            state.draggingId = opt.id;
+          });
+          btn.addEventListener("pointerup", () => {
+            state.draggingId = null;
           });
           grid.appendChild(btn);
         });
 
-        document.getElementById("sf-confirm").addEventListener("click", () => {
-          const answers = new Set(q.answers);
-          const correctSelected = [...selected].filter((id) => answers.has(id));
-          const wrongSelected = [...selected].filter((id) => !answers.has(id));
-          if (wrongSelected.length === 0 && correctSelected.length === q.requiredCount) {
-            qIndex += 1;
-            render();
-            return;
-          }
-          document.getElementById("sf-hint").textContent = "部分選項不正確，請再想想。";
-          grid.querySelectorAll(".sf-card").forEach((el) => {
-            const id = el.dataset.id;
-            if (wrongSelected.includes(id)) {
-              el.classList.add("wrong-flash");
-              setTimeout(() => {
-                el.classList.remove("wrong-flash", "selected");
-                selected.delete(id);
-                document.getElementById("sf-count").textContent = "已選 " + selected.size + " / " + q.requiredCount;
-                document.getElementById("sf-confirm").disabled = selected.size !== q.requiredCount;
-              }, 450);
+        const activeDrop = document.getElementById("drop-" + systemId);
+        if (activeDrop) {
+          activeDrop.classList.add("targeting");
+          activeDrop.addEventListener("dragover", (e) => e.preventDefault());
+          activeDrop.addEventListener("dragenter", (e) => {
+            e.preventDefault();
+            activeDrop.classList.add("targeting");
+          });
+          activeDrop.addEventListener("dragleave", () => activeDrop.classList.remove("targeting"));
+          activeDrop.addEventListener("drop", (e) => {
+            e.preventDefault();
+            const id = state.draggingId || e.dataTransfer.getData("text/plain");
+            activeDrop.classList.add("targeting");
+            if (id) installOption(systemId, id);
+          });
+          activeDrop.addEventListener("click", () => {
+            if (state.selectedCard) {
+              installOption(systemId, state.selectedCard);
             }
           });
+        }
+
+        document.getElementById("sf-next").addEventListener("click", () => {
+          state.finishedSystems.add(systemId);
+          state.qIndex += 1;
+          renderSystem(false, completeMessages[systemId]);
         });
       }
 
-      render();
+      renderIntro();
     }
 
     /* ===== Level 5: 3x3 key visual puzzle ===== */
@@ -2343,7 +3056,6 @@
       const body = document.getElementById("stage-body");
       const imgSrc = (typeof STATION_LEVEL === "number" ? "../" : "./") + "assets/kenmec-50-main-visual.png";
       let order = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-      let hintUsed = false;
       let locked = false;
       let dragFrom = null;
       let tapFrom = null;
@@ -2404,9 +3116,10 @@
 
       function renderBoard() {
         body.innerHTML =
+          '<p class="sf-meta">提示圖會固定顯示在上方，可隨時對照。</p>' +
+          '<div class="puzzle-preview" id="pz-fixed-preview" style="background-image:url(\'' + imgSrc + '\')"></div>' +
           '<div class="puzzle-board" id="pz-board"></div>' +
-          '<p class="lc-hint" id="pz-msg"></p>' +
-          '<button type="button" class="btn btn-ghost btn-sm" id="pz-hint" style="width:100%;margin-top:8px">查看提示</button>';
+          '<p class="lc-hint" id="pz-msg"></p>';
         const board = document.getElementById("pz-board");
         order.forEach((tile, slot) => {
           const btn = document.createElement("button");
@@ -2483,25 +3196,6 @@
 
           board.appendChild(btn);
         });
-
-        document.getElementById("pz-hint").addEventListener("click", () => {
-          if (hintUsed || locked) return;
-          hintUsed = true;
-          const btn = document.getElementById("pz-hint");
-          btn.textContent = "提示已使用";
-          btn.disabled = true;
-          const overlay = document.createElement("div");
-          overlay.className = "puzzle-preview";
-          overlay.style.backgroundImage = "url('" + imgSrc + "')";
-          overlay.style.position = "fixed";
-          overlay.style.left = "50%";
-          overlay.style.top = "50%";
-          overlay.style.transform = "translate(-50%,-50%)";
-          overlay.style.zIndex = "80";
-          overlay.style.width = "min(92vw,360px)";
-          document.body.appendChild(overlay);
-          setTimeout(() => overlay.remove(), 3000);
-        });
       }
 
       function afterMove() {
@@ -2512,19 +3206,28 @@
         board.classList.add("complete");
         board.innerHTML = "";
         board.style.backgroundImage = "url('" + imgSrc + "')";
-        board.style.backgroundSize = "cover";
+        board.style.backgroundSize = "contain";
+        board.style.backgroundRepeat = "no-repeat";
         board.style.backgroundPosition = "center";
-        document.getElementById("pz-msg").textContent = "闖關成功";
-        const hint = document.getElementById("pz-hint");
-        if (hint) hint.remove();
-        setTimeout(() => showLevelSuccess(DATA.levels[4]), 900);
+        document.getElementById("pz-msg").textContent = "拼圖完成";
+        GC.trackTimeout(setTimeout(() => { if (!challengeFailed) showLevelSuccess(DATA.levels[4]); }, 900));
       }
 
       renderIntro();
     }
 
 
-        document.getElementById("modal-start").addEventListener("click", () => {
+        syncSoundButton();
+    const soundBtn = document.getElementById("sound-toggle");
+    if (soundBtn) {
+      soundBtn.addEventListener("click", () => {
+        if (!GC) return;
+        GC.initAudio();
+        GC.setSoundEnabled(!GC.isSoundEnabled());
+        syncSoundButton();
+      });
+    }
+    document.getElementById("modal-start").addEventListener("click", () => {
       if (pendingLevel) startLevel(pendingLevel);
     });
     document.getElementById("modal-cancel").addEventListener("click", closeModal);
