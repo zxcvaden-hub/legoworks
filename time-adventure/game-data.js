@@ -31,7 +31,7 @@ window.GAME_DATA = {
       "intro": "AI伺服器過熱，液冷核心密碼遺失，快找回它！❄️",
       "passphrase": "AI液冷啟動成功",
       "hint": "擦拭濾鏡顯現算式，完成三個模組後組合 2000＋30－4＝2026。",
-      "howToPlay": "👉 用手指刮開銀漆區域，找出密碼並輸入完成挑戰。🔍",
+      "howToPlay": "👉 用手指刮開覆蓋區域，找出密碼並輸入完成挑戰。🔍",
       "readyMessage": "❄️ 找回液冷核心，拯救AI系統！"
     },
     {
@@ -44,7 +44,7 @@ window.GAME_DATA = {
       "intro": "走進廣運五十年，解開每個重要歷史時刻！📖",
       "passphrase": "立足台灣，布局全球",
       "hint": "五題四選一；全部答對後向關主報告通關密語並蓋章。",
-      "howToPlay": "👉 五題四選一，全部答對即可完成歷史挑戰。✅",
+      "howToPlay": "👉 選出正確答案，全部答對即可完成歷史挑戰✅",
       "readyMessage": "📚 你準備好接受歷史挑戰了嗎？"
     },
     {
@@ -92,7 +92,7 @@ window.GAME_DATA = {
     "2": [
       {
         "icon": "fa-eraser",
-        "text": "用手指刮開畫面上的銀色區域"
+        "text": "用手指刮開畫面上的覆蓋區域"
       },
       {
         "icon": "fa-key",
@@ -150,8 +150,8 @@ window.GAME_DATA = {
     "introTitle": "AI伺服器溫度持續上升！",
     "introText": "請依序完成三個液冷模組的參數校正，找出液冷系統的啟動密碼。",
     "startButton": "開始校正",
-    "wipeHint": "請繼續擦拭，找出完整算式。",
-    "wipeThreshold": 0.6,
+    "wipeHint": "請刮開公式附近覆蓋層；露出一半以上即可作答。",
+    "wipeThreshold": 0.5,
     "modules": [
       {
         "id": "main-cooling",

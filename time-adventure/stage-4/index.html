@@ -2634,7 +2634,7 @@
     function initLevel2() {
       const cfg = DATA.liquidCooling || {};
       const modules = cfg.modules || [];
-      const threshold = cfg.wipeThreshold == null ? 0.6 : cfg.wipeThreshold;
+      const threshold = cfg.wipeThreshold == null ? 0.5 : cfg.wipeThreshold;
       const liquidCoolingState = {
         currentModule: 0,
         completedModules: [false, false, false],
@@ -2687,6 +2687,7 @@
         const W = 300, H = 220;
         let unlocked = false;
         let sampleTimer = 0;
+        let eqZone = { x0: 0, y0: 0, x1: W, y1: H };
 
         function drawBase() {
           const g = bctx.createLinearGradient(0, 0, 0, H);
@@ -2727,6 +2728,7 @@
           bctx.textAlign = "center";
           bctx.textBaseline = "middle";
           const tw = bctx.measureText(text).width;
+          const th = 28;
           const padX = 18;
           const padY = 30;
           const minX = padX + tw / 2;
@@ -2753,6 +2755,15 @@
           // 略降對比：擦開後仍可讀，未擦時較不易從濾鏡透出
           bctx.fillStyle = "rgba(210, 224, 236, 0.82)";
           bctx.fillText(text, tx, ty);
+          // 只計算公式附近擦開比例（露出一半即可作答）
+          const marginX = 14;
+          const marginY = 16;
+          eqZone = {
+            x0: Math.max(0, Math.floor(tx - tw / 2 - marginX)),
+            y0: Math.max(0, Math.floor(ty - th / 2 - marginY)),
+            x1: Math.min(W, Math.ceil(tx + tw / 2 + marginX)),
+            y1: Math.min(H, Math.ceil(ty + th / 2 + marginY))
+          };
         }
 
         function drawMask() {
@@ -2781,16 +2792,16 @@
         }
 
         function sampleCleared() {
-          const step = 8;
+          const step = 4;
           const data = mctx.getImageData(0, 0, W, H).data;
           let clear = 0, total = 0;
-          for (let y = 0; y < H; y += step) {
-            for (let x = 0; x < W; x += step) {
+          for (let y = eqZone.y0; y < eqZone.y1; y += step) {
+            for (let x = eqZone.x0; x < eqZone.x1; x += step) {
               total += 1;
               if (data[(y * W + x) * 4 + 3] < 40) clear += 1;
             }
           }
-          return clear / total;
+          return total ? clear / total : 0;
         }
 
         function setChoicesEnabled(on) {
