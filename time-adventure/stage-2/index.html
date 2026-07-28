@@ -3330,26 +3330,10 @@
           '<p class="story-headline">廣運下一個五十年的願景，藏在完整主視覺之中。</p>' +
           '<p class="story-body">請完成九宮格拼圖，一起開啟廣運邁向百年企業的新篇章。</p>' +
           '<button type="button" class="btn btn-primary" id="pz-start">開始拼圖</button>';
-        document.getElementById("pz-start").addEventListener("click", startPreview);
-      }
-
-      function startPreview() {
-        body.innerHTML =
-          '<p class="sf-meta">請記住圖片的位置</p>' +
-          '<div class="puzzle-preview" id="pz-preview" style="background-image:url(\'' + imgSrc + '\')">' +
-          '<div class="puzzle-countdown" id="pz-count">3</div></div>';
-        let n = 3;
-        const el = document.getElementById("pz-count");
-        const timer = setInterval(() => {
-          n -= 1;
-          if (n <= 0) {
-            clearInterval(timer);
-            shuffleSolvable();
-            renderBoard();
-          } else {
-            el.textContent = String(n);
-          }
-        }, 1000);
+        document.getElementById("pz-start").addEventListener("click", () => {
+          shuffleSolvable();
+          renderBoard();
+        });
       }
 
       function isSolved() {
@@ -3364,8 +3348,7 @@
 
       function renderBoard() {
         body.innerHTML =
-          '<p class="sf-meta">提示圖會固定顯示在上方，可隨時對照。</p>' +
-          '<div class="puzzle-preview" id="pz-fixed-preview" style="background-image:url(\'' + imgSrc + '\')"></div>' +
+          '<p class="sf-meta">拖曳或點選兩格交換，完成九宮格拼圖。</p>' +
           '<div class="puzzle-board" id="pz-board"></div>' +
           '<p class="lc-hint" id="pz-msg"></p>';
         const board = document.getElementById("pz-board");
