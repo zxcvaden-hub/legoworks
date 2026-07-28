@@ -291,6 +291,20 @@
     });
   }
 
+  function playReadyBeep(stepIndex, total) {
+    // 3 → 2 → 1：短逼聲；GO：較高較長
+    withAudio((ctx) => {
+      const t0 = ctx.currentTime;
+      const isGo = stepIndex >= total - 1;
+      if (isGo) {
+        playToneAt(ctx, 660, 0.08, "square", 0.12, t0);
+        playToneAt(ctx, 880, 0.12, "square", 0.14, t0 + 0.09);
+      } else {
+        playToneAt(ctx, 740, 0.09, "square", 0.13, t0);
+      }
+    });
+  }
+
   function startReadyCountdown(overlayEl, onDone) {
     if (!overlayEl) {
       if (typeof onDone === "function") onDone();
@@ -313,6 +327,7 @@
       label.classList.remove("pop");
       void label.offsetWidth;
       label.classList.add("pop");
+      playReadyBeep(i, seq.length);
       i += 1;
       trackTimeout(setTimeout(step, GAME_CONFIG.readyStepMs));
     }
@@ -370,6 +385,7 @@
     playCountdownSound,
     playSuccessSound,
     playFactoryBootSound,
+    playReadyBeep,
     startReadyCountdown,
     progressBars,
     shuffle
