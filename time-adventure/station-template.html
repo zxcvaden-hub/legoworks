@@ -2546,18 +2546,19 @@
     });
     document.getElementById("modal-cancel").addEventListener("click", closeModal);
     const resetBtn = document.getElementById("reset-btn");
-    if (resetBtn) resetBtn.addEventListener("click", () => {
-      if (confirm("確定重置所有闖關進度？")) {
-        try {
-          localStorage.removeItem(STORAGE_KEY);
-        } catch {
-          storageAvailable = false;
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        if (confirm("確定重置所有闖關進度？")) {
+          try {
+            localStorage.removeItem(STORAGE_KEY);
+          } catch {
+            storageAvailable = false;
+          }
+          memoryProgress = {};
+          progress = {};
+          renderHub();
         }
-        memoryProgress = {};
-        progress = {};
-        renderHub();
-      }
-    });
+      });
     }
 
     init();

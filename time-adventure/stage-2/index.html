@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0A2540" />
   <title>廣運時光探險｜第2關 液冷尋密碼</title>
   <link rel="stylesheet" href="../font-icons.css" />
-  <script src="./adventure.js"></script>
+  <script src="../adventure.js"></script>
   <style>
     :root {
       --bg-deep: #0a2540;
@@ -2529,18 +2529,19 @@
     });
     document.getElementById("modal-cancel").addEventListener("click", closeModal);
     const resetBtn = document.getElementById("reset-btn");
-    if (resetBtn) resetBtn.addEventListener("click", () => {
-      if (confirm("確定重置所有闖關進度？")) {
-        try {
-          localStorage.removeItem(STORAGE_KEY);
-        } catch {
-          storageAvailable = false;
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        if (confirm("確定重置所有闖關進度？")) {
+          try {
+            localStorage.removeItem(STORAGE_KEY);
+          } catch {
+            storageAvailable = false;
+          }
+          memoryProgress = {};
+          progress = {};
+          renderHub();
         }
-        memoryProgress = {};
-        progress = {};
-        renderHub();
-      }
-    });
+      });
     }
 
     init();
