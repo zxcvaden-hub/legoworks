@@ -16,10 +16,12 @@
 | GitHub repo | [`zxcvaden-hub/kenmec`](https://github.com/zxcvaden-hub/kenmec) | [`zxcvaden-hub/legoworks`](https://github.com/zxcvaden-hub/legoworks) |
 | 智能客服 | https://zxcvaden-hub.github.io/kenmec/ | https://zxcvaden-hub.github.io/legoworks/ |
 | QR Code | https://zxcvaden-hub.github.io/kenmec/qr.html | https://zxcvaden-hub.github.io/legoworks/qr.html |
-| 時光探險 | 依 kenmec 現場部署為準 | https://zxcvaden-hub.github.io/legoworks/time-adventure/ |
+| 時光探險 | 依 kenmec 現場部署為準 | https://zxcvaden-hub.github.io/legoworks/time-adventure/（0728 UX／stage-only） |
 | 專屬說明 | [`README-正式版-kenmec.md`](./README-正式版-kenmec.md) | [`README-測試版-legoworks.md`](./README-測試版-legoworks.md) |
 
 上傳步驟見：[`README-上傳說明.md`](./README-上傳說明.md)
+
+時光探險維護細節：[`time-adventure/README.md`](./time-adventure/README.md)（網址只改 `config.js` 的 `SITE_BASE_URL`）
 
 ---
 
