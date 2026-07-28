@@ -1006,11 +1006,28 @@
       75% { transform: translateX(6px); }
     }
     .lc-hint { text-align: center; color: #ffcf6b; font-size: 0.85rem; min-height: 1.3em; }
-    .lc-ops { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; margin: 14px 0; }
-    .lc-ops select, .lc-ops .val {
-      min-height: 48px; min-width: 64px; border-radius: 10px; border: 1px solid rgba(0,242,254,.3);
-      background: #0a2540; color: var(--accent); font-size: 1.1rem; font-weight: 700; text-align: center;
+    .lc-ops {
+      display: flex; flex-direction: column; gap: 10px; align-items: center;
+      margin: 14px 0;
     }
+    .lc-ops-row {
+      display: flex; flex-wrap: nowrap; gap: 6px; justify-content: center; align-items: center;
+      width: 100%;
+    }
+    .lc-ops-row select, .lc-ops-row .val {
+      min-height: 44px; min-width: 0; flex: 1 1 0; max-width: 72px;
+      border-radius: 10px; border: 1px solid rgba(0,242,254,.3);
+      background: #0a2540; color: var(--accent); font-size: 1.05rem; font-weight: 700; text-align: center;
+      padding: 0 2px;
+    }
+    .lc-ops-result {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 56px; min-width: min(100%, 168px); padding: 10px 22px;
+      border-radius: 12px; border: 1px solid rgba(0,242,254,.35);
+      background: #0a2540; color: var(--accent);
+    }
+    .lc-ops-result .lc-eq { font-size: 1.15rem; font-weight: 700; opacity: .9; }
+    .lc-ops-result .lc-result { font-size: 1.7rem; font-weight: 800; letter-spacing: 0.04em; line-height: 1; }
     .lc-flow {
       height: 8px; border-radius: 999px; margin: 12px 0; overflow: hidden;
       background: rgba(255,255,255,.08);
@@ -2744,6 +2761,7 @@
           '<div class="lc-status"><strong>組合啟動密碼</strong></div>' +
           '<p class="story-body">請選擇正確運算符號，啟動液冷系統。</p>' +
           '<div class="lc-ops">' +
+          '<div class="lc-ops-row">' +
           '<span class="val">' + vals[0] + "</span>" +
           '<select id="lc-op1" aria-label="運算符號一"><option value="">？</option>' +
           (fin.operators || []).map((o) => '<option value="' + o + '">' + o + "</option>").join("") +
@@ -2753,7 +2771,9 @@
           (fin.operators || []).map((o) => '<option value="' + o + '">' + o + "</option>").join("") +
           "</select>" +
           '<span class="val">' + vals[2] + "</span>" +
-          '<span class="val">＝' + (fin.result || "2026") + "</span></div>" +
+          "</div>" +
+          '<div class="lc-ops-result"><span class="lc-eq">＝</span><span class="lc-result">' + (fin.result || "2026") + "</span></div>" +
+          "</div>" +
           '<button type="button" class="btn btn-primary" id="lc-final-check">啟動液冷系統</button>' +
           '<p class="lc-hint" id="lc-final-hint"></p>';
 
