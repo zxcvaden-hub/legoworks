@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
@@ -2610,9 +2610,10 @@
       }
 
       function filterColor(name) {
-        if (name === "red") return "rgba(180,20,20,0.92)";
-        if (name === "yellow") return "rgba(190,150,20,0.92)";
-        return "rgba(20,70,160,0.92)";
+        // 撟曆?銝?嚗??行???詨?頛芸?
+        if (name === "red") return "rgba(96,6,6,0.995)";
+        if (name === "yellow") return "rgba(118,92,8,0.995)";
+        return "rgba(6,28,88,0.995)";
       }
 
       function renderModule(index) {
@@ -2623,10 +2624,10 @@
           return;
         }
         root.innerHTML =
-          '<div class="lc-status"><strong>' + mod.name + "</strong>（模組 " + (index + 1) + " / 3）</div>" +
-          '<p class="story-body">請擦拭濾鏡，找出完整算式。</p>' +
+          '<div class="lc-status"><strong>' + mod.name + "</strong>嚗芋蝯?" + (index + 1) + " / 3嚗?/div>" +
+          '<p class="story-body">隢?剜蕪?∴??曉摰蝞???/p>' +
           '<div class="lc-stage" id="lc-stage"><canvas id="lc-base" width="300" height="220"></canvas><canvas id="lc-mask" width="300" height="220"></canvas></div>' +
-          '<p class="lc-hint" id="lc-hint">' + (cfg.wipeHint || "請繼續擦拭，找出完整算式。") + "</p>" +
+          '<p class="lc-hint" id="lc-hint">' + (cfg.wipeHint || "隢匱蝥?哨??曉摰蝞???) + "</p>" +
           '<div class="lc-choices" id="lc-choices"></div>' +
           '<p id="lc-feedback" class="lc-hint"></p>';
 
@@ -2645,19 +2646,90 @@
           g.addColorStop(1, "#101214");
           bctx.fillStyle = g;
           bctx.fillRect(0, 0, W, H);
-          bctx.fillStyle = "rgba(255,90,40,0.25)";
+          bctx.fillStyle = "rgba(255,90,40,0.18)";
           bctx.fillRect(0, 0, W, H);
-          bctx.fillStyle = "#e8f4ff";
-          bctx.font = "bold 28px sans-serif";
+          // ?望?嚗?閮僕?橘????詨??摰漁憛儘霅漲
+          for (let i = 0; i < 48; i++) {
+            const rx = Math.random() * W;
+            const ry = Math.random() * H;
+            const rr = 6 + Math.random() * 34;
+            bctx.fillStyle = "rgba(255," + (70 + Math.floor(Math.random() * 50)) + "," +
+              (20 + Math.floor(Math.random() * 40)) + "," + (0.03 + Math.random() * 0.09) + ")";
+            bctx.beginPath();
+            bctx.arc(rx, ry, rr, 0, Math.PI * 2);
+            bctx.fill();
+          }
+          bctx.strokeStyle = "rgba(255,255,255,0.04)";
+          bctx.lineWidth = 1;
+          for (let x = 20; x < W; x += 20) {
+            bctx.beginPath();
+            bctx.moveTo(x, 0);
+            bctx.lineTo(x, H);
+            bctx.stroke();
+          }
+          for (let y = 20; y < H; y += 20) {
+            bctx.beginPath();
+            bctx.moveTo(0, y);
+            bctx.lineTo(W, y);
+            bctx.stroke();
+          }
+
+          const text = mod.equation;
+          bctx.font = "bold 26px sans-serif";
           bctx.textAlign = "center";
           bctx.textBaseline = "middle";
-          bctx.fillText(mod.equation, W / 2, H / 2);
+          const tw = bctx.measureText(text).width;
+          const padX = 18;
+          const padY = 30;
+          const minX = padX + tw / 2;
+          const maxX = W - padX - tw / 2;
+          const minY = padY;
+          const maxY = H - padY;
+          // ?冽???嚗葉嚗?嚗?蝬剜??函???
+          const band = Math.floor(Math.random() * 3);
+          const span = Math.max(0, maxY - minY);
+          let y0;
+          let y1;
+          if (band === 0) {
+            y0 = minY;
+            y1 = minY + span * 0.36;
+          } else if (band === 1) {
+            y0 = minY + span * 0.32;
+            y1 = minY + span * 0.68;
+          } else {
+            y0 = minY + span * 0.64;
+            y1 = maxY;
+          }
+          const tx = minX + Math.random() * Math.max(0, maxX - minX);
+          const ty = y0 + Math.random() * Math.max(0, y1 - y0);
+          // ?仿?撠?嚗??隞霈嚗?行?頛???瞈暸?
+          bctx.fillStyle = "rgba(210, 224, 236, 0.82)";
+          bctx.fillText(text, tx, ty);
         }
 
         function drawMask() {
           mctx.globalCompositeOperation = "source-over";
           mctx.fillStyle = filterColor(mod.filter);
           mctx.fillRect(0, 0, W, H);
+          // 瞈暸鞈芸嚗???暺??踹?銋暹楊?脣??摮耦?楠
+          for (let i = 0; i < 90; i++) {
+            const rx = Math.random() * W;
+            const ry = Math.random() * H;
+            const rr = 4 + Math.random() * 22;
+            mctx.fillStyle = "rgba(0,0,0," + (0.05 + Math.random() * 0.14) + ")";
+            mctx.beginPath();
+            mctx.arc(rx, ry, rr, 0, Math.PI * 2);
+            mctx.fill();
+          }
+          for (let i = 0; i < 40; i++) {
+            const rx = Math.random() * W;
+            const ry = Math.random() * H;
+            const rr = 3 + Math.random() * 14;
+            mctx.fillStyle = "rgba(255,255,255," + (0.02 + Math.random() * 0.06) + ")";
+            mctx.beginPath();
+            mctx.arc(rx, ry, rr, 0, Math.PI * 2);
+            mctx.fill();
+          }
         }
 
         function sampleCleared() {
