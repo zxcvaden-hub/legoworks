@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
@@ -2624,7 +2624,7 @@
       }
 
       function filterColor(name) {
-        // 撟曆?銝?嚗??行???詨?頛芸?
+        // 幾乎不透明，避免未擦時透出數字輪廓
         if (name === "red") return "rgba(96,6,6,0.995)";
         if (name === "yellow") return "rgba(118,92,8,0.995)";
         return "rgba(6,28,88,0.995)";
@@ -2638,10 +2638,10 @@
           return;
         }
         root.innerHTML =
-          '<div class="lc-status"><strong>' + mod.name + "</strong>嚗芋蝯?" + (index + 1) + " / 3嚗?/div>" +
-          '<p class="story-body">隢?剜蕪?∴??曉摰蝞???/p>' +
+          '<div class="lc-status"><strong>' + mod.name + "</strong>（模組 " + (index + 1) + " / 3）</div>" +
+          '<p class="story-body">請擦拭濾鏡，找出完整算式。</p>' +
           '<div class="lc-stage" id="lc-stage"><canvas id="lc-base" width="300" height="220"></canvas><canvas id="lc-mask" width="300" height="220"></canvas></div>' +
-          '<p class="lc-hint" id="lc-hint">' + (cfg.wipeHint || "隢匱蝥?哨??曉摰蝞???) + "</p>" +
+          '<p class="lc-hint" id="lc-hint">' + (cfg.wipeHint || "請繼續擦拭，找出完整算式。") + "</p>" +
           '<div class="lc-choices" id="lc-choices"></div>' +
           '<p id="lc-feedback" class="lc-hint"></p>';
 
@@ -2662,7 +2662,7 @@
           bctx.fillRect(0, 0, W, H);
           bctx.fillStyle = "rgba(255,90,40,0.18)";
           bctx.fillRect(0, 0, W, H);
-          // ?望?嚗?閮僕?橘????詨??摰漁憛儘霅漲
+          // 熱斑／雜訊干擾，降低數字「固定亮塊」辨識度
           for (let i = 0; i < 48; i++) {
             const rx = Math.random() * W;
             const ry = Math.random() * H;
@@ -2699,7 +2699,7 @@
           const maxX = W - padX - tw / 2;
           const minY = padY;
           const maxY = H - padY;
-          // ?冽???嚗葉嚗?嚗?蝬剜??函???
+          // 隨機偏上／中／下，但維持在片內
           const band = Math.floor(Math.random() * 3);
           const span = Math.max(0, maxY - minY);
           let y0;
@@ -2716,7 +2716,7 @@
           }
           const tx = minX + Math.random() * Math.max(0, maxX - minX);
           const ty = y0 + Math.random() * Math.max(0, y1 - y0);
-          // ?仿?撠?嚗??隞霈嚗?行?頛???瞈暸?
+          // 略降對比：擦開後仍可讀，未擦時較不易從濾鏡透出
           bctx.fillStyle = "rgba(210, 224, 236, 0.82)";
           bctx.fillText(text, tx, ty);
         }
@@ -2725,7 +2725,7 @@
           mctx.globalCompositeOperation = "source-over";
           mctx.fillStyle = filterColor(mod.filter);
           mctx.fillRect(0, 0, W, H);
-          // 瞈暸鞈芸嚗???暺??踹?銋暹楊?脣??摮耦?楠
+          // 濾鏡質地／明暗斑點，避免乾淨色塊透出字形邊緣
           for (let i = 0; i < 90; i++) {
             const rx = Math.random() * W;
             const ry = Math.random() * H;
