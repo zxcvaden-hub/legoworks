@@ -17,17 +17,18 @@ a { color:#00f2fe; }
 </head>
 <body>
 <h1>時光探險 QR Code 總覽</h1>
-<p class="meta">工作人員列印用。網址來自 <code>config.js</code> 的 <code>SITE_BASE_URL</code>。<br>目前預設測試站 legoworks。</p>
+<p class="meta">工作人員列印用。網址來自 <code>config.js</code> 的集中設定。<br>目前為 LEGOWORKS 測試版 QR Code，正式交付前需切換為 kenmec 網址並重新下載。</p>
 <p><a href="./index.html">← 活動說明</a></p>
 <div class="grid" id="grid"></div>
 <script src="./config.js"></script>
 <script src="../qrcode.min.js"></script>
 <script>
 const LEVELS = [{"id": 1, "title": "啟航輸送機", "location": "303運動休息室", "file": "01-啟航輸送機-QR.png"}, {"id": 2, "title": "液冷尋密碼", "location": "319運動休息室", "file": "02-液冷尋密碼-QR.png"}, {"id": 3, "title": "廣運歷史小測驗", "location": "廣運歷史牆", "file": "03-廣運歷史小測驗-QR.png"}, {"id": 4, "title": "廣運AI智慧一點通", "location": "三樓活動現場後門", "file": "04-廣運AI智慧一點通-QR.png"}, {"id": 5, "title": "廣運成功密碼", "location": "329運動休息室", "file": "05-廣運成功密碼-QR.png"}];
-const base = (typeof SITE_BASE_URL === "string" ? SITE_BASE_URL : "").replace(/\/$/, "");
 const grid = document.getElementById("grid");
 LEVELS.forEach((lv) => {
-  const url = base + "/time-adventure/stage-" + lv.id + "/";
+  const key = "stage" + lv.id;
+  const fallback = (typeof SITE_BASE_URL === "string" ? SITE_BASE_URL.replace(/\/$/, "") : "") + "/time-adventure/stage-" + lv.id + "/";
+  const url = (typeof STAGE_URLS === "object" && STAGE_URLS[key]) ? STAGE_URLS[key] : fallback;
   const card = document.createElement("div");
   card.className = "card";
   card.innerHTML =

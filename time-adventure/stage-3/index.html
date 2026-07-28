@@ -104,7 +104,7 @@
       box-shadow: var(--glow);
     }
 
-    .level-nav {
+    .stage-nav {
       display: flex;
       gap: 8px;
       justify-content: center;
@@ -114,9 +114,9 @@
       scrollbar-width: none;
     }
 
-    .level-nav::-webkit-scrollbar { display: none; }
+    .stage-nav::-webkit-scrollbar { display: none; }
 
-    .level-nav button {
+    .stage-nav button {
       flex: 0 0 auto;
       width: 52px;
       min-height: 44px;
@@ -130,13 +130,13 @@
       touch-action: manipulation;
     }
 
-    .level-nav button.active {
+    .stage-nav button.active {
       border-color: var(--accent);
       box-shadow: var(--glow);
       color: var(--accent);
     }
 
-    .level-nav button.done {
+    .stage-nav button.done {
       background: rgba(0, 242, 254, 0.15);
     }
 
@@ -169,12 +169,12 @@
       margin-bottom: 10px;
     }
 
-    .level-list {
+    .stage-list {
       display: grid;
       gap: 10px;
     }
 
-    .level-card {
+    .stage-card {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -189,17 +189,17 @@
       touch-action: manipulation;
     }
 
-    .level-card:disabled {
+    .stage-card:disabled {
       opacity: 0.45;
       cursor: not-allowed;
     }
 
-    .level-card.done {
+    .stage-card.done {
       border-color: var(--accent-soft);
       box-shadow: 0 0 12px rgba(0, 210, 196, 0.25);
     }
 
-    .level-num {
+    .stage-num {
       width: 38px;
       height: 38px;
       border-radius: 12px;
@@ -211,17 +211,17 @@
       flex-shrink: 0;
     }
 
-    .level-card.done .level-num {
+    .stage-card.done .stage-num {
       background: linear-gradient(135deg, #22d3ee, #34d399);
     }
 
-    .level-meta strong {
+    .stage-meta strong {
       display: block;
       font-size: 0.98rem;
       margin-bottom: 2px;
     }
 
-    .level-meta span {
+    .stage-meta span {
       font-size: 0.8rem;
       color: var(--muted);
     }
@@ -961,7 +961,7 @@
         min-height: 48px;
       }
 
-      .level-nav button { width: 46px; }
+      .stage-nav button { width: 46px; }
 
       .app { padding-left: 8px; padding-right: 8px; }
 
@@ -1065,7 +1065,7 @@
     }
   </style>
 <style>
-#level-nav, #hub, #modal-cancel { display: none !important; }
+#stage-nav, #hub, #modal-cancel { display: none !important; }
 </style>
 </head>
 <body>
@@ -1084,14 +1084,14 @@
       <source src="../audio/bgm.mp3" type="audio/mpeg" />
     </audio>
 
-    <nav class="level-nav" id="level-nav" aria-label="關卡導覽"></nav>
+    <nav class="stage-nav" id="stage-nav" aria-label="關卡導覽"></nav>
 
     <section id="hub" class="panel">
       <h2>玩法說明</h2>
       <p id="hub-rules"><strong style="color:var(--accent)">闖關護照</strong>將於活動日前預先發送給來賓，無須報到時領取。五關可<strong style="color:var(--accent)">任意選擇、不限順序</strong>；解開謎題後向該關關主報告<strong style="color:var(--accent)">通關密語</strong>，由關主在闖關護照蓋章，即可前往其他關卡。</p>
       <p class="progress-line" id="progress-text">已完成 0 / 5 關</p>
       <p id="storage-warning" class="hidden" style="margin:0 0 12px;color:#ffcf6b;font-size:0.85rem"></p>
-      <div class="level-list" id="level-list"></div>
+      <div class="stage-list" id="stage-list"></div>
       <div id="complete-banner" class="complete-banner hidden">
         <strong>🎉 五關全部完成！</strong><br />
         手機紀錄僅供個人查看。完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。
@@ -1356,7 +1356,7 @@
     }
 
     function renderLevelNav() {
-      const nav = document.getElementById("level-nav");
+      const nav = document.getElementById("stage-nav");
       nav.innerHTML = "";
       DATA.levels.forEach((lv) => {
         const btn = document.createElement("button");
@@ -1381,15 +1381,15 @@
       }
       renderStorageWarning();
 
-      const list = document.getElementById("level-list");
+      const list = document.getElementById("stage-list");
       list.innerHTML = "";
       DATA.levels.forEach((lv) => {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "level-card" + (progress[lv.id] ? " done" : "");
+        btn.className = "stage-card" + (progress[lv.id] ? " done" : "");
         btn.innerHTML =
-          '<div class="level-num">' + lv.id + "</div>" +
-          '<div class="level-meta"><strong>' + lv.title + "</strong>" +
+          '<div class="stage-num">' + lv.id + "</div>" +
+          '<div class="stage-meta"><strong>' + lv.title + "</strong>" +
           "<span>" + (lv.headline ? lv.headline + " · " : "") + lv.location + "</span></div>";
         btn.addEventListener("click", () => openLevelModal(lv.id));
         list.appendChild(btn);
@@ -1435,8 +1435,8 @@
         (lv.headline ? '<p class="story-headline">' + lv.headline + "</p>" : "") +
         (lv.story ? '<p class="story-body">' + lv.story + "</p>" : "") +
         '<p style="color:var(--muted);font-size:0.88rem;margin:0 0 12px">📍 ' + lv.location + "</p>" +
-        '<div id="level-body"></div>' +
-        '<div id="level-success"></div>';
+        '<div id="stage-body"></div>' +
+        '<div id="stage-success"></div>';
 
       document.getElementById("back-hub").addEventListener("click", () => {
         if (memoryTimer) clearInterval(memoryTimer);
@@ -1452,7 +1452,7 @@
 
     function showLevelSuccess(level) {
       markComplete(level.id);
-      const box = document.getElementById("level-success");
+      const box = document.getElementById("stage-success");
       box.innerHTML =
         '<div class="success-box">' +
         "<strong>✅ 闖關成功</strong>" +
@@ -1859,7 +1859,7 @@
 
     function initLevel1() {
       level1Won = false;
-      const body = document.getElementById("level-body");
+      const body = document.getElementById("stage-body");
       body.innerHTML =
         '<p style="text-align:center;font-size:0.88rem;color:var(--muted);margin:0 0 10px">點選水管即可旋轉接通起點到終點即可過關</p>' +
         '<div class="conveyor-wrap">' +
@@ -1949,7 +1949,7 @@
         finalOperators: [null, null],
         isCompleted: false
       };
-      const body = document.getElementById("level-body");
+      const body = document.getElementById("stage-body");
       body.innerHTML = '<div class="lc-wrap" id="lc-root"></div>';
       const root = document.getElementById("lc-root");
 
@@ -2143,7 +2143,7 @@
 
     /* ===== Level 3: AI Chat quiz (supports choices) ===== */
     function initLevel3() {
-      const body = document.getElementById("level-body");
+      const body = document.getElementById("stage-body");
       const quiz = DATA.quizQuestions || [];
       let current = 0;
 
@@ -2266,7 +2266,7 @@
       const questions = DATA.smartFactoryQuestions || [];
       let qIndex = 0;
       let selected = new Set();
-      const body = document.getElementById("level-body");
+      const body = document.getElementById("stage-body");
 
       function render() {
         const q = questions[qIndex];
@@ -2340,7 +2340,7 @@
 
     /* ===== Level 5: 3x3 key visual puzzle ===== */
     function initLevel5() {
-      const body = document.getElementById("level-body");
+      const body = document.getElementById("stage-body");
       const imgSrc = (typeof STATION_LEVEL === "number" ? "../" : "./") + "assets/kenmec-50-main-visual.png";
       let order = [0, 1, 2, 3, 4, 5, 6, 7, 8];
       let hintUsed = false;

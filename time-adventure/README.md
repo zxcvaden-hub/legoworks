@@ -2,9 +2,12 @@
 
 廣運 50 週年家庭日 · 五關手機互動挑戰＋現場蓋章。靜態網站，部署於 GitHub Pages。
 
-## 專案用途
+## 目前測試站
 
-來賓於各關現場掃描專屬 QR，完成手機挑戰後向關主報告通關密語並於闖關護照蓋章。完成五關並集滿印章後，向各個關主出示護照確認通關領取禮券；領取後關主於護照兌換區打孔。
+目前測試站：
+`https://zxcvaden-hub.github.io/legoworks/time-adventure/`
+
+目前 QR Code 均為 LEGOWORKS 測試版本。
 
 ## 五個關卡
 
@@ -16,37 +19,47 @@
 | 04 | 廣運AI智慧一點通 | 三樓活動現場後門 | 六技術固定選項分類（3／2／1） |
 | 05 | 廣運成功密碼 | 329運動休息室 | 3×3 主視覺拼圖；密語「展望百年願景」 |
 
-## 正式／測試網址（目前 QR 預設測試站）
+## 網址設定
 
 `time-adventure/config.js`：
 
 ```js
 const SITE_BASE_URL = "https://zxcvaden-hub.github.io/legoworks";
+const GAME_BASE_PATH = "/time-adventure";
 ```
 
-正式站請改為：`https://zxcvaden-hub.github.io/kenmec`
+五個測試關卡網址：
+- `{SITE_BASE_URL}{GAME_BASE_PATH}/stage-1/`
+- `{SITE_BASE_URL}{GAME_BASE_PATH}/stage-2/`
+- `{SITE_BASE_URL}{GAME_BASE_PATH}/stage-3/`
+- `{SITE_BASE_URL}{GAME_BASE_PATH}/stage-4/`
+- `{SITE_BASE_URL}{GAME_BASE_PATH}/stage-5/`
 
-| 用途 | 網址 |
-|------|------|
-| 活動說明 | `{SITE_BASE_URL}/time-adventure/` |
-| QR 總覽（工作人員） | `{SITE_BASE_URL}/time-adventure/qr-codes.html` |
-| 第 1 關 | `{SITE_BASE_URL}/time-adventure/stage-1/` |
-| 第 2 關 | `{SITE_BASE_URL}/time-adventure/stage-2/` |
-| 第 3 關 | `{SITE_BASE_URL}/time-adventure/stage-3/` |
-| 第 4 關 | `{SITE_BASE_URL}/time-adventure/stage-4/` |
-| 第 5 關 | `{SITE_BASE_URL}/time-adventure/stage-5/` |
+目前正式使用的關卡資料夾：
+- `stage-1`
+- `stage-2`
+- `stage-3`
+- `stage-4`
+- `stage-5`
 
-舊網址 `level-1`～`level-5` 會自動導向對應 `stage-*`。
+目前不保留任何舊版關卡資料夾與相容路徑。
 
-## 如何更換正式部署網址
+## 正式站切換流程
 
-1. 編輯 `time-adventure/config.js` 的 `SITE_BASE_URL`
-2. 重新開啟 `qr-codes.html`／各關 `qr.html` 即可產生新 QR（無需 rebuild）
+目前測試站：
+`https://zxcvaden-hub.github.io/legoworks`
 
-## 如何更換第五關活動主視覺
+未來正式站：
+`https://zxcvaden-hub.github.io/kenmec`
 
-1. 覆蓋 `time-adventure/assets/kenmec-50-main-visual.png`（建議同時更新專案根目錄同名檔）
-2. 重新整理第 5 關頁面即可
+切換步驟：
+1. 將完整專案複製到 `kenmec` 儲存庫。
+2. 修改唯一的 `SITE_BASE_URL` 設定。
+3. 確認 `GAME_BASE_PATH` 是否仍為 `/time-adventure`。
+4. 重新部署 GitHub Pages。
+5. 開啟五個 `stage-*` 網址逐一測試。
+6. 重新產生並下載五張正式 QR Code。
+7. 不可沿用 LEGOWORKS 測試 QR Code 交付客戶。
 
 ## 如何修改關卡文案／通關密語／題目
 
@@ -57,7 +70,7 @@ const SITE_BASE_URL = "https://zxcvaden-hub.github.io/legoworks";
 py scripts/split-time-adventure.py
 ```
 
-會同步 `station-template.html` 內嵌資料，並再生 `stage-*`／`level-*` 導向／`qr-codes.html`／活動說明頁。
+會同步 `station-template.html` 內嵌資料，並再生 `stage-*`／`qr-codes.html`／活動說明頁。
 
 ## 本機預覽
 
@@ -68,25 +81,11 @@ py -m http.server 8080
 ```
 
 開啟：
-
 - http://127.0.0.1:8080/time-adventure/
 - http://127.0.0.1:8080/time-adventure/stage-1/
 - http://127.0.0.1:8080/time-adventure/qr-codes.html
 
-（本機預覽時 QR 圖仍指向 `SITE_BASE_URL` 正式／測試網域，不會用 localhost。）
-
-## 部署方式
-
-1. `py scripts/split-time-adventure.py`
-2. 客服知識庫若有改：`py` 注入或 `node inject-knowledge.js`（將 `data/knowledge.json` 寫入 `index.html`）
-3. 上傳至 `zxcvaden-hub/legoworks`（測試）或 `zxcvaden-hub/kenmec`（正式）根目錄，**保留／更新** `time-adventure/` 整夾（含 `stage-*`、`assets/`、`config.js`）
-4. 手機實機掃描 `qr-codes.html` 下載的 PNG 驗證
-
-## 手機測試建議
-
-- iPhone Safari／Android Chrome 各測一次五關直達網址
-- 第二關：觸控擦拭、未達 60% 不可作答、最終 2000＋30－4
-- 第五關：預覽倒數、拖曳／點選交換、提示一次、密語「展望百年願景」
+（本機預覽時 QR 圖仍指向 `SITE_BASE_URL`，不會用 localhost。）
 
 ## 維護檔案
 
@@ -94,6 +93,6 @@ py -m http.server 8080
 |------|------|
 | `time-adventure/puzzles.json` | 文案與題目來源 |
 | `time-adventure/station-template.html` | 遊戲邏輯模板 |
-| `time-adventure/config.js` | 部署網域 |
+| `time-adventure/config.js` | 唯一網址設定 |
 | `scripts/split-time-adventure.py` | 產出各關頁 |
 | `data/knowledge.json` | 客服 FAQ（真實路徑；注入後同步根目錄 `knowledge.json`） |

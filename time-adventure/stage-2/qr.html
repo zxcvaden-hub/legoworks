@@ -27,8 +27,8 @@ a.btn { display:block; margin-top:12px; background:linear-gradient(135deg,#00d2c
 <script src="../config.js"></script>
 <script src="../../qrcode.min.js"></script>
 <script>
-var path = "/time-adventure/stage-2/";
-var url = (typeof SITE_BASE_URL === "string" ? SITE_BASE_URL.replace(/\/$/, "") : (location.origin)) + path;
+var key = "stage" + 2;
+var url = (typeof STAGE_URLS === "object" && STAGE_URLS[key]) ? STAGE_URLS[key] : "";
 document.getElementById("url").textContent = url;
 document.getElementById("open").href = "./";
 new QRCode(document.getElementById("qrcode"), {

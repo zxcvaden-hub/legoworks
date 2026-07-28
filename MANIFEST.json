@@ -1,6 +1,6 @@
 {
   "label": "時光探險上傳0702",
-  "packedAt": "2026-07-17T17:28:32.085971",
+  "packedAt": "2026-07-28T17:03:00+08:00",
   "faqCount": 39,
   "quickReplies": [
     "交通方式",
@@ -28,7 +28,23 @@
       "font-icons.css",
       "index.html",
       "puzzles.json",
-      "qr.html"
+      "qr.html",
+      "config.js",
+      "README.md",
+      "qr-codes.html",
+      "station-template.html",
+      "assets/kenmec-50-main-visual.jpg",
+      "assets/kenmec-50-main-visual.png",
+      "stage-1/index.html",
+      "stage-2/index.html",
+      "stage-3/index.html",
+      "stage-4/index.html",
+      "stage-5/index.html",
+      "stage-1/qr.html",
+      "stage-2/qr.html",
+      "stage-3/qr.html",
+      "stage-4/qr.html",
+      "stage-5/qr.html"
     ]
   },
   "imageIncluded": true,
@@ -54,5 +70,8 @@
     "time-adventure/staff.html",
     "time-adventure/adventure.css"
   ],
-  "mobileRwdReport": false
+  "mobileRwdReport": false,
+  "siteBaseUrl": "https://zxcvaden-hub.github.io/legoworks",
+  "gameBasePath": "/time-adventure",
+  "releaseNote": "本版本為LEGOWORKS測試驗收版，尚未切換至kenmec正式站。"
 }

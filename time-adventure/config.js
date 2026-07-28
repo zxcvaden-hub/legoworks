@@ -1,5 +1,13 @@
-/* 廣運時光探險 · 正式部署網址（QR Code 由此產生）
- * 修改此變數後，請重新開啟 qr-codes.html / 各關 qr.html 即可生效。
- * 正式站改為：https://zxcvaden-hub.github.io/kenmec
- */
+/* 廣運時光探險 · 網址集中設定 */
 const SITE_BASE_URL = "https://zxcvaden-hub.github.io/legoworks";
+const GAME_BASE_PATH = "/time-adventure";
+
+const STAGE_URLS = {
+  stage1: `${SITE_BASE_URL}${GAME_BASE_PATH}/stage-1/`,
+  stage2: `${SITE_BASE_URL}${GAME_BASE_PATH}/stage-2/`,
+  stage3: `${SITE_BASE_URL}${GAME_BASE_PATH}/stage-3/`,
+  stage4: `${SITE_BASE_URL}${GAME_BASE_PATH}/stage-4/`,
+  stage5: `${SITE_BASE_URL}${GAME_BASE_PATH}/stage-5/`
+};
+
+const QR_OVERVIEW_URL = `${SITE_BASE_URL}${GAME_BASE_PATH}/qr-codes.html`;
