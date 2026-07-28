@@ -28,6 +28,7 @@
 
   let audioCtx = null;
   let soundEnabled = true;
+  let unlockPromise = null;
 
   try {
     const saved = localStorage.getItem(GAME_CONFIG.soundPrefKey);
@@ -133,19 +134,56 @@
     return !timers.failed && !timers.cleared;
   }
 
-  function initAudio() {
+  function ensureAudioContext() {
     try {
       const Ctx = global.AudioContext || global.webkitAudioContext;
       if (!Ctx) return null;
       if (!audioCtx) audioCtx = new Ctx();
-      if (audioCtx.state === "suspended") {
-        audioCtx.resume().catch(() => {});
-      }
       return audioCtx;
     } catch (err) {
-      console.warn("AudioContext init failed", err);
+      console.warn("AudioContext create failed", err);
       return null;
     }
+  }
+
+  /** 必須在使用者手勢中呼叫；解鎖後後續 setTimeout 音效才聽得到（尤其 iOS Safari） */
+  function initAudio() {
+    const ctx = ensureAudioContext();
+    if (!ctx) return null;
+    if (ctx.state === "suspended") {
+      unlockAudio();
+    }
+    return ctx;
+  }
+
+  function unlockAudio() {
+    const ctx = ensureAudioContext();
+    if (!ctx) return Promise.resolve(null);
+    if (ctx.state === "running") return Promise.resolve(ctx);
+    if (unlockPromise) return unlockPromise;
+    unlockPromise = ctx
+      .resume()
+      .then(() => {
+        // iOS：播放極短靜音 buffer，完成真正解鎖
+        try {
+          const buffer = ctx.createBuffer(1, 1, ctx.sampleRate || 22050);
+          const src = ctx.createBufferSource();
+          src.buffer = buffer;
+          src.connect(ctx.destination);
+          src.start(0);
+        } catch (_) {
+          /* ignore */
+        }
+        return ctx;
+      })
+      .catch((err) => {
+        console.warn("AudioContext resume failed", err);
+        return ctx;
+      })
+      .finally(() => {
+        unlockPromise = null;
+      });
+    return unlockPromise;
   }
 
   function setSoundEnabled(on) {
@@ -155,65 +193,99 @@
     } catch (_) {
       /* ignore */
     }
+    if (soundEnabled) unlockAudio();
   }
 
   function isSoundEnabled() {
     return soundEnabled;
   }
 
-  function tone(freq, dur, type, gainValue, when) {
-    if (!soundEnabled) return;
-    const ctx = initAudio();
-    if (!ctx) return;
+  function playToneAt(ctx, freq, dur, type, gainValue, when) {
     try {
-      const t0 = (when == null ? ctx.currentTime : when);
+      const t0 = when == null ? ctx.currentTime : when;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = type || "sine";
-      osc.frequency.value = freq;
+      osc.frequency.setValueAtTime(freq, t0);
+      const peak = Math.max(0.0001, gainValue == null ? 0.12 : gainValue);
       gain.gain.setValueAtTime(0.0001, t0);
-      gain.gain.exponentialRampToValueAtTime(gainValue || 0.08, t0 + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+      gain.gain.exponentialRampToValueAtTime(peak, t0 + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + Math.max(0.03, dur));
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(t0);
-      osc.stop(t0 + dur + 0.02);
+      osc.stop(t0 + dur + 0.03);
     } catch (err) {
       console.warn("tone failed", err);
     }
   }
 
+  function withAudio(run) {
+    if (!soundEnabled) return;
+    unlockAudio().then((ctx) => {
+      if (!ctx || !soundEnabled) return;
+      if (ctx.state === "suspended") {
+        ctx.resume().then(() => run(ctx)).catch(() => {});
+        return;
+      }
+      run(ctx);
+    });
+  }
+
+  function tone(freq, dur, type, gainValue, whenOffset) {
+    withAudio((ctx) => {
+      const t0 = ctx.currentTime + (whenOffset || 0);
+      playToneAt(ctx, freq, dur, type, gainValue, t0);
+    });
+  }
+
   function playStartSound() {
-    tone(523.25, 0.08, "triangle", 0.07);
-    tone(784.99, 0.1, "triangle", 0.06, (audioCtx && audioCtx.currentTime + 0.08) || undefined);
+    withAudio((ctx) => {
+      const t0 = ctx.currentTime;
+      playToneAt(ctx, 523.25, 0.09, "triangle", 0.14, t0);
+      playToneAt(ctx, 784.99, 0.12, "triangle", 0.12, t0 + 0.08);
+    });
   }
 
   function playCorrectSound() {
-    tone(523.25, 0.07, "sine", 0.07);
-    tone(659.25, 0.08, "sine", 0.07, (audioCtx && audioCtx.currentTime + 0.07) || undefined);
-    tone(783.99, 0.12, "sine", 0.06, (audioCtx && audioCtx.currentTime + 0.14) || undefined);
+    withAudio((ctx) => {
+      const t0 = ctx.currentTime;
+      playToneAt(ctx, 523.25, 0.08, "sine", 0.14, t0);
+      playToneAt(ctx, 659.25, 0.09, "sine", 0.13, t0 + 0.07);
+      playToneAt(ctx, 783.99, 0.14, "sine", 0.12, t0 + 0.14);
+    });
   }
 
   function playWrongSound() {
-    tone(220, 0.14, "sawtooth", 0.045);
+    withAudio((ctx) => {
+      playToneAt(ctx, 220, 0.16, "sawtooth", 0.09, ctx.currentTime);
+    });
   }
 
   function playCountdownSound() {
-    tone(880, 0.05, "square", 0.035);
+    withAudio((ctx) => {
+      playToneAt(ctx, 880, 0.06, "square", 0.07, ctx.currentTime);
+    });
   }
 
   function playSuccessSound() {
-    tone(523.25, 0.09, "triangle", 0.07);
-    tone(659.25, 0.09, "triangle", 0.07, (audioCtx && audioCtx.currentTime + 0.09) || undefined);
-    tone(783.99, 0.09, "triangle", 0.07, (audioCtx && audioCtx.currentTime + 0.18) || undefined);
-    tone(1046.5, 0.18, "triangle", 0.06, (audioCtx && audioCtx.currentTime + 0.28) || undefined);
+    withAudio((ctx) => {
+      const t0 = ctx.currentTime;
+      playToneAt(ctx, 523.25, 0.1, "triangle", 0.14, t0);
+      playToneAt(ctx, 659.25, 0.1, "triangle", 0.13, t0 + 0.09);
+      playToneAt(ctx, 783.99, 0.1, "triangle", 0.13, t0 + 0.18);
+      playToneAt(ctx, 1046.5, 0.22, "triangle", 0.12, t0 + 0.28);
+    });
   }
 
   function playFactoryBootSound() {
-    tone(110, 0.2, "sawtooth", 0.04);
-    tone(220, 0.2, "sawtooth", 0.04, (audioCtx && audioCtx.currentTime + 0.18) || undefined);
-    tone(440, 0.25, "triangle", 0.05, (audioCtx && audioCtx.currentTime + 0.36) || undefined);
-    tone(880, 0.3, "sine", 0.05, (audioCtx && audioCtx.currentTime + 0.55) || undefined);
+    withAudio((ctx) => {
+      const t0 = ctx.currentTime;
+      playToneAt(ctx, 110, 0.22, "sawtooth", 0.08, t0);
+      playToneAt(ctx, 220, 0.22, "sawtooth", 0.08, t0 + 0.18);
+      playToneAt(ctx, 440, 0.28, "triangle", 0.1, t0 + 0.36);
+      playToneAt(ctx, 880, 0.32, "sine", 0.1, t0 + 0.55);
+    });
   }
 
   function startReadyCountdown(overlayEl, onDone) {
@@ -286,6 +358,7 @@
       endTime: timers.endTime
     }),
     initAudio,
+    unlockAudio,
     setSoundEnabled,
     isSoundEnabled,
     playStartSound,

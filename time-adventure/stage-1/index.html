@@ -1941,6 +1941,15 @@
       if (bgm) bgm.volume = 0.42;
       syncSoundButtons();
 
+      // 第一次觸控／點擊即解鎖 WebAudio（iOS 過關／答對音效依賴此）
+      const unlockOnce = () => {
+        if (GC && typeof GC.unlockAudio === "function") GC.unlockAudio();
+        else if (GC) GC.initAudio();
+      };
+      ["pointerdown", "touchstart", "click"].forEach((ev) => {
+        document.addEventListener(ev, unlockOnce, { once: true, passive: true });
+      });
+
       if (panelToggle && panelMenu) {
         panelToggle.addEventListener("click", (e) => {
           e.stopPropagation();
@@ -1957,6 +1966,7 @@
       if (bgm && btn) {
         btn.addEventListener("click", (e) => {
           e.stopPropagation();
+          unlockOnce();
           if (bgm.paused) startBgm();
           else {
             bgm.pause();
@@ -1970,7 +1980,8 @@
         sfxBtn.addEventListener("click", (e) => {
           e.stopPropagation();
           if (!GC) return;
-          GC.initAudio();
+          if (typeof GC.unlockAudio === "function") GC.unlockAudio();
+          else GC.initAudio();
           GC.setSoundEnabled(!GC.isSoundEnabled());
           syncSoundButtons();
         });
@@ -2115,7 +2126,8 @@
       challengeFailed = false;
       levelCleared = false;
       if (GC) {
-        GC.initAudio();
+        if (typeof GC.unlockAudio === "function") GC.unlockAudio();
+        else GC.initAudio();
         GC.playStartSound();
         GC.cancelAllRuntime();
       }
