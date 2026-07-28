@@ -103,8 +103,9 @@ py -m http.server 8080
 | 檔案 | 用途 |
 |------|------|
 | `config.js` | 網址／限時唯一設定 |
+| `game-data.js` | **執行時**唯一遊戲資料（`window.GAME_DATA`，由 build 產生） |
 | `game-common.js` | 計時／音效／321GO／成就／防呆共用 |
-| `puzzles.json` | 文案與題目來源 |
+| `puzzles.json` | **編輯用**來源；修改後必須跑 split 產生 `game-data.js`（勿手改 game-data.js） |
 | `station-template.html` | 遊戲邏輯模板 |
 | `scripts/split-time-adventure.py` | 產出各關頁與 QR |
 | `MANIFEST.json` | 本包版本與檔案清單 |

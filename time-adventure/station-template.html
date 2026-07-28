@@ -1173,7 +1173,7 @@
     }
     .global-progress .gp-title { font-size: 0.72rem; color: var(--accent); letter-spacing: 0.04em; }
     .global-progress .gp-bars { margin: 4px 0 2px; font-size: 0.82rem; letter-spacing: 0.08em; color: #8eb4d4; }
-    .global-progress .gp-pct { font-size: 0.78rem; font-weight: 700; color: var(--text); }
+    .global-progress .gp-pct { display: none; }
     .challenge-timer {
       font-variant-numeric: tabular-nums; font-weight: 800; font-size: 0.95rem;
       min-width: 64px; text-align: center; padding: 4px 10px; border-radius: 999px;
@@ -1252,11 +1252,21 @@
       50% { transform: scale(1.04); box-shadow: 0 0 12px rgba(255,120,120,.28); }
     }
     .global-progress .gp-stage { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
-    .sound-toggle {
+    .sound-panel {
       position: fixed; top: calc(10px + var(--safe-top, 0px)); left: 10px; z-index: 90;
-      min-height: 44px; padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(0,242,254,.28);
-      background: rgba(8, 28, 48, 0.88); color: var(--text); font-size: 0.82rem; font-weight: 700;
+      display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
     }
+    .sound-panel > button, .sound-panel-menu button {
+      min-height: 44px; padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(0,242,254,.28);
+      background: rgba(8, 28, 48, 0.92); color: var(--text); font-size: 0.82rem; font-weight: 700;
+      width: max-content; max-width: min(220px, calc(100vw - 24px));
+    }
+    .sound-panel-menu {
+      display: none; flex-direction: column; gap: 6px;
+      padding: 8px; border-radius: 12px; background: rgba(8, 28, 48, 0.94);
+      border: 1px solid rgba(0,242,254,.28);
+    }
+    .sound-panel-menu.open { display: flex; }
     .ready-overlay {
       position: fixed; inset: 0; z-index: 180; display: none; place-items: center;
       background: rgba(4, 16, 32, 0.78);
@@ -1279,6 +1289,39 @@
       border-color: #7CFFB2 !important; background: rgba(80, 220, 140, 0.18) !important; color: #b9ffd8;
     }
     .hq-ok { min-height: 1.4em; text-align:center; color:#7CFFB2; font-weight:700; margin-top:10px; }
+
+    .rules-block { margin: 0 0 12px; }
+    .rules-label {
+      margin: 0 0 4px; font-size: 0.72rem; letter-spacing: 0.06em;
+      color: var(--muted); text-transform: none;
+    }
+    .rules-story {
+      margin: 0; font-size: 0.9rem; line-height: 1.55; color: var(--muted);
+      word-break: break-word; overflow-wrap: anywhere;
+    }
+    .rules-howto {
+      margin: 0; font-size: 0.98rem; line-height: 1.55; color: var(--text); font-weight: 700;
+      word-break: break-word; overflow-wrap: anywhere;
+    }
+    .rules-ready {
+      margin: 0 0 12px; padding: 10px 12px; border-radius: 12px;
+      background: rgba(0,242,254,.08); border: 1px solid rgba(0,242,254,.22);
+      color: var(--accent); font-size: 0.9rem; line-height: 1.5;
+      word-break: break-word; overflow-wrap: anywhere;
+    }
+    .passphrase-hint {
+      margin: 10px 0 0; padding: 10px 12px; border-radius: 12px;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      color: var(--muted); font-size: 0.88rem; line-height: 1.55;
+      word-break: break-word; overflow-wrap: anywhere;
+    }
+    .reward-lines { margin: 10px 0 0; text-align: left; }
+    .reward-lines p {
+      margin: 0 0 6px; font-size: 0.88rem; line-height: 1.55; color: var(--muted);
+      word-break: break-word; overflow-wrap: anywhere;
+    }
+    .finale-congrats .reward-lines p { text-align: center; color: var(--muted); }
+
     .modal .limit-chip {
       display:inline-block; margin: 6px 0 10px; padding: 4px 10px; border-radius: 999px;
       background: rgba(0,242,254,.12); border: 1px solid rgba(0,242,254,.3); color: var(--accent); font-size: 0.8rem;
@@ -1294,7 +1337,6 @@
       <p class="hero-sub">50年的啟程 · 五關獨立挑戰 · 完成後向各個關主確認通關領取禮券</p>
       <nav class="nav-row">
         <a href="../index.html">← 活動客服</a>
-        <button type="button" class="nav-pill-btn" id="bgm-toggle" aria-pressed="false" aria-label="背景音樂開關">🔇 音樂</button>
       </nav>
     </header>
 
@@ -1307,7 +1349,7 @@
     <section id="hub" class="panel">
       <h2>玩法說明</h2>
       <p id="hub-rules"><strong style="color:var(--accent)">闖關護照</strong>將於活動日前預先發送給來賓，無須報到時領取。五關可<strong style="color:var(--accent)">任意選擇、不限順序</strong>；解開謎題後向該關關主報告<strong style="color:var(--accent)">通關密語</strong>，由關主在闖關護照蓋章，即可前往其他關卡。</p>
-      <p class="progress-line" id="progress-text">已完成 0 / 5 關</p>
+      <p class="progress-line" id="progress-text">五關可任意選擇、不限順序</p>
       <p id="storage-warning" class="hidden" style="margin:0 0 12px;color:#ffcf6b;font-size:0.85rem"></p>
       <div class="stage-list" id="stage-list"></div>
       <div id="complete-banner" class="complete-banner hidden">
@@ -1321,12 +1363,17 @@
   </div>
 
 
-  <button type="button" class="sound-toggle" id="sound-toggle" aria-pressed="true">音效：開</button>
+  <div class="sound-panel" id="sound-panel">
+    <button type="button" id="sound-panel-toggle" aria-expanded="false">聲音設定</button>
+    <div class="sound-panel-menu" id="sound-panel-menu">
+      <button type="button" id="bgm-toggle" aria-pressed="false">背景音樂：關</button>
+      <button type="button" id="sfx-toggle" aria-pressed="true">操作音效：開</button>
+    </div>
+  </div>
   <div class="global-progress" id="global-progress" aria-live="polite">
     <div class="gp-title">時光探險</div>
     <div class="gp-stage" id="gp-stage">目前關卡：第 0 / 5 關</div>
     <div class="gp-bars" id="gp-bars">□□□□□</div>
-    <div class="gp-pct" id="gp-pct">0%</div>
   </div>
   <div class="ready-overlay" id="ready-overlay" aria-hidden="true"><div class="ready-count">3</div></div>
 
@@ -1348,7 +1395,10 @@
       </div>
       <div class="finale-congrats" id="finale-congrats">
         <strong>恭喜完成<br>廣運50週年<br>時光探險</strong>
-        <p>完成五個關卡並集滿護照印章後，<br>請向各個關主出示護照確認通關，<br>即可領取禮券。</p>
+        <div class="reward-lines" id="finale-reward-lines">
+          <p>🎉 完成五個關卡並集滿護照印章後，</p>
+          <p>🎁 請向各個關主出示護照確認通關，即可領取禮券。</p>
+        </div>
       </div>
     </div>
   </div>
@@ -1365,6 +1415,7 @@
   </div>
 
   <script src="./config.js"></script>
+  <script src="./game-data.js"></script>
   <script src="./game-common.js"></script>
   <script>
     const STORAGE_KEY = "guangyun-time-adventure-v2";
@@ -1402,19 +1453,25 @@
     function updateGlobalProgress(levelId) {
       const info = GC.progressBars(levelId);
       const barsEl = document.getElementById("gp-bars");
-      const pctEl = document.getElementById("gp-pct");
       const stageEl = document.getElementById("gp-stage");
       if (barsEl) barsEl.textContent = info.bars;
-      if (pctEl) pctEl.textContent = info.pct + "%";
       if (stageEl) stageEl.textContent = info.label;
     }
 
-    function syncSoundButton() {
-      const btn = document.getElementById("sound-toggle");
-      if (!btn || !GC) return;
-      const on = GC.isSoundEnabled();
-      btn.textContent = on ? "音效：開" : "音效：關";
-      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    function syncSoundButtons() {
+      const bgmBtn = document.getElementById("bgm-toggle");
+      const sfxBtn = document.getElementById("sfx-toggle");
+      const bgm = document.getElementById("bgm");
+      if (bgmBtn) {
+        const playing = !!(bgm && !bgm.paused);
+        bgmBtn.textContent = playing ? "背景音樂：開" : "背景音樂：關";
+        bgmBtn.setAttribute("aria-pressed", playing ? "true" : "false");
+      }
+      if (sfxBtn && GC) {
+        const on = GC.isSoundEnabled();
+        sfxBtn.textContent = on ? "操作音效：開" : "操作音效：關";
+        sfxBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      }
     }
 
     function pauseGameInteractions() {
@@ -1541,6 +1598,10 @@
       yearEl.classList.remove("on");
       yearEl.textContent = "";
       document.getElementById("finale-fw").innerHTML = "";
+      const rewardHost = document.getElementById("finale-reward-lines");
+      if (rewardHost && DATA && DATA.finalRewardLines) {
+        rewardHost.innerHTML = DATA.finalRewardLines.map((line) => "<p>" + line + "</p>").join("");
+      }
       overlay.classList.add("show");
       overlay.setAttribute("aria-hidden", "false");
       let i = 0;
@@ -1576,19 +1637,23 @@
     function renderSuccessBox(level) {
       const box = document.getElementById("stage-success");
       if (!box) return;
-      const headline = SUCCESS_HEADLINES[level.id] || "闖關成功";
+      const headline = SUCCESS_HEADLINES[level.id] || "挑戰完成！";
       const isStation = typeof STATION_LEVEL === "number";
       const incomplete = DATA.levels.filter((lv) => !progress[lv.id]);
-      const rewardText =
-        "完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。";
+      const passHint = DATA.passphraseInstruction || "🗣️ 向關主說出通關密語，即可請關主在護照蓋通關完成章。";
+      const rewardLines = DATA.finalRewardLines || [
+        "🎉 完成五個關卡並集滿護照印章後，",
+        "🎁 請向各個關主出示護照確認通關，即可領取禮券。"
+      ];
+      const rewardHtml = '<div class="reward-lines">' + rewardLines.map((line) => "<p>" + line + "</p>").join("") + "</div>";
       box.innerHTML =
         '<div class="success-box">' +
         "<strong>" + headline + "</strong>" +
         '<p style="margin:8px 0 4px;font-size:0.95rem">第 ' + level.id + " 關｜" + level.title + "</p>" +
         '<p class="passphrase-label">關主通關密語</p>' +
         '<div class="code">「' + level.passphrase + '」</div>' +
-        '<p style="margin:10px 0 0;font-size:0.88rem;color:var(--muted)">請前往指定地點找到關主，向關主說出通關密語，請關主於護照蓋章。</p>' +
-        '<p style="margin:8px 0 0;font-size:0.85rem;color:var(--muted)">' + rewardText + "</p>" +
+        '<div class="passphrase-hint">' + passHint + "</div>" +
+        rewardHtml +
         storageWarningHtml() +
         (isStation
           ? '<button type="button" class="btn btn-primary btn-sm" id="retry-station" style="margin-top:12px">重新挑戰本關</button>' +
@@ -1796,13 +1861,11 @@
       el.innerHTML = pipeSvgHtml(cell.type, cell.rot);
     }
 
-    const INLINE_PUZZLES = {"title":"廣運時光探險","subtitle":"50年的啟程 · 五關獨立挑戰 · 現場掃 QR 完成","reward":"完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。實境解謎闖關禮每人兌換限 1 次，護照遺失恕不補發。","playRules":"闖關護照將於活動日前預先發送給來賓，無須報到時領取。到達各關現場後，掃描該關專屬 QR Code 開始本關挑戰；各關網頁互不相連。解開謎題後向該關關主報告通關密語並在闖關護照蓋章，再前往其他關卡現場掃描其專屬 QR Code。完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。","storyArc":"從1976年創業起點出發，進入2026年AI液冷技術，回顧廣運五十年發展歷史，認識智慧工廠核心技術，展望下一個五十年與百年企業願景。","levels":[{"id":1,"title":"啟航輸送機","theme":"1976 · 創業起點","location":"303運動休息室","headline":"一切故事，就從這裡開始。","story":"時間回到1976年，一台自動輸送機正式啟動，也開啟了廣運集團的第一步。從這裡出發，廣運一步步累積技術與經驗，為日後的成長奠定堅實基礎。","intro":"一切故事，就從這裡開始。時間回到1976年，一台自動輸送機正式啟動，也開啟了廣運集團的第一步。","passphrase":"第一台輸送機","hint":"用手指點選方塊旋轉水管，讓起點與終點接通。"},{"id":2,"title":"液冷尋密碼","theme":"2026 · AI液冷","location":"319運動休息室","headline":"解開AI時代的關鍵技術。","story":"從輸送設備到AI液冷散熱，廣運將四十多年累積的自動化與機電整合能力，延伸至智慧資料中心的關鍵技術領域，持續開拓更多可能。","intro":"解開AI時代的關鍵技術。請依序完成三個液冷模組的參數校正，找出液冷系統的啟動密碼。","passphrase":"AI液冷啟動成功","hint":"擦拭濾鏡顯現算式，完成三個模組後組合 2000＋30－4＝2026。"},{"id":3,"title":"廣運歷史快問快答","theme":"五十年發展歷程","location":"廣運歷史牆","headline":"回顧五十年，一起見證廣運成長。","story":"五十年來，廣運走過創業、研發、綠能、智慧製造等不同發展階段，每一個重要里程碑，都見證著企業一步步成長，紀錄下廣運五十年的精彩歷程。","intro":"回顧五十年，一起見證廣運成長。完成五題歷史快問快答。","passphrase":"榮耀半世紀，百年展願景","hint":"五題四選一；全部答對後向關主報告通關密語並蓋章。"},{"id":4,"title":"修復智慧工廠","theme":"智慧工廠核心技術","location":"三樓活動現場後門","headline":"修復智慧工廠","story":"玩家抵達廣運智慧工廠時，系統因核心模組遺失而無法啟動。請協助重新配置智慧物流、智慧製造與AI、綠能三大系統，讓整座智慧工廠重新啟動。","intro":"智慧工廠系統故障，核心模組遺失。請重新配置三大系統，完成後讓整座工廠重新啟動。","passphrase":"智慧整合成功","hint":"依序修復智慧物流、智慧製造與AI、綠能三大系統。"},{"id":5,"title":"廣運成功密碼","theme":"展望下一個五十年","location":"329運動休息室","headline":"展望下一個五十年","story":"廣運歷經五十年的深耕與創新，將持續以全球布局為發展方向，朝百年企業的願景穩健邁進，一起開啟廣運下一個五十年的新篇章！","intro":"展望下一個五十年。請完成九宮格拼圖，一起開啟廣運邁向百年企業的新篇章。","passphrase":"展望百年願景","hint":"完成 3×3 主視覺拼圖後，向關主報告通關密語並蓋章。"}],"levelRules":{"1":[{"icon":"fa-eye","text":"觀察輸送機與物件的運作方式"},{"icon":"fa-list-ol","text":"依照畫面提示完成正確操作"},{"icon":"fa-stamp","text":"在時間內完成即可通過本關"}],"2":[{"icon":"fa-eraser","text":"用手指刮開畫面上的銀色區域"},{"icon":"fa-key","text":"找出隱藏在液冷畫面中的正確密碼"},{"icon":"fa-check","text":"輸入正確密碼即可通過本關"}],"3":[{"icon":"fa-list","text":"本關共有五題四選一題目"},{"icon":"fa-check-double","text":"選出正確答案後即可進入下一題"},{"icon":"fa-rotate-left","text":"五題全部答對即可通過本關"}],"4":[{"icon":"fa-industry","text":"依序修復智慧工廠的三大系統"},{"icon":"fa-gears","text":"將六項技術配置到正確的系統"},{"icon":"fa-bolt","text":"完成後按下「啟動智慧工廠」即可通關"}],"5":[{"icon":"fa-border-all","text":"移動九宮格拼圖完成正確圖像"},{"icon":"fa-image","text":"從完成的圖片中找出通關線索"},{"icon":"fa-unlock","text":"輸入正確通關密語即可完成挑戰"}]},"liquidCooling":{"introTitle":"AI伺服器溫度持續上升！","introText":"請依序完成三個液冷模組的參數校正，找出液冷系統的啟動密碼。","startButton":"開始校正","wipeHint":"請繼續擦拭，找出完整算式。","wipeThreshold":0.6,"modules":[{"id":"main-cooling","name":"主冷卻系統","filter":"red","equation":"50 × 40＝？","choices":["1800","2000","2400"],"answer":"2000","success":"主冷卻系統校正完成","valueLabel":"已取得參數：2000"},{"id":"pump","name":"循環泵浦","filter":"yellow","equation":"6 × 5＝？","choices":["25","30","35"],"answer":"30","success":"循環泵浦校正完成","valueLabel":"已取得參數：30"},{"id":"temp","name":"溫度校正","filter":"blue","equation":"12 ÷ 3＝？","choices":["3","4","6"],"answer":"4","success":"溫度校正完成","valueLabel":"已取得參數：4"}],"final":{"values":["2000","30","4"],"operators":["＋","－","×","÷"],"correct":["＋","－"],"result":"2026","wrongHint":"啟動參數不正確，請重新排列運算符號。","successTitle":"液冷系統啟動成功"}},"smartFactoryOptions":[{"id":"agv","label":"AGV無人搬運車","icon":"🤖"},{"id":"conveyor","label":"自動輸送機","icon":"⚙️"},{"id":"warehouse","label":"自動倉儲","icon":"🏭"},{"id":"digital-twin","label":"數位孿生","icon":"🖥️"},{"id":"immersion-cooling","label":"浸沒式液冷","icon":"❄️"},{"id":"taichi-solar","label":"太極太陽能","icon":"☀️"}],"smartFactoryQuestions":[{"id":"smart-logistics","title":"修復智慧物流系統","hint":"請將正確設備安裝至物流系統。","requiredCount":3,"answers":["agv","conveyor","warehouse"]},{"id":"smart-manufacturing-ai","title":"修復智慧製造與AI系統","hint":"請將正確模組安裝至智慧製造與AI系統。","requiredCount":2,"answers":["digital-twin","immersion-cooling"]},{"id":"green-energy","title":"修復綠能系統","hint":"請將正確模組安裝至綠能系統。","requiredCount":1,"answers":["taichi-solar"]}],"quizQuestions":[{"id":1,"tag":"創立起點","topic":"廣運的創立起點","subtitle":"廣運的創立起點","prompt":"廣運集團公司創立的起點是哪一天？","choices":["1976年7月12日","1978年7月12日","1980年7月12日","1976年12月7日"],"answers":["1976年7月12日"],"placeholder":"請選擇答案","wrongHint":"再想想！"},{"id":2,"tag":"海外布局","topic":"2006 年海外布局","subtitle":"2006 年海外布局","prompt":"2006 年，廣運海外布局拓展至哪一個國家？","choices":["越南","日本","美國","德國"],"answers":["越南"],"placeholder":"請選擇答案","wrongHint":"再想想！"},{"id":3,"tag":"核心技術","topic":"創立初期核心技術","subtitle":"創立初期核心技術","prompt":"廣運創立初期主要投入哪一項核心技術？","choices":["自動輸送設備","智慧醫療設備","電動車製造","金融科技"],"answers":["自動輸送設備"],"placeholder":"請選擇答案","wrongHint":"再想想！"},{"id":4,"tag":"生產基地","topic":"主要生產基地","subtitle":"主要生產基地","prompt":"除了台灣之外，廣運目前的主要生產基地位於哪些地區？","choices":["中國、越南","日本、韓國","美國、加拿大","德國、新加坡"],"answers":["中國、越南"],"placeholder":"請選擇答案","wrongHint":"再想想！"},{"id":5,"tag":"跨越50，邁向百年","topic":"AGV 應用場景","subtitle":"AGV 應用場景","prompt":"AGV（無人搬運車）主要應用於哪一種場景？","choices":["工廠物流搬運","餐廳送餐","飛機駕駛","家庭清潔"],"answers":["工廠物流搬運"],"placeholder":"請選擇答案","wrongHint":"再想想！"}]};
-
     function init() {
       try {
-        DATA = INLINE_PUZZLES;
-        if (!Array.isArray(DATA.levels) || DATA.levels.length !== 5) {
-          throw new Error("闖關資料格式不完整");
+        DATA = window.GAME_DATA;
+        if (!DATA || !Array.isArray(DATA.levels) || DATA.levels.length !== 5) {
+          throw new Error("闖關資料格式不完整（缺少 GAME_DATA）");
         }
         setupBgm();
         renderLevelNav();
@@ -1815,37 +1878,56 @@
     function setupBgm() {
       const bgm = document.getElementById("bgm");
       const btn = document.getElementById("bgm-toggle");
-      if (!bgm || !btn) return;
+      const panelToggle = document.getElementById("sound-panel-toggle");
+      const panelMenu = document.getElementById("sound-panel-menu");
+      const sfxBtn = document.getElementById("sfx-toggle");
+      if (bgm) bgm.volume = 0.42;
+      syncSoundButtons();
 
-      bgm.volume = 0.42;
-      updateBgmButton(btn, false);
+      if (panelToggle && panelMenu) {
+        panelToggle.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const open = panelMenu.classList.toggle("open");
+          panelToggle.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+        document.addEventListener("click", () => {
+          panelMenu.classList.remove("open");
+          panelToggle.setAttribute("aria-expanded", "false");
+        });
+        panelMenu.addEventListener("click", (e) => e.stopPropagation());
+      }
 
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        if (bgm.paused) {
-          startBgm();
-        } else {
-          bgm.pause();
-          setStoredPreference(BGM_PREF_KEY, "off");
-          updateBgmButton(btn, false);
-        }
-      });
-    }
+      if (bgm && btn) {
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (bgm.paused) startBgm();
+          else {
+            bgm.pause();
+            setStoredPreference(BGM_PREF_KEY, "off");
+            syncSoundButtons();
+          }
+        });
+      }
 
-    function updateBgmButton(btn, playing) {
-      btn.textContent = playing ? "🔊 音樂" : "🔇 音樂";
-      btn.setAttribute("aria-pressed", playing ? "true" : "false");
+      if (sfxBtn) {
+        sfxBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (!GC) return;
+          GC.initAudio();
+          GC.setSoundEnabled(!GC.isSoundEnabled());
+          syncSoundButtons();
+        });
+      }
     }
 
     function startBgm() {
       const bgm = document.getElementById("bgm");
-      const btn = document.getElementById("bgm-toggle");
-      if (!bgm || !btn) return;
+      if (!bgm) return;
       bgm.play().then(() => {
         setStoredPreference(BGM_PREF_KEY, "on");
-        updateBgmButton(btn, true);
+        syncSoundButtons();
       }).catch(() => {
-        updateBgmButton(btn, false);
+        syncSoundButtons();
       });
     }
 
@@ -1866,7 +1948,7 @@
       document.getElementById("hub").classList.remove("hidden");
       document.getElementById("game-screen").classList.add("hidden");
       if (typeof STATION_LEVEL === "number") updateGlobalProgress(STATION_LEVEL);
-      document.getElementById("progress-text").textContent = "已完成 " + completedCount() + " / 5 關";
+      document.getElementById("progress-text").textContent = "五關可任意選擇、不限順序";
       document.getElementById("complete-banner").classList.toggle("hidden", !allComplete());
       const hubRules = document.getElementById("hub-rules");
       if (hubRules && DATA.playRules) hubRules.textContent = DATA.playRules;
@@ -1901,22 +1983,19 @@
       if (memoryTimer) clearInterval(memoryTimer);
       updateGlobalProgress(levelId);
       const lv = DATA.levels[levelId - 1];
-      const rules = DATA.levelRules[String(levelId)] || [];
       const dur = (typeof GAME_DURATION_SECONDS === "number" ? GAME_DURATION_SECONDS : 180);
-      document.getElementById("modal-title").textContent = "遊戲規則";
-      document.getElementById("modal-intro").innerHTML =
-        "<strong>第 " + levelId + " 關｜" + lv.title + "</strong>" +
-        '<div class="limit-chip">本關限時 ' + dur + " 秒</div>";
+      document.getElementById("modal-title").textContent = "第 " + levelId + " 關｜" + lv.title;
+      document.getElementById("modal-intro").innerHTML = "";
       const steps = document.getElementById("modal-steps");
-      steps.innerHTML = "";
-      rules.forEach((step, i) => {
-        const card = document.createElement("div");
-        card.className = "step-card";
-        card.innerHTML =
-          '<i class="fa-solid ' + (step.icon || "fa-circle") + '"></i>' +
-          "<p><strong>" + (i + 1) + ".</strong> " + step.text + "</p>";
-        steps.appendChild(card);
-      });
+      steps.innerHTML =
+        '<div class="rules-block">' +
+        '<p class="rules-label">故事背景</p>' +
+        '<p class="rules-story">' + (lv.intro || "") + "</p></div>" +
+        '<div class="rules-block">' +
+        '<p class="rules-label">玩法說明</p>' +
+        '<p class="rules-howto">' + (lv.howToPlay || "") + "</p></div>" +
+        '<div class="rules-ready">' + (lv.readyMessage || "") + "</div>" +
+        '<div class="limit-chip">本關限時 ' + dur + " 秒</div>";
       document.getElementById("rules-modal").classList.add("show");
       const startBtn = document.getElementById("modal-start");
       if (startBtn) startBtn.disabled = false;
@@ -2687,7 +2766,7 @@
               '<div class="lc-stage cool" style="display:grid;place-items:center;color:var(--accent);font-weight:700">伺服器溫度下降中</div>' +
               '<div class="lc-flow"></div>' +
               "<h3 style='text-align:center;color:var(--accent)'>" + (fin.successTitle || "液冷系統啟動成功") + "</h3>" +
-              '<p class="story-body">闖關成功</p>';
+              '<p class="story-body">液冷核心修復完成！</p>';
             GC.trackTimeout(setTimeout(() => { if (!challengeFailed) showLevelSuccess(DATA.levels[1]); }, 1100));
           } else {
             if (GC) GC.playWrongSound();
@@ -3213,16 +3292,7 @@
     }
 
 
-        syncSoundButton();
-    const soundBtn = document.getElementById("sound-toggle");
-    if (soundBtn) {
-      soundBtn.addEventListener("click", () => {
-        if (!GC) return;
-        GC.initAudio();
-        GC.setSoundEnabled(!GC.isSoundEnabled());
-        syncSoundButton();
-      });
-    }
+        syncSoundButtons();
     document.getElementById("modal-start").addEventListener("click", () => {
       if (pendingLevel) startLevel(pendingLevel);
     });

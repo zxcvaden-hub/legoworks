@@ -1,4 +1,7 @@
-{
+/* AUTO-GENERATED from puzzles.json - do not hand-edit.
+ * Edit puzzles.json then run: py scripts/split-time-adventure.py
+ */
+window.GAME_DATA = {
   "title": "廣運時光探險",
   "subtitle": "50年的啟程 · 五關獨立挑戰 · 現場掃 QR 完成",
   "reward": "完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。實境解謎闖關禮每人兌換限 1 次，護照遺失恕不補發。",
@@ -375,4 +378,4 @@
     "🎉 完成五個關卡並集滿護照印章後，",
     "🎁 請向各個關主出示護照確認通關，即可領取禮券。"
   ]
-}
+};

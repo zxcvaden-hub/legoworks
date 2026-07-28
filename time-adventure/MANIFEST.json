@@ -11,6 +11,7 @@
   "files": {
     "core": [
       "time-adventure/config.js",
+      "time-adventure/game-data.js",
       "time-adventure/game-common.js",
       "time-adventure/puzzles.json",
       "time-adventure/station-template.html",
