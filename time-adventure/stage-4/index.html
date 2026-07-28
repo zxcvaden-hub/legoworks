@@ -1094,7 +1094,50 @@
       transition: box-shadow .35s ease, border-color .35s ease, transform .35s ease, filter .35s ease;
       filter: grayscale(1) saturate(.55) brightness(.78);
     }
-    .sf-unit.active { transform: translateY(-2px); }
+    .sf-unit.active {
+      transform: translateY(-2px);
+      filter: none;
+      border-color: rgba(0,242,254,.45);
+      box-shadow: 0 0 0 1px rgba(0,242,254,.22), 0 0 14px rgba(0,242,254,.16);
+    }
+    .sf-unit.guide-glow {
+      filter: none;
+      border-color: rgba(0,242,254,.65);
+      box-shadow: 0 0 0 1px rgba(0,242,254,.35), 0 0 18px rgba(0,242,254,.28);
+      animation: sf-breathe 1.6s ease-in-out infinite;
+    }
+    @keyframes sf-breathe {
+      0%, 100% { box-shadow: 0 0 0 1px rgba(0,242,254,.28), 0 0 12px rgba(0,242,254,.18); }
+      50% { box-shadow: 0 0 0 2px rgba(0,242,254,.5), 0 0 22px rgba(0,242,254,.38); }
+    }
+    .sf-op-tip {
+      text-align: center; margin: 0 0 10px; padding: 0;
+      background: transparent; border: 0;
+      color: var(--accent); font-size: 0.88rem; font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    .sf-toast {
+      position: fixed; left: 50%; bottom: calc(18% + env(safe-area-inset-bottom, 0px));
+      transform: translateX(-50%); z-index: 40; min-width: min(78vw, 280px);
+      padding: 12px 16px; border-radius: 14px; text-align: center;
+      background: rgba(8, 24, 44, 0.94); border: 1px solid rgba(0,242,254,.4);
+      color: var(--text); font-weight: 700; font-size: 0.95rem; line-height: 1.45;
+      box-shadow: 0 10px 28px rgba(0,0,0,.35); pointer-events: none;
+      animation: sf-toast-in .2s ease;
+    }
+    .sf-toast strong { display:block; color: var(--accent); margin-bottom: 2px; }
+    @keyframes sf-toast-in { from { opacity:0; transform: translate(-50%, 8px); } to { opacity:1; transform: translate(-50%, 0); } }
+    .sf-scroll-hint {
+      position: sticky; bottom: 8px; z-index: 5; margin: 8px auto 0; width: fit-content;
+      padding: 8px 14px; border-radius: 999px; text-align: center;
+      background: rgba(0,242,254,.16); border: 1px solid rgba(0,242,254,.35);
+      color: var(--accent); font-size: 0.86rem; font-weight: 700;
+      animation: sf-bob 1.2s ease-in-out infinite;
+    }
+    @keyframes sf-bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
     .sf-unit.online-logistics { filter:none; border-color: rgba(34,197,94,.5); box-shadow: 0 0 18px rgba(34,197,94,.16); }
     .sf-unit.online-ai { filter:none; border-color: rgba(59,130,246,.52); box-shadow: 0 0 18px rgba(59,130,246,.18); }
     .sf-unit.online-energy { filter:none; border-color: rgba(250,204,21,.56); box-shadow: 0 0 18px rgba(250,204,21,.18); }
@@ -1141,7 +1184,7 @@
       font-weight: 800; animation: pulseGlow 1.2s ease infinite alternate;
     }
     @media (min-width: 820px) {
-      .sf-layout { grid-template-columns: minmax(220px, 260px) 1fr; align-items: start; }
+      .sf-layout { grid-template-columns: 1fr; }
     }
     .puzzle-board {
       width: min(100%, 420px); margin: 0 auto; aspect-ratio: 16 / 9;
@@ -3021,7 +3064,7 @@
       renderQuestion();
     }
 
-    /* ===== Level 4: Smart factory repair ===== */
+    /* ===== Level 4: Smart factory repair (tap system → tap equipment) ===== */
     function initLevel4() {
       const options = DATA.smartFactoryOptions || [];
       const questions = DATA.smartFactoryQuestions || [];
@@ -3041,11 +3084,6 @@
         "smart-manufacturing-ai": "🧠",
         "green-energy": "☀️"
       };
-      const completeMessages = {
-        "smart-logistics": "智慧物流系統修復完成",
-        "smart-manufacturing-ai": "智慧製造與AI系統修復完成",
-        "green-energy": "綠能系統修復完成"
-      };
       const bootSteps = [
         "物流輸送帶開始運轉",
         "AGV 開始移動",
@@ -3056,12 +3094,12 @@
       ];
       const state = {
         qIndex: -1,
-        selectedCard: null,
-        draggingId: null,
+        systemConfirmed: false,
+        locked: false,
         installedBySystem: {},
         installedOptions: new Set(),
         finishedSystems: new Set(),
-        booting: false
+        scrollHintDismissed: false
       };
       questions.forEach((q) => {
         state.installedBySystem[q.id] = [];
@@ -3074,6 +3112,21 @@
           "green-energy": "綠能模組已接線"
         }[systemId];
         if (cue) console.info("[SFX placeholder]", cue);
+      }
+
+      function clearToasts() {
+        document.querySelectorAll(".sf-toast").forEach((el) => el.remove());
+      }
+
+      function showToast(html, ms) {
+        clearToasts();
+        const toast = document.createElement("div");
+        toast.className = "sf-toast";
+        toast.innerHTML = html;
+        document.body.appendChild(toast);
+        const hide = () => { if (toast.parentNode) toast.remove(); };
+        if (GC) GC.trackTimeout(setTimeout(hide, ms));
+        else setTimeout(hide, ms);
       }
 
       function statusCardHtml(id) {
@@ -3090,28 +3143,30 @@
         );
       }
 
-      function factoryUnitHtml(q) {
+      function factoryUnitHtml(q, activeId) {
         const installed = state.installedBySystem[q.id] || [];
         const online = state.finishedSystems.has(q.id);
+        const isActive = !online && q.id === activeId;
+        const classes = [
+          online ? systemClasses[q.id] : "",
+          isActive ? "guide-glow active" : ""
+        ].filter(Boolean).join(" ");
         return (
-          '<div class="sf-unit ' + (online ? systemClasses[q.id] : "") + '">' +
+          '<div class="sf-unit ' + classes + '" id="unit-' + q.id + '" data-system="' + q.id + '">' +
           "<h4>" + systemLabels[q.id] + "</h4>" +
           '<div class="sf-unit-icon">' + systemIcons[q.id] + "</div>" +
-          '<div class="sf-dropzone ' + (installed.length ? "ready " : "") + '" id="drop-' + q.id + '" data-system="' + q.id + '">' +
+          '<div class="sf-dropzone ' + (installed.length || online ? "ready " : "") + (isActive && state.systemConfirmed ? "targeting " : "") + '" id="drop-' + q.id + '" data-system="' + q.id + '">' +
           '<div class="installed-list">' + installed.map((id) => {
             const opt = options.find((item) => item.id === id);
             return '<span class="sf-chip">' + (opt ? opt.icon : "⚙️") + " " + (opt ? opt.label : id) + "</span>";
           }).join("") + "</div>" +
-          '<div class="sf-dropnote">' +
-          (installed.length
-            ? "已安裝 " + installed.length + " / " + q.requiredCount + "，點這裡繼續安裝"
-            : "拖曳卡片到這裡，或點卡片後再點此安裝") +
-          "</div>" +
+          (online ? '<div class="sf-dropnote">ONLINE</div>' : "") +
           "</div></div>"
         );
       }
 
       function showFactorySuccess() {
+        clearToasts();
         showLevelSuccess(DATA.levels[3]);
         setTimeout(() => {
           const box = document.querySelector("#stage-success .success-box");
@@ -3133,7 +3188,7 @@
           '<div class="warn">⚠️</div>' +
           "<strong>智慧工廠系統故障</strong>" +
           '<p class="story-body" style="margin-bottom:8px">核心模組遺失</p>' +
-          '<p class="story-body">請重新配置三大系統</p>' +
+          '<p class="story-body">請點選配對，修復三大系統</p>' +
           '<button type="button" class="btn btn-primary" id="sf-start" style="margin-top:10px">開始修復</button>' +
           "</div>" +
           '<div class="sf-status-panel">' +
@@ -3143,45 +3198,107 @@
           "</div></div>";
         document.getElementById("sf-start").addEventListener("click", () => {
           state.qIndex = 0;
+          state.systemConfirmed = false;
           renderSystem();
         });
       }
 
+      function advanceAfterPair(systemId) {
+        state.locked = true;
+        showToast("<strong>🎉 配對成功！</strong>", 800);
+        const go = () => {
+          state.locked = false;
+          state.systemConfirmed = false;
+          if (state.qIndex >= questions.length - 1) {
+            renderSystem();
+            return;
+          }
+          state.qIndex += 1;
+          renderSystem();
+        };
+        if (GC) GC.trackTimeout(setTimeout(go, 800));
+        else setTimeout(go, 800);
+      }
+
       function installOption(systemId, optionId) {
+        if (state.locked) return;
         const q = questions.find((item) => item.id === systemId);
         const installed = state.installedBySystem[systemId];
         if (!q || !installed || state.installedOptions.has(optionId)) return;
-        const hint = document.getElementById("sf-hint");
+        if (!state.systemConfirmed) {
+          const hint = document.getElementById("sf-hint");
+          if (hint) hint.textContent = "請先點選要修復的系統，再點選設備。";
+          return;
+        }
         if (!q.answers.includes(optionId)) {
-          hint.textContent = "模組不相容，請重新配置。";
+          const hint = document.getElementById("sf-hint");
+          if (hint) hint.textContent = "模組不相容，請重新點選正確設備。";
           if (GC) GC.playWrongSound();
           const card = document.querySelector('.sf-card[data-id="' + optionId + '"]');
           if (card) {
             card.classList.add("wrong-flash");
-            const clearWrong = () => card.classList.remove("wrong-flash", "selected");
+            const clearWrong = () => card.classList.remove("wrong-flash");
             if (GC) GC.trackTimeout(setTimeout(clearWrong, 420));
             else setTimeout(clearWrong, 420);
           }
-          state.selectedCard = null;
           return;
         }
         installed.push(optionId);
         state.installedOptions.add(optionId);
-        state.selectedCard = null;
-        if (installed.length === q.requiredCount) state.finishedSystems.add(systemId);
         if (GC) GC.playCorrectSound();
         playSystemCue(systemId);
-        renderSystem(true, completeMessages[systemId]);
+        if (installed.length === q.requiredCount) {
+          state.finishedSystems.add(systemId);
+          renderSystem();
+          advanceAfterPair(systemId);
+          return;
+        }
+        renderSystem();
+      }
+
+      function confirmSystem(systemId) {
+        if (state.locked) return;
+        const q = questions[state.qIndex];
+        if (!q || q.id !== systemId || state.finishedSystems.has(systemId)) return;
+        state.systemConfirmed = true;
+        showToast("<strong>✓ 已選擇</strong>" + systemLabels[systemId], 800);
+        renderSystem();
+      }
+
+      function bindScrollHint() {
+        const hint = document.getElementById("sf-scroll-hint");
+        const grid = document.getElementById("sf-grid");
+        if (!hint || !grid || state.scrollHintDismissed) {
+          if (hint) hint.remove();
+          return;
+        }
+        const rect = grid.getBoundingClientRect();
+        const inView = rect.top < window.innerHeight - 40 && rect.bottom > 80;
+        if (inView) {
+          hint.remove();
+          return;
+        }
+        const dismiss = () => {
+          if (state.scrollHintDismissed) return;
+          state.scrollHintDismissed = true;
+          const el = document.getElementById("sf-scroll-hint");
+          if (el) el.remove();
+          window.removeEventListener("scroll", dismiss, true);
+          document.removeEventListener("touchmove", dismiss, true);
+        };
+        window.addEventListener("scroll", dismiss, true);
+        document.addEventListener("touchmove", dismiss, true);
       }
 
       function renderBootSequence() {
+        clearToasts();
         if (GC) GC.playFactoryBootSound();
         body.innerHTML =
           '<div class="sf-shell">' +
           '<div class="sf-factory">' +
           '<div class="sf-factory-title">SMART FACTORY CONTROL CENTER</div>' +
           '<div class="sf-plant">' +
-          questions.map((q) => factoryUnitHtml(q)).join("") +
+          questions.map((q) => factoryUnitHtml(q, null)).join("") +
           "</div>" +
           '<div class="sf-boot-success">智慧工廠啟動成功！</div>' +
           "</div>" +
@@ -3198,102 +3315,68 @@
         }, 2000));
       }
 
-      function renderSystem(showFlash, doneMessage) {
+      function renderSystem() {
         const q = questions[state.qIndex];
         if (!q) {
           renderBootSequence();
           return;
         }
         const systemId = q.id;
-        const installed = state.installedBySystem[systemId] || [];
-        const canComplete = installed.length === q.requiredCount;
+        const canBoot = state.finishedSystems.has(systemId) && state.qIndex === questions.length - 1;
         body.innerHTML =
           '<div class="sf-shell">' +
           '<div class="sf-layout">' +
+          '<div class="sf-center">' +
+          '<p class="story-headline">' + q.title + "</p>" +
+          '<div class="sf-factory">' +
+          '<div class="sf-factory-title">SMART FACTORY CONTROL CENTER</div>' +
+          '<p class="sf-op-tip">👇 先點系統，再點設備</p>' +
+          '<div class="sf-plant">' +
+          questions.map((item) => factoryUnitHtml(item, systemId)).join("") +
+          "</div></div>" +
+          '<div class="sf-grid" id="sf-grid"></div>' +
+          '<p class="lc-hint" id="sf-hint"></p>' +
+          (canBoot
+            ? '<button type="button" class="btn btn-primary" id="sf-next">啟動智慧工廠</button>'
+            : "") +
+          (!state.scrollHintDismissed ? '<div class="sf-scroll-hint" id="sf-scroll-hint">⬇️ 請往下滑</div>' : "") +
+          "</div>" +
           '<div class="sf-status-panel">' +
           statusCardHtml("smart-logistics") +
           statusCardHtml("smart-manufacturing-ai") +
           statusCardHtml("green-energy") +
-          "</div>" +
-          '<div class="sf-center">' +
-          '<p class="story-headline">' + q.title + "</p>" +
-          '<p class="sf-meta">' + q.hint + "</p>" +
-          '<p class="sf-meta">STEP ' + (state.qIndex + 1) + " / 3 ・ 已安裝 " + installed.length + " / " + q.requiredCount + "</p>" +
-          '<div class="sf-factory">' +
-          '<div class="sf-factory-title">SMART FACTORY CONTROL CENTER</div>' +
-          '<div class="sf-plant">' +
-          questions.map((item) => factoryUnitHtml(item)).join("") +
-          "</div></div>" +
-          (doneMessage ? '<p class="story-headline" style="margin-top:12px">' + doneMessage + "</p>" : "") +
-          '<div class="sf-grid" id="sf-grid"></div>' +
-          '<p class="lc-hint" id="sf-hint">' + (state.selectedCard
-            ? ("已選擇「" + ((options.find((opt) => opt.id === state.selectedCard) || {}).label || "") + "」，請點目前系統框安裝。")
-            : "拖曳卡片到目標框，或點選卡片後再點目標框。") + "</p>" +
-          '<button type="button" class="btn btn-primary" id="sf-next" ' + (canComplete ? "" : "disabled") + ">" +
-          (state.qIndex === questions.length - 1 ? "啟動智慧工廠" : "修復下一個系統") +
-          "</button>" +
           "</div></div></div>";
 
         const grid = document.getElementById("sf-grid");
         options.forEach((opt) => {
           const btn = document.createElement("button");
           btn.type = "button";
-          btn.className = "sf-card" + (state.selectedCard === opt.id ? " selected" : "") + (state.installedOptions.has(opt.id) ? " installed" : "");
+          btn.className = "sf-card" + (state.installedOptions.has(opt.id) ? " installed" : "");
           btn.dataset.id = opt.id;
-          btn.draggable = !state.installedOptions.has(opt.id);
+          btn.draggable = false;
           btn.innerHTML = '<span class="ico">' + (opt.icon || "") + '</span><span>' + opt.label + "</span>";
           btn.addEventListener("click", () => {
-            if (state.installedOptions.has(opt.id)) return;
-            state.selectedCard = state.selectedCard === opt.id ? null : opt.id;
-            renderSystem(false, doneMessage);
-          });
-          btn.addEventListener("dragstart", (e) => {
-            if (state.installedOptions.has(opt.id)) return;
-            state.draggingId = opt.id;
-            btn.classList.add("dragging");
-            e.dataTransfer.setData("text/plain", opt.id);
-          });
-          btn.addEventListener("dragend", () => {
-            state.draggingId = null;
-            btn.classList.remove("dragging");
-          });
-          btn.addEventListener("pointerdown", () => {
-            if (state.installedOptions.has(opt.id)) return;
-            state.draggingId = opt.id;
-          });
-          btn.addEventListener("pointerup", () => {
-            state.draggingId = null;
+            if (state.installedOptions.has(opt.id) || state.locked) return;
+            installOption(systemId, opt.id);
           });
           grid.appendChild(btn);
         });
 
-        const activeDrop = document.getElementById("drop-" + systemId);
-        if (activeDrop) {
-          activeDrop.classList.add("targeting");
-          activeDrop.addEventListener("dragover", (e) => e.preventDefault());
-          activeDrop.addEventListener("dragenter", (e) => {
-            e.preventDefault();
-            activeDrop.classList.add("targeting");
-          });
-          activeDrop.addEventListener("dragleave", () => activeDrop.classList.remove("targeting"));
-          activeDrop.addEventListener("drop", (e) => {
-            e.preventDefault();
-            const id = state.draggingId || e.dataTransfer.getData("text/plain");
-            activeDrop.classList.add("targeting");
-            if (id) installOption(systemId, id);
-          });
-          activeDrop.addEventListener("click", () => {
-            if (state.selectedCard) {
-              installOption(systemId, state.selectedCard);
-            }
+        questions.forEach((item) => {
+          const unit = document.getElementById("unit-" + item.id);
+          if (!unit) return;
+          unit.addEventListener("click", () => confirmSystem(item.id));
+        });
+
+        const bootBtn = document.getElementById("sf-next");
+        if (bootBtn) {
+          bootBtn.addEventListener("click", () => {
+            state.qIndex = questions.length;
+            renderBootSequence();
           });
         }
 
-        document.getElementById("sf-next").addEventListener("click", () => {
-          state.finishedSystems.add(systemId);
-          state.qIndex += 1;
-          renderSystem(false, completeMessages[systemId]);
-        });
+        requestAnimationFrame(bindScrollHint);
       }
 
       renderIntro();
