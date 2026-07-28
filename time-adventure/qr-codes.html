@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>廣運時光探險｜QR Code 總覽</title>
+<style>
+body { margin:0; background:#0a2540; color:#e8f4ff; font-family:system-ui,"Noto Sans TC",sans-serif; padding:20px; }
+h1 { color:#00f2fe; } .grid { display:grid; gap:18px; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); }
+.card { background:rgba(255,255,255,.06); border:1px solid rgba(0,242,254,.28); border-radius:16px; padding:16px; text-align:center; }
+.qr { background:#fff; border-radius:12px; padding:12px; display:inline-flex; }
+.url { word-break:break-all; font-size:.78rem; color:#00f2fe; margin:10px 0; user-select:text; -webkit-user-select:text; }
+button { min-height:48px; width:100%; border:0; border-radius:12px; font-weight:700; background:linear-gradient(135deg,#00d2c4,#00f2fe); color:#0a2540; }
+.meta { color:#8eb4d4; font-size:.9rem; line-height:1.5; }
+a { color:#00f2fe; }
+</style>
+</head>
+<body>
+<h1>時光探險 QR Code 總覽</h1>
+<p class="meta">工作人員列印用。網址來自 <code>config.js</code> 的 <code>SITE_BASE_URL</code>。<br>目前預設測試站 legoworks。</p>
+<p><a href="./index.html">← 活動說明</a></p>
+<div class="grid" id="grid"></div>
+<script src="./config.js"></script>
+<script src="../qrcode.min.js"></script>
+<script>
+const LEVELS = [{"id": 1, "title": "啟航輸送機", "location": "303運動休息室", "file": "01-啟航輸送機-QR.png"}, {"id": 2, "title": "液冷尋密碼", "location": "319運動休息室", "file": "02-液冷尋密碼-QR.png"}, {"id": 3, "title": "廣運歷史小測驗", "location": "廣運歷史牆", "file": "03-廣運歷史小測驗-QR.png"}, {"id": 4, "title": "廣運AI智慧一點通", "location": "後門", "file": "04-廣運AI智慧一點通-QR.png"}, {"id": 5, "title": "廣運成功密碼", "location": "329運動休息室", "file": "05-廣運成功密碼-QR.png"}];
+const base = (typeof SITE_BASE_URL === "string" ? SITE_BASE_URL : "").replace(/\/$/, "");
+const grid = document.getElementById("grid");
+LEVELS.forEach((lv) => {
+  const url = base + "/time-adventure/stage-" + lv.id + "/";
+  const card = document.createElement("div");
+  card.className = "card";
+  card.innerHTML =
+    "<h2>第 " + String(lv.id).padStart(2,"0") + " 關｜" + lv.title + "</h2>" +
+    '<p class="meta">地點：' + lv.location + "</p>" +
+    '<div class="qr" id="qr-' + lv.id + '"></div>' +
+    '<div class="url">' + url + "</div>" +
+    '<button type="button" data-id="' + lv.id + '" data-file="' + lv.file + '">下載 QR Code PNG</button>';
+  grid.appendChild(card);
+  const holder = document.getElementById("qr-" + lv.id);
+  new QRCode(holder, { text: url, width: 220, height: 220, colorDark: "#000000", colorLight: "#ffffff", correctLevel: QRCode.CorrectLevel.H });
+});
+grid.addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-id]");
+  if (!btn) return;
+  const id = btn.getAttribute("data-id");
+  const file = btn.getAttribute("data-file");
+  const canvas = document.querySelector("#qr-" + id + " canvas");
+  if (!canvas) return;
+  const out = document.createElement("canvas");
+  out.width = 1000; out.height = 1000;
+  const ctx = out.getContext("2d");
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0, 0, 1000, 1000);
+  const pad = 80;
+  ctx.drawImage(canvas, pad, pad, 1000 - pad * 2, 1000 - pad * 2);
+  const a = document.createElement("a");
+  a.href = out.toDataURL("image/png");
+  a.download = file;
+  a.click();
+});
+</script>
+</body>
+</html>

@@ -36,6 +36,30 @@ body {
   padding: 5px 12px;
   margin-bottom: 10px;
 }
+.anniversary-visual {
+  display: block;
+  width: 80%;
+  max-width: 288px;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  object-fit: cover;
+  object-position: center center;
+  border-radius: 12px;
+  margin: 0 auto 14px;
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  background: #0078b4;
+}
+.level-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 1.8em;
+  height: 1.8em;
+  margin-right: 0.25em;
+  border-radius: 50%;
+  background: rgba(0, 242, 254, 0.14);
+  font-size: 0.82em;
+  vertical-align: middle;
+}
 h1 {
   font-size: 1.25rem;
   margin: 0 0 8px;
@@ -87,12 +111,13 @@ a {
 <body>
 <div class="card">
   <div class="badge">Time Adventure</div>
+  <img class="anniversary-visual" src="../messageImage_50_16x9.jpg" alt="廣運 50 週年主視覺" />
   <h1>廣運時光探險</h1>
-  <p>掃描 QR Code 直接進入五關實境解謎</p>
+  <p>掃描 QR Code 查看活動說明；請前往各關現場掃描專屬 QR Code 開始挑戰。</p>
   <div id="qrcode"></div>
   <div id="url" class="url"></div>
-  <a id="open" href="./">直接開啟闖關</a>
-  <p class="note">此 QR 與智能客服分開。活動諮詢請掃客服 QR（根目錄 qr.html）。</p>
+  <a id="open" href="./">開啟活動說明</a>
+  <p class="note">此 QR 與智能客服分開。活動諮詢請掃客服 QR</p>
 </div>
 <script src="../qrcode.min.js"></script>
 <script>

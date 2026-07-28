@@ -1,0 +1,2549 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0A2540" />
+  <title>廣運時光探險｜第1關 啟航輸送機</title>
+  <link rel="stylesheet" href="../font-icons.css" />
+  <script src="./adventure.js"></script>
+  <style>
+    :root {
+      --bg-deep: #0a2540;
+      --bg-mid: #003366;
+      --accent: #00f2fe;
+      --accent-soft: #00d2c4;
+      --card: rgba(255, 255, 255, 0.06);
+      --card-border: rgba(0, 242, 254, 0.28);
+      --text: #e8f4ff;
+      --muted: #8eb4d4;
+      --danger: #ff6b8a;
+      --ok: #00f2fe;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --glow: 0 0 18px rgba(0, 242, 254, 0.45);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      min-height: 100dvh;
+      font-family: "Noto Sans TC", system-ui, -apple-system, sans-serif;
+      background: radial-gradient(ellipse at top, var(--bg-mid) 0%, var(--bg-deep) 58%);
+      color: var(--text);
+      overscroll-behavior: none;
+    }
+
+    .app {
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      padding: calc(10px + var(--safe-top)) 12px calc(16px + var(--safe-bottom));
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hero {
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 242, 254, 0.35);
+      color: var(--accent);
+      background: rgba(0, 242, 254, 0.08);
+    }
+
+    .hero h1 {
+      margin: 8px 0 4px;
+      font-size: clamp(1.4rem, 6vw, 1.85rem);
+      text-shadow: var(--glow);
+    }
+
+    .hero-sub {
+      margin: 0;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .nav-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .nav-row a, .nav-pill, .nav-pill-btn {
+      font-size: 0.78rem;
+      color: var(--text);
+      text-decoration: none;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-pill-btn {
+      cursor: pointer;
+      font-family: inherit;
+      touch-action: manipulation;
+    }
+
+    .nav-pill-btn[aria-pressed="true"] {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: var(--glow);
+    }
+
+    .level-nav {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 4px 2px 8px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .level-nav::-webkit-scrollbar { display: none; }
+
+    .level-nav button {
+      flex: 0 0 auto;
+      width: 52px;
+      min-height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .level-nav button.active {
+      border-color: var(--accent);
+      box-shadow: var(--glow);
+      color: var(--accent);
+    }
+
+    .level-nav button.done {
+      background: rgba(0, 242, 254, 0.15);
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(8px);
+    }
+
+    .panel h2 {
+      margin: 0 0 8px;
+      font-size: 1.1rem;
+      color: var(--accent);
+    }
+
+    .panel p {
+      margin: 0 0 12px;
+      line-height: 1.65;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .progress-line {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--accent-soft);
+      margin-bottom: 10px;
+    }
+
+    .level-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .level-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      text-align: left;
+      border: 1px solid rgba(0, 242, 254, 0.22);
+      background: rgba(0, 0, 0, 0.18);
+      border-radius: 14px;
+      padding: 14px;
+      color: var(--text);
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .level-card:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .level-card.done {
+      border-color: var(--accent-soft);
+      box-shadow: 0 0 12px rgba(0, 210, 196, 0.25);
+    }
+
+    .level-num {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      color: var(--bg-deep);
+      flex-shrink: 0;
+    }
+
+    .level-card.done .level-num {
+      background: linear-gradient(135deg, #22d3ee, #34d399);
+    }
+
+    .level-meta strong {
+      display: block;
+      font-size: 0.98rem;
+      margin-bottom: 2px;
+    }
+
+    .level-meta span {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .complete-banner {
+      margin-top: 12px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--accent);
+      background: rgba(0, 242, 254, 0.1);
+      text-align: center;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 12px;
+      min-height: 48px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      touch-action: manipulation;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      color: var(--bg-deep);
+      box-shadow: var(--glow);
+      width: 100%;
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-sm {
+      min-height: 40px;
+      font-size: 0.88rem;
+      padding: 8px 14px;
+      width: auto;
+    }
+
+    .screen-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(0, 242, 254, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(5, 15, 30, 0.82);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 12px;
+      padding-bottom: calc(12px + var(--safe-bottom));
+    }
+
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      width: 100%;
+      max-width: 440px;
+      max-height: 88dvh;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #0d3052, #0a2540);
+      border: 1px solid var(--card-border);
+      border-radius: 20px 20px 16px 16px;
+      padding: 18px 16px;
+      box-shadow: 0 -8px 40px rgba(0, 242, 254, 0.15);
+    }
+
+    .modal h3 {
+      margin: 0 0 6px;
+      font-size: 1.15rem;
+      color: var(--accent);
+    }
+
+    .modal .intro {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.55;
+    }
+
+    .step-cards {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .step-card {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(0, 242, 254, 0.06);
+      border: 1px solid rgba(0, 242, 254, 0.18);
+    }
+
+    .step-card i {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: rgba(0, 242, 254, 0.15);
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .step-card p {
+      margin: 0;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: var(--text);
+    }
+
+    /* Level 1 conveyor */
+    .conveyor-wrap {
+      position: relative;
+      margin: 8px auto;
+      max-width: min(100%, 380px);
+    }
+
+    .conveyor-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+    }
+
+    .pipe-cell {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 242, 254, 0.28);
+      background: rgba(0, 10, 24, 0.85);
+      padding: 0;
+      overflow: hidden;
+      position: relative;
+      display: block;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: box-shadow 0.2s, transform 0.15s;
+      user-select: none;
+    }
+
+    .pipe-cell:active { transform: scale(0.97); }
+
+    .pipe-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+    }
+
+    .pipe-svg .track {
+      fill: none;
+      stroke: #00f2fe;
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 0 5px rgba(0, 242, 254, 0.85));
+    }
+
+    .pipe-svg .track-collar {
+      fill: none;
+      stroke: #00f2fe;
+      stroke-width: 8;
+      stroke-linecap: round;
+      filter: drop-shadow(0 0 4px rgba(0, 242, 254, 0.75));
+    }
+
+    .pipe-svg .track-hub {
+      fill: rgba(0, 242, 254, 0.35);
+      stroke: #00f2fe;
+      stroke-width: 3;
+      filter: drop-shadow(0 0 4px rgba(0, 242, 254, 0.6));
+    }
+
+    .pipe-cell.start, .pipe-cell.end {
+      font-size: 1.55rem;
+      line-height: 1;
+      font-weight: 800;
+      color: var(--accent-soft);
+      background: rgba(0, 242, 254, 0.12);
+      display: grid;
+      place-items: center;
+    }
+
+    .cargo {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #fff7d6, #ffd166 45%, #ff9f1c);
+      box-shadow: 0 0 14px rgba(255, 209, 102, 0.95), 0 0 28px rgba(0, 242, 254, 0.55);
+      transition: left 0.42s ease, top 0.42s ease;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 20;
+    }
+
+    .cargo.run {
+      opacity: 1;
+      animation: cargoPulse 0.55s ease-in-out infinite alternate;
+    }
+
+    @keyframes cargoPulse {
+      from { box-shadow: 0 0 14px rgba(255, 209, 102, 0.9), 0 0 24px rgba(0, 242, 254, 0.45); }
+      to { box-shadow: 0 0 22px rgba(255, 209, 102, 1), 0 0 40px rgba(0, 242, 254, 0.75); }
+    }
+
+    /* Level 2 liquid cool — server rack frame */
+    .server-rack {
+      position: relative;
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
+      padding: 12px 10px 10px;
+      background: linear-gradient(165deg, #454b52 0%, #2f3439 38%, #1c1f23 100%);
+      border: 2px solid #5c636b;
+      border-radius: 3px;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -2px 6px rgba(0, 0, 0, 0.35),
+        0 10px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    .server-rack-panel {
+      height: 14px;
+      margin: 0 18px 10px;
+      background: linear-gradient(180deg, #14171a, #23272c);
+      border: 1px solid #0a0c0e;
+      border-radius: 2px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .server-rack-grille {
+      margin-top: 8px;
+      height: 20px;
+      border-radius: 2px;
+      border: 1px solid #0a0c0e;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          #0c0e11 0,
+          #0c0e11 4px,
+          #252a30 4px,
+          #252a30 10px
+        );
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.55);
+    }
+
+    .server-rack-feet {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 16px 0;
+    }
+
+    .server-rack-feet span {
+      width: 14px;
+      height: 5px;
+      border-radius: 2px;
+      background: linear-gradient(180deg, #6a7078, #3a3f45);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+
+    .heat-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 300 / 220;
+      margin: 0 auto;
+      border-radius: 2px;
+      overflow: hidden;
+      border: 2px solid #0f1114;
+      box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.65);
+      touch-action: none;
+      background: #121416;
+    }
+
+    .heat-stage canvas {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    #heat-mask {
+      z-index: 1;
+    }
+
+    .coolant-block {
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.9), rgba(0, 210, 196, 0.85));
+      border: 2px solid #fff;
+      box-shadow: var(--glow);
+      display: grid;
+      place-items: center;
+      color: var(--bg-deep);
+      font-size: 1.4rem;
+      cursor: grab;
+      touch-action: none;
+      left: 12px;
+      top: 12px;
+      z-index: 2;
+    }
+
+    .coolant-block.dragging { cursor: grabbing; }
+
+    .reveal-btn {
+      display: none;
+      margin: 12px auto 0;
+      text-align: center;
+    }
+
+    .reveal-btn.show { display: block; }
+
+    .reveal-btn button {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 14px 28px;
+      border-radius: 14px;
+      border: 2px solid var(--accent);
+      background: rgba(0, 242, 254, 0.15);
+      color: var(--accent);
+      box-shadow: var(--glow);
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    /* Level 3 chat */
+    .chat-box {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid rgba(0, 242, 254, 0.25);
+      background: rgba(0, 0, 0, 0.25);
+    }
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: rgba(0, 242, 254, 0.1);
+      border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+    }
+
+    .bot-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      display: grid;
+      place-items: center;
+      color: var(--bg-deep);
+      font-size: 1.2rem;
+      box-shadow: var(--glow);
+    }
+
+    .chat-messages {
+      min-height: 220px;
+      max-height: 42dvh;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bubble {
+      max-width: 88%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 0.92rem;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
+
+    .bubble.bot {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.1);
+      border-bottom-left-radius: 4px;
+    }
+
+    .bubble.user {
+      align-self: flex-end;
+      background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      color: var(--bg-deep);
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-input-row {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .chat-input-row input {
+      flex: 1;
+      min-width: 0;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      background: rgba(0, 0, 0, 0.3);
+      color: var(--text);
+      padding: 12px;
+      font-size: 16px;
+    }
+
+    .chat-input-row button {
+      min-width: 52px;
+      border-radius: 12px;
+      border: none;
+      background: var(--accent);
+      color: var(--bg-deep);
+      font-weight: 800;
+      font-size: 1rem;
+      touch-action: manipulation;
+    }
+
+    /* Level 4 memory */
+    .memory-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.88rem;
+      color: var(--accent-soft);
+      margin-bottom: 10px;
+    }
+
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    @media (max-width: 360px) {
+      .memory-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .mem-card {
+      aspect-ratio: 0.85;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      background: rgba(0, 0, 0, 0.35);
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      touch-action: manipulation;
+      transform-style: preserve-3d;
+      transition: transform 0.35s;
+      position: relative;
+    }
+
+    .mem-card.flipped { transform: rotateY(180deg); }
+
+    .mem-card .face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      padding: 6px;
+      text-align: center;
+    }
+
+    .mem-card .back {
+      background: linear-gradient(135deg, #0a2540, #003366);
+      color: var(--accent);
+      font-weight: 800;
+      font-size: 0.85rem;
+    }
+
+    .mem-card .front {
+      transform: rotateY(180deg);
+      background: rgba(0, 242, 254, 0.12);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 4px;
+    }
+
+    .mem-card .mem-icon {
+      font-size: 3rem;
+      line-height: 1;
+      display: block;
+    }
+
+    .mem-card .mem-label {
+      font-size: 0.72rem;
+      line-height: 1.25;
+      font-weight: 700;
+    }
+
+    .mem-card.matched .front {
+      box-shadow: var(--glow);
+      border: 1px solid var(--accent);
+    }
+
+    .factory-merge {
+      display: none;
+      margin-top: 14px;
+      padding: 16px;
+      border-radius: 14px;
+      text-align: center;
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid var(--accent);
+      animation: pulseGlow 1.2s ease infinite alternate;
+    }
+
+    .factory-merge.show { display: block; }
+
+    @keyframes pulseGlow {
+      from { box-shadow: 0 0 8px rgba(0, 242, 254, 0.3); }
+      to { box-shadow: 0 0 24px rgba(0, 242, 254, 0.7); }
+    }
+
+    /* Level 5 vault */
+    .vault {
+      text-align: center;
+      position: relative;
+    }
+
+    .vault-door {
+      margin: 0 auto 16px;
+      width: 100%;
+      max-width: 300px;
+      padding: 20px 14px;
+      border-radius: 18px;
+      border: 2px solid rgba(0, 242, 254, 0.4);
+      background: rgba(0, 0, 0, 0.35);
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .vault-digit-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .vault-digit {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 242, 254, 0.35);
+      background: rgba(0, 0, 0, 0.35);
+      color: var(--accent);
+      font-size: 1.5rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 12px 4px;
+      min-height: 52px;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .vault-digit:focus {
+      outline: none;
+      box-shadow: var(--glow);
+      border-color: var(--accent);
+    }
+
+    .vault-digit.ok {
+      border-color: var(--accent-soft);
+      background: rgba(0, 242, 254, 0.12);
+    }
+
+    .vault-door.vault-glow {
+      animation: vaultGlow 1s ease-in-out infinite alternate;
+      border-color: var(--accent);
+    }
+
+    @keyframes vaultGlow {
+      from { box-shadow: 0 0 12px rgba(0, 242, 254, 0.45); }
+      to { box-shadow: 0 0 28px rgba(0, 242, 254, 0.95), 0 0 56px rgba(0, 242, 254, 0.45); }
+    }
+
+    .vault-fireworks {
+      display: none;
+      position: absolute;
+      inset: -20px;
+      pointer-events: none;
+      overflow: visible;
+      z-index: 3;
+    }
+
+    .vault-fireworks.show { display: block; }
+
+    .vault-firework {
+      position: absolute;
+      left: 50%;
+      top: 45%;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      animation: fireworkBurst 1.1s ease-out forwards;
+    }
+
+    @keyframes fireworkBurst {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+      100% { transform: translate(calc(-50% + var(--fx)), calc(-50% + var(--fy))) scale(0.2); opacity: 0; }
+    }
+
+    .vault-open {
+      display: none;
+      margin-top: 16px;
+      padding: 20px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(0, 210, 196, 0.15));
+      border: 1px solid var(--accent);
+      animation: vaultBurst 0.8s ease;
+    }
+
+    .vault-open.show { display: block; }
+
+    .vault-open h3 {
+      margin: 0 0 8px;
+      color: var(--accent);
+      font-size: 1.1rem;
+    }
+
+    .vault-open .vision {
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: #fff;
+      text-shadow: var(--glow);
+    }
+
+    @keyframes vaultBurst {
+      0% { transform: scale(0.9); opacity: 0; }
+      60% { transform: scale(1.03); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .success-box {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--accent);
+      background: rgba(0, 242, 254, 0.1);
+      text-align: center;
+    }
+
+    .success-box .code {
+      font-size: clamp(0.95rem, 4.5vw, 1.15rem);
+      font-weight: 800;
+      color: var(--accent);
+      margin: 8px 0;
+      letter-spacing: 0.04em;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    body { overflow-x: hidden; }
+
+    .app {
+      overflow-x: hidden;
+    }
+
+    #game-screen {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .chat-input-row button {
+      min-height: 44px;
+      min-width: 56px;
+      padding: 12px;
+    }
+
+    .reveal-btn button {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 380px) {
+      .pipe-cell.start, .pipe-cell.end {
+        font-size: clamp(0.62rem, 3vw, 0.82rem);
+        letter-spacing: -0.02em;
+      }
+
+      .conveyor-grid { gap: 3px; }
+
+      .reveal-btn button {
+        font-size: 1.05rem;
+        padding: 12px 14px;
+        width: 100%;
+      }
+
+      .mem-card .mem-icon { font-size: 2.2rem; }
+
+      .vault-digit {
+        font-size: 1.2rem;
+        padding: 10px 2px;
+        min-height: 48px;
+      }
+
+      .level-nav button { width: 46px; }
+
+      .app { padding-left: 8px; padding-right: 8px; }
+
+      .chat-messages { max-height: 36dvh; }
+    }
+
+    @media (max-width: 360px) {
+      .coolant-block {
+        width: 60px;
+        height: 60px;
+        font-size: 1.2rem;
+      }
+    }
+
+    .hidden { display: none !important; }
+
+    /* ===== 0728 new games ===== */
+    .story-headline { color: var(--accent); font-size: 1.05rem; font-weight: 700; margin: 0 0 6px; text-align: center; }
+    .story-body { color: var(--muted); font-size: 0.88rem; line-height: 1.65; margin: 0 0 14px; text-align: center; }
+    .lc-wrap { touch-action: none; user-select: none; -webkit-user-select: none; }
+    .lc-status { text-align: center; margin: 0 0 10px; font-size: 0.9rem; }
+    .lc-alert { color: #ff6b6b; font-weight: 700; }
+    .lc-stage {
+      position: relative; width: min(100%, 340px); margin: 0 auto 12px;
+      aspect-ratio: 300 / 220; border-radius: 14px; overflow: hidden;
+      border: 1px solid rgba(255,80,80,.45); background: #12151a;
+      touch-action: none;
+    }
+    .lc-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .lc-stage.cool { border-color: rgba(0,242,254,.45); }
+    .lc-choices { display: grid; gap: 10px; margin-top: 10px; }
+    .lc-choices button {
+      min-height: 48px; border-radius: 12px; border: 1px solid rgba(0,242,254,.28);
+      background: rgba(255,255,255,.06); color: var(--text); font-size: 1.05rem; font-weight: 700;
+    }
+    .lc-choices button:disabled { opacity: .45; }
+    .lc-choices button.shake { animation: lc-shake .35s ease; }
+    @keyframes lc-shake {
+      0%,100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+    .lc-hint { text-align: center; color: #ffcf6b; font-size: 0.85rem; min-height: 1.3em; }
+    .lc-ops { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; align-items: center; margin: 14px 0; }
+    .lc-ops select, .lc-ops .val {
+      min-height: 48px; min-width: 64px; border-radius: 10px; border: 1px solid rgba(0,242,254,.3);
+      background: #0a2540; color: var(--accent); font-size: 1.1rem; font-weight: 700; text-align: center;
+    }
+    .lc-flow {
+      height: 8px; border-radius: 999px; margin: 12px 0; overflow: hidden;
+      background: rgba(255,255,255,.08);
+    }
+    .lc-flow::after {
+      content: ""; display: block; height: 100%; width: 40%;
+      background: linear-gradient(90deg, transparent, #00f2fe, transparent);
+      animation: lc-flow 1.2s linear infinite;
+    }
+    @keyframes lc-flow { from { transform: translateX(-100%); } to { transform: translateX(350%); } }
+    .sf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+    .sf-card {
+      min-height: 72px; border-radius: 14px; border: 1px solid rgba(0,242,254,.25);
+      background: rgba(255,255,255,.05); color: var(--text); padding: 10px 8px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+      font-size: 0.86rem; font-weight: 650; text-align: center;
+    }
+    .sf-card .ico { font-size: 1.35rem; }
+    .sf-card.selected { border-color: var(--accent); background: rgba(0,242,254,.14); box-shadow: 0 0 0 1px rgba(0,242,254,.35); }
+    .sf-card.wrong-flash { border-color: #ff6b6b; background: rgba(255,80,80,.18); }
+    .sf-meta { text-align: center; color: var(--muted); font-size: 0.88rem; margin: 0 0 8px; }
+    .puzzle-board {
+      width: min(100%, 360px); margin: 0 auto; aspect-ratio: 1 / 1;
+      display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
+      gap: 2px; background: rgba(0,242,254,.25); border-radius: 12px; overflow: hidden;
+      touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;
+    }
+    .puzzle-board.complete { gap: 0; background: transparent; }
+    .puzzle-tile {
+      background-size: 300% 300%; background-repeat: no-repeat; cursor: grab;
+      border: 0; padding: 0; min-height: 0; position: relative;
+    }
+    .puzzle-tile.lifting { opacity: .85; transform: scale(1.04); box-shadow: 0 8px 18px rgba(0,0,0,.35); z-index: 2; }
+    .puzzle-tile.selected { outline: 2px solid var(--accent); outline-offset: -2px; }
+    .puzzle-preview {
+      width: min(100%, 360px); margin: 0 auto 12px; aspect-ratio: 1 / 1; border-radius: 12px;
+      background-size: cover; background-position: center; position: relative; overflow: hidden;
+    }
+    .puzzle-countdown {
+      position: absolute; inset: 0; display: grid; place-items: center;
+      background: rgba(10,37,64,.55); font-size: 3rem; font-weight: 800; color: #fff;
+    }
+    .passphrase-label { margin: 10px 0 4px; font-size: 0.9rem; color: var(--muted); }
+    .success-box .code {
+      font-size: clamp(1.35rem, 5.5vw, 1.85rem); line-height: 1.35; padding: 16px 14px;
+      letter-spacing: 0.02em;
+    }
+    .chat-choices { display: grid; gap: 8px; margin: 8px 0 0; }
+    .chat-choices button {
+      min-height: 48px; border-radius: 12px; border: 1px solid rgba(0,242,254,.28);
+      background: rgba(255,255,255,.06); color: var(--text); text-align: left; padding: 10px 12px;
+      font-size: 0.95rem;
+    }
+  </style>
+<style>
+#level-nav, #hub, #modal-cancel { display: none !important; }
+</style>
+</head>
+<body>
+  <div class="app" id="app">
+    <header class="hero">
+      <div class="hero-badge">KENMEC 50 · 第 1 關</div>
+      <h1>廣運時光探險</h1>
+      <p class="hero-sub">第 1 關｜啟航輸送機 · 📍 303運動休息室</p>
+      <nav class="nav-row">
+        <a href="../../index.html">← 活動客服</a>
+        <button type="button" class="nav-pill-btn" id="bgm-toggle" aria-pressed="false" aria-label="背景音樂開關">🔇 音樂</button>
+      </nav>
+    </header>
+
+    <audio id="bgm" loop preload="none" playsinline>
+      <source src="../audio/bgm.mp3" type="audio/mpeg" />
+    </audio>
+
+    <nav class="level-nav" id="level-nav" aria-label="關卡導覽"></nav>
+
+    <section id="hub" class="panel">
+      <h2>玩法說明</h2>
+      <p id="hub-rules"><strong style="color:var(--accent)">闖關護照</strong>將於活動日前預先發送給來賓，無須報到時領取。五關可<strong style="color:var(--accent)">任意選擇、不限順序</strong>；解開謎題後向該關關主報告<strong style="color:var(--accent)">通關密語</strong>，由關主在闖關護照蓋章，即可前往其他關卡。</p>
+      <p class="progress-line" id="progress-text">已完成 0 / 5 關</p>
+      <p id="storage-warning" class="hidden" style="margin:0 0 12px;color:#ffcf6b;font-size:0.85rem"></p>
+      <div class="level-list" id="level-list"></div>
+      <div id="complete-banner" class="complete-banner hidden">
+        <strong>🎉 五關全部完成！</strong><br />
+        手機紀錄僅供個人查看。完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。
+      </div>
+      <!-- reset removed for production -->
+    </section>
+
+    <section id="game-screen" class="panel hidden"></section>
+  </div>
+
+  <div class="modal-overlay" id="rules-modal" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3 id="modal-title">關卡規則</h3>
+      <p class="intro" id="modal-intro"></p>
+      <div class="step-cards" id="modal-steps"></div>
+      <button type="button" class="btn btn-primary" id="modal-start">開始挑戰</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="modal-cancel" style="margin-top:10px;width:100%">返回</button>
+    </div>
+  </div>
+
+  <script>
+    const STATION_LEVEL = 1;
+    const STORAGE_KEY = "guangyun-time-adventure-v2-stage-1";
+    const BGM_PREF_KEY = "guangyun-bgm-enabled";
+    let DATA = null;
+    let storageAvailable = true;
+    let memoryProgress = {};
+    let progress = loadProgress();
+    let pendingLevel = null;
+    let memoryTimer = null;
+
+    const PIPE = {
+      H: [0, 1, 0, 1],
+      V: [1, 0, 1, 0],
+      L: [1, 1, 0, 0],
+      T: [1, 1, 1, 0]
+    };
+
+    function loadProgress() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        memoryProgress = saved;
+        return saved;
+      } catch {
+        storageAvailable = false;
+        return { ...memoryProgress };
+      }
+    }
+
+    function saveProgress(data) {
+      memoryProgress = JSON.parse(JSON.stringify(data));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        return true;
+      } catch (error) {
+        storageAvailable = false;
+        console.warn("無法儲存闖關進度，改用暫時記憶模式。", error);
+        return false;
+      }
+    }
+
+    function setStoredPreference(key, value) {
+      try {
+        localStorage.setItem(key, value);
+      } catch {
+        storageAvailable = false;
+      }
+    }
+
+    function storageWarningHtml() {
+      return storageAvailable
+        ? ""
+        : '<p style="margin:8px 0 0;font-size:0.85rem;color:#ffcf6b">⚠️ 此瀏覽器無法保存闖關進度。請勿關閉此頁，並以闖關護照蓋章為準。</p>';
+    }
+
+    function renderStorageWarning() {
+      const warning = document.getElementById("storage-warning");
+      if (!warning) return;
+      warning.textContent = storageAvailable
+        ? ""
+        : "⚠️ 此瀏覽器無法保存闖關進度。請勿關閉此頁，並以闖關護照蓋章為準。";
+      warning.classList.toggle("hidden", storageAvailable);
+    }
+
+    function markComplete(id) {
+      progress[id] = true;
+      progress.completedAt = progress.completedAt || {};
+      progress.completedAt[id] = new Date().toISOString();
+      saveProgress(progress);
+    }
+
+    function isUnlocked(id) {
+      return id >= 1 && id <= 5;
+    }
+
+    function completedCount() {
+      return [1, 2, 3, 4, 5].filter((i) => progress[i]).length;
+    }
+
+    function allComplete() {
+      return completedCount() === 5;
+    }
+
+    function rotateConn(conn, rot) {
+      const c = conn.slice();
+      for (let i = 0; i < rot % 4; i++) c.unshift(c.pop());
+      return c;
+    }
+
+    function pipeSvgHtml(type, rot) {
+      const conn = rotateConn(PIPE[type], rot);
+      const n = conn[0], e = conn[1], s = conn[2], w = conn[3];
+      const C = 50, O = 10, R = 12;
+      const xL = C - O, xR = C + O, yT = C - O, yB = C + O;
+      const paths = [];
+      const extras = [];
+
+      function track(d) {
+        paths.push('<path class="track" d="' + d + '"/>');
+      }
+
+      function hline(y, x1, x2) {
+        track("M" + x1 + "," + y + " L" + x2 + "," + y);
+      }
+
+      function vline(x, y1, y2) {
+        track("M" + x + "," + y1 + " L" + x + "," + y2);
+      }
+
+      function collarH(y) {
+        extras.push('<line class="track-collar" x1="30" y1="' + y + '" x2="70" y2="' + y + '"/>');
+      }
+
+      function collarV(x) {
+        extras.push('<line class="track-collar" x1="' + x + '" y1="30" x2="' + x + '" y2="70"/>');
+      }
+
+      function drawL(nOpen, eOpen, sOpen, wOpen) {
+        if (nOpen && eOpen) {
+          track("M" + xL + ",0 L" + xL + "," + (yT - R) + " Q" + xL + "," + yB + " " + (xL + R) + "," + yB + " L100," + yB);
+          track("M" + xR + ",0 L" + xR + "," + (yT + R) + " Q" + xR + "," + yT + " " + (xR + R) + "," + yT + " L100," + yT);
+        } else if (eOpen && sOpen) {
+          track("M" + xL + ",100 L" + xL + "," + (yB + R) + " Q" + xL + "," + yT + " " + (xL + R) + "," + yT + " L100," + yT);
+          track("M" + xR + ",100 L" + xR + "," + (yB - R) + " Q" + xR + "," + yB + " " + (xR + R) + "," + yB + " L100," + yB);
+        } else if (sOpen && wOpen) {
+          track("M" + xR + ",100 L" + xR + "," + (yB - R) + " Q" + xR + "," + yT + " " + (xR - R) + "," + yT + " L0," + yT);
+          track("M" + xL + ",100 L" + xL + "," + (yB + R) + " Q" + xL + "," + yB + " " + (xL - R) + "," + yB + " L0," + yB);
+        } else if (wOpen && nOpen) {
+          track("M" + xR + ",0 L" + xR + "," + (yT - R) + " Q" + xR + "," + yB + " " + (xR - R) + "," + yB + " L0," + yB);
+          track("M" + xL + ",0 L" + xL + "," + (yT + R) + " Q" + xL + "," + yT + " " + (xL - R) + "," + yT + " L0," + yT);
+        }
+      }
+
+      function drawT(nOpen, eOpen, sOpen, wOpen) {
+        if (nOpen && eOpen && sOpen && !wOpen) {
+          vline(xL, 0, 100);
+          vline(xR, 0, 100);
+          hline(yT, xR, 100);
+          hline(yB, xR, 100);
+        } else if (nOpen && eOpen && wOpen && !sOpen) {
+          hline(yT, 0, 100);
+          hline(yB, 0, 100);
+          vline(xL, 0, yT);
+          vline(xR, 0, yT);
+        } else if (eOpen && sOpen && wOpen && !nOpen) {
+          hline(yT, 0, 100);
+          hline(yB, 0, 100);
+          vline(xL, yB, 100);
+          vline(xR, yB, 100);
+        } else if (nOpen && sOpen && wOpen && !eOpen) {
+          vline(xL, 0, 100);
+          vline(xR, 0, 100);
+          hline(yT, 0, xL);
+          hline(yB, 0, xL);
+        }
+        extras.push('<circle class="track-hub" cx="' + C + '" cy="' + C + '" r="9"/>');
+      }
+
+      const openCount = n + e + s + w;
+
+      if (openCount === 2) {
+        if (n && s) {
+          vline(xL, 0, 100);
+          vline(xR, 0, 100);
+        } else if (e && w) {
+          hline(yT, 0, 100);
+          hline(yB, 0, 100);
+        } else {
+          drawL(n, e, s, w);
+        }
+      } else if (openCount === 3) {
+        drawT(n, e, s, w);
+      }
+
+      if (n) collarH(3);
+      if (s) collarH(97);
+      if (w) collarV(3);
+      if (e) collarV(97);
+
+      return (
+        '<svg class="pipe-svg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">' +
+        paths.join("") +
+        extras.join("") +
+        "</svg>"
+      );
+    }
+
+    function updatePipeVisual(el, cell) {
+      el.innerHTML = pipeSvgHtml(cell.type, cell.rot);
+    }
+
+    const INLINE_PUZZLES = {"title":"廣運時光探險","subtitle":"50年的啟程 · 五關獨立挑戰 · 現場掃 QR 完成","reward":"完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。實境解謎闖關禮每人兌換限 1 次，護照遺失恕不補發。","playRules":"闖關護照將於活動日前預先發送給來賓，無須報到時領取。到達各關現場後，掃描該關專屬 QR Code 開始本關挑戰；各關網頁互不相連。解開謎題後向該關關主報告通關密語並在闖關護照蓋章，再前往其他關卡現場掃描其專屬 QR Code。完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。","storyArc":"從1976年創業起點出發，進入2026年AI液冷技術，回顧廣運五十年發展歷史，認識智慧工廠核心技術，展望下一個五十年與百年企業願景。","levels":[{"id":1,"title":"啟航輸送機","theme":"1976 · 創業起點","location":"303運動休息室","headline":"一切故事，就從這裡開始。","story":"時間回到1976年，一台自動輸送機正式啟動，也開啟了廣運集團的第一步。從這裡出發，廣運一步步累積技術與經驗，為日後的成長奠定堅實基礎。","intro":"一切故事，就從這裡開始。時間回到1976年，一台自動輸送機正式啟動，也開啟了廣運集團的第一步。","passphrase":"第一台輸送機","hint":"用手指點選方塊旋轉水管，讓起點與終點接通。"},{"id":2,"title":"液冷尋密碼","theme":"2026 · AI液冷","location":"319運動休息室","headline":"解開AI時代的關鍵技術。","story":"從輸送設備到AI液冷散熱，廣運將四十多年累積的自動化與機電整合能力，延伸至智慧資料中心的關鍵技術領域，持續開拓更多可能。","intro":"解開AI時代的關鍵技術。請依序完成三個液冷模組的參數校正，找出液冷系統的啟動密碼。","passphrase":"AI液冷啟動成功","hint":"擦拭濾鏡顯現算式，完成三個模組後組合 2000＋30－4＝2026。"},{"id":3,"title":"廣運歷史小測驗","theme":"五十年發展歷程","location":"廣運歷史牆","headline":"回顧五十年，一起見證廣運成長。","story":"五十年來，廣運走過創業、研發、綠能、智慧製造等不同發展階段，每一個重要里程碑，都見證著企業一步步成長，紀錄下廣運五十年的精彩歷程。","intro":"回顧五十年，一起見證廣運成長。與 AI 小幫手對話，完成歷史牆上的五道歷史小測驗。","passphrase":"榮耀半世紀，百年展願景","hint":"答案都在歷史牆；五題全部答對後向關主報告通關密語並蓋章。"},{"id":4,"title":"廣運AI智慧一點通","theme":"智慧工廠核心技術","location":"後門","headline":"認識智慧工廠的核心技術。","story":"智慧工廠並不是單靠一項技術運作，而是整合智慧物流、智慧製造與AI、綠能等不同領域的核心技術，共同打造高效、智慧的生產環境，展現廣運持續推動產業與技術整合的實力。","intro":"認識智慧工廠的核心技術。從六個技術選項中，依題目找出正確分類。","passphrase":"智慧整合成功","hint":"三題分別找出智慧物流、智慧製造與AI、綠能相關技術。"},{"id":5,"title":"廣運成功密碼","theme":"展望下一個五十年","location":"329運動休息室","headline":"展望下一個五十年","story":"廣運歷經五十年的深耕與創新，將持續以全球布局為發展方向，朝百年企業的願景穩健邁進，一起開啟廣運下一個五十年的新篇章！","intro":"展望下一個五十年。請完成九宮格拼圖，一起開啟廣運邁向百年企業的新篇章。","passphrase":"展望百年願景","hint":"完成 3×3 主視覺拼圖後，向關主報告通關密語並蓋章。"}],"levelRules":{"1":[{"icon":"fa-rotate","text":"用手指點選畫面上的方塊。"},{"icon":"fa-puzzle-piece","text":"旋轉水管角度，將上下或左右管道接通。"},{"icon":"fa-rocket","text":"成功讓貨物從起點送達終點即可通關，向關主報告通關密語並在闖關護照蓋章。"}],"2":[{"icon":"fa-server","text":"依序完成三個液冷模組：主冷卻系統、循環泵浦、溫度校正。"},{"icon":"fa-hand-pointer","text":"用手指或滑鼠擦拭濾鏡，讓隱藏算式逐漸顯現（約擦除六成後可作答）。"},{"icon":"fa-calculator","text":"取得參數 2000、30、4 後，組合成正確算式啟動液冷系統。"}],"3":[{"icon":"fa-comments","text":"進入聊天室後，AI 會依序出五道歷史知識題。"},{"icon":"fa-puzzle-piece","text":"到現場廣運歷史牆尋找線索，解出每題答案。"},{"icon":"fa-keyboard","text":"五題全部答對後，向關主報告通關密語並在闖關護照蓋章。"}],"4":[{"icon":"fa-cubes","text":"畫面固定顯示六個技術選項，共三題分類挑戰。"},{"icon":"fa-hand-pointer","text":"依題目點選正確技術卡片，選滿指定數量後按確認。"},{"icon":"fa-check-double","text":"三題全對後即可通關，向關主報告密語並蓋章。"}],"5":[{"icon":"fa-image","text":"先預覽完整活動主視覺，再開始 3×3 九宮格拼圖。"},{"icon":"fa-arrows-up-down-left-right","text":"拖曳或點選兩片圖片交換位置，拼回完整主視覺。"},{"icon":"fa-unlock","text":"完成後向關主報告通關密語「展望百年願景」並蓋章。"}]},"liquidCooling":{"introTitle":"AI伺服器溫度持續上升！","introText":"請依序完成三個液冷模組的參數校正，找出液冷系統的啟動密碼。","startButton":"開始校正","wipeHint":"請繼續擦拭，找出完整算式。","wipeThreshold":0.6,"modules":[{"id":"main-cooling","name":"主冷卻系統","filter":"red","equation":"50 × 40＝？","choices":["1800","2000","2400"],"answer":"2000","success":"主冷卻系統校正完成","valueLabel":"已取得參數：2000"},{"id":"pump","name":"循環泵浦","filter":"yellow","equation":"6 × 5＝？","choices":["25","30","35"],"answer":"30","success":"循環泵浦校正完成","valueLabel":"已取得參數：30"},{"id":"temp","name":"溫度校正","filter":"blue","equation":"12 ÷ 3＝？","choices":["3","4","6"],"answer":"4","success":"溫度校正完成","valueLabel":"已取得參數：4"}],"final":{"values":["2000","30","4"],"operators":["＋","－","×","÷"],"correct":["＋","－"],"result":"2026","wrongHint":"啟動參數不正確，請重新排列運算符號。","successTitle":"液冷系統啟動成功"}},"smartFactoryOptions":[{"id":"agv","label":"AGV無人搬運車","icon":"🤖"},{"id":"conveyor","label":"自動輸送機","icon":"⚙️"},{"id":"warehouse","label":"自動倉儲","icon":"🏭"},{"id":"digital-twin","label":"數位孿生","icon":"🖥️"},{"id":"immersion-cooling","label":"浸沒式液冷","icon":"❄️"},{"id":"taichi-solar","label":"太極太陽能","icon":"☀️"}],"smartFactoryQuestions":[{"id":"smart-logistics","title":"找出所有「智慧物流」技術","hint":"想一想，哪些設備負責搬運、輸送或儲存物品？","requiredCount":3,"answers":["agv","conveyor","warehouse"]},{"id":"smart-manufacturing-ai","title":"找出所有「智慧製造與AI」技術","hint":"想一想，哪些技術可以進行模擬運算，或協助AI設備高效散熱？","requiredCount":2,"answers":["digital-twin","immersion-cooling"]},{"id":"green-energy","title":"找出所有「綠能」技術","hint":"哪一項技術與太陽能源及再生能源有關？","requiredCount":1,"answers":["taichi-solar"]}],"quizQuestions":[{"id":1,"tag":"創立起點","topic":"廣運的創立起點","subtitle":"廣運的創立起點","prompt":"廣運集團公司創立的起點是哪一天？","choices":["1976年7月12日","1987年3月1日","1996年7月12日","2007年7月12日"],"answers":["1976年7月12日"],"placeholder":"請選擇答案","wrongHint":"請再看看歷史牆上的創立日期喔。"},{"id":2,"tag":"AGV","topic":"自主研發無人搬運車","subtitle":"自主研發無人搬運車","prompt":"1993 至 1998 年期間，廣運技術迎來重大突破，成功自主研發出哪一種「無人搬運車系統」，開啟了智慧物流的新篇章？請透過圖形邏輯組合，拼出這組「3 個字母的英文簡稱」。","answers":["AGV"],"caseInsensitive":true,"placeholder":"輸入 3 個英文字母…","wrongHint":"提示：無人搬運車的英文縮寫。"},{"id":3,"tag":"太極","topic":"跨足綠能太陽能產業","subtitle":"跨足綠能太陽能產業","prompt":"在 2000 年代的全球布局中，廣運於 2007 年正式成立了哪一家著名的「能源子公司」，宣告全面跨足太陽能與綠色能源產業？請重組黑白格子，拼出這家子公司的「2 字中文名稱」。","answers":["太極"],"placeholder":"輸入 2 字中文…","wrongHint":"提示：2007 年成立的能源子公司。"},{"id":4,"tag":"人工智慧新時代","topic":"人工智慧新時代","subtitle":"數位孿生與智慧物流","prompt":"邁入 2023 年後，廣運利用倉儲數位孿生模擬將時間大幅縮短至 3 分鐘，並引進高階應用，全面進入了什麼高新技術驅動的智慧製造新時代？請解開圖形密碼，拼出這組「2 個字母的科技核心簡稱」。","answers":["AI"],"caseInsensitive":true,"placeholder":"輸入 2 個英文字母…","wrongHint":"提示：人工智慧的英文縮寫。"},{"id":5,"tag":"跨越50，邁向百年","topic":"跨越50，邁向百年","subtitle":"五十周年的永續承諾","prompt":"廣運 50 週年的活動口號為：「榮耀半世紀，＿＿＿＿＿」。這象徵全體員工凝聚向心力、攜手共創永續未來。提示：本次活動口號，中文 5 個字。","answers":["百年展願景"],"placeholder":"輸入 5 字中文…","wrongHint":"提示：本次活動口號，中文 5 個字。"}]};
+
+    function init() {
+      try {
+        DATA = INLINE_PUZZLES;
+        if (!Array.isArray(DATA.levels) || DATA.levels.length !== 5) {
+          throw new Error("闖關資料格式不完整");
+        }
+        setupBgm();
+        openLevelModal(STATION_LEVEL);
+      } catch (error) {
+        showLoadError();
+      }
+    }
+
+    function setupBgm() {
+      const bgm = document.getElementById("bgm");
+      const btn = document.getElementById("bgm-toggle");
+      if (!bgm || !btn) return;
+
+      bgm.volume = 0.42;
+      updateBgmButton(btn, false);
+
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (bgm.paused) {
+          startBgm();
+        } else {
+          bgm.pause();
+          setStoredPreference(BGM_PREF_KEY, "off");
+          updateBgmButton(btn, false);
+        }
+      });
+    }
+
+    function updateBgmButton(btn, playing) {
+      btn.textContent = playing ? "🔊 音樂" : "🔇 音樂";
+      btn.setAttribute("aria-pressed", playing ? "true" : "false");
+    }
+
+    function startBgm() {
+      const bgm = document.getElementById("bgm");
+      const btn = document.getElementById("bgm-toggle");
+      if (!bgm || !btn) return;
+      bgm.play().then(() => {
+        setStoredPreference(BGM_PREF_KEY, "on");
+        updateBgmButton(btn, true);
+      }).catch(() => {
+        updateBgmButton(btn, false);
+      });
+    }
+
+    function renderLevelNav() {
+      const nav = document.getElementById("level-nav");
+      nav.innerHTML = "";
+      DATA.levels.forEach((lv) => {
+        const btn = document.createElement("button");
+        btn.textContent = lv.id;
+        btn.title = lv.title;
+        btn.className = (progress[lv.id] ? "done " : "") + (pendingLevel === lv.id ? "active" : "");
+        btn.addEventListener("click", () => openLevelModal(lv.id));
+        nav.appendChild(btn);
+      });
+    }
+
+    function renderHub() {
+      document.getElementById("hub").classList.remove("hidden");
+      document.getElementById("game-screen").classList.add("hidden");
+      document.getElementById("progress-text").textContent = "已完成 " + completedCount() + " / 5 關";
+      document.getElementById("complete-banner").classList.toggle("hidden", !allComplete());
+      const hubRules = document.getElementById("hub-rules");
+      if (hubRules && DATA.playRules) hubRules.textContent = DATA.playRules;
+      const banner = document.getElementById("complete-banner");
+      if (banner && DATA.reward) {
+        banner.innerHTML = "<strong>🎉 五關全部完成！</strong><br />" + DATA.reward;
+      }
+      renderStorageWarning();
+
+      const list = document.getElementById("level-list");
+      list.innerHTML = "";
+      DATA.levels.forEach((lv) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "level-card" + (progress[lv.id] ? " done" : "");
+        btn.innerHTML =
+          '<div class="level-num">' + lv.id + "</div>" +
+          '<div class="level-meta"><strong>' + lv.title + "</strong>" +
+          "<span>" + (lv.headline ? lv.headline + " · " : "") + lv.location + "</span></div>";
+        btn.addEventListener("click", () => openLevelModal(lv.id));
+        list.appendChild(btn);
+      });
+      renderLevelNav();
+    }
+
+    function openLevelModal(levelId) {
+      pendingLevel = levelId;
+      const lv = DATA.levels[levelId - 1];
+      const rules = DATA.levelRules[String(levelId)] || [];
+      document.getElementById("modal-title").textContent = "第 " + levelId + " 關｜" + lv.title;
+      document.getElementById("modal-intro").innerHTML = (lv.headline ? "<strong>" + lv.headline + "</strong><br>" : "") + (lv.story || lv.intro || "");
+      const steps = document.getElementById("modal-steps");
+      steps.innerHTML = "";
+      rules.forEach((step, i) => {
+        const card = document.createElement("div");
+        card.className = "step-card";
+        card.innerHTML = '<i class="fa-solid ' + step.icon + '"></i><p><strong>步驟 ' + (i + 1) + ".</strong> " + step.text + "</p>";
+        steps.appendChild(card);
+      });
+      document.getElementById("rules-modal").classList.add("show");
+      renderLevelNav();
+    }
+
+    function closeModal() {
+      document.getElementById("rules-modal").classList.remove("show");
+      pendingLevel = null;
+      renderLevelNav();
+    }
+
+    function startLevel(levelId) {
+      closeModal();
+      document.getElementById("hub").classList.add("hidden");
+      const screen = document.getElementById("game-screen");
+      screen.classList.remove("hidden");
+      const lv = DATA.levels[levelId - 1];
+      screen.innerHTML =
+        '<div class="screen-head">' +
+        '<button type="button" class="btn btn-ghost btn-sm" id="back-hub">← 本關說明</button>' +
+        '<span class="tag">第 ' + levelId + " 關</span></div>" +
+        "<h2>" + lv.title + "</h2>" +
+        (lv.headline ? '<p class="story-headline">' + lv.headline + "</p>" : "") +
+        (lv.story ? '<p class="story-body">' + lv.story + "</p>" : "") +
+        '<p style="color:var(--muted);font-size:0.88rem;margin:0 0 12px">📍 ' + lv.location + "</p>" +
+        '<div id="level-body"></div>' +
+        '<div id="level-success"></div>';
+
+      document.getElementById("back-hub").addEventListener("click", () => {
+        if (memoryTimer) clearInterval(memoryTimer);
+        openLevelModal(STATION_LEVEL);
+      });
+
+      if (levelId === 1) initLevel1();
+      if (levelId === 2) initLevel2();
+      if (levelId === 3) initLevel3();
+      if (levelId === 4) initLevel4();
+      if (levelId === 5) initLevel5();
+    }
+
+    function showLevelSuccess(level) {
+      markComplete(level.id);
+      const box = document.getElementById("level-success");
+      box.innerHTML =
+        '<div class="success-box">' +
+        "<strong>✅ 闖關成功</strong>" +
+        '<p style="margin:8px 0 4px;font-size:0.95rem">第 ' + level.id + " 關｜" + level.title + "</p>" +
+        '<p class="passphrase-label">關主通關密語</p>' +
+        '<div class="code">「' + level.passphrase + '」</div>' +
+        '<p style="margin:10px 0 0;font-size:0.88rem;color:var(--muted)">請前往指定地點找到關主，向關主說出通關密語，請關主於護照蓋章。</p>' +
+        '<p style="margin:8px 0 0;font-size:0.85rem;color:var(--muted)">完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。</p>' +
+        storageWarningHtml() +
+        '<button type="button" class="btn btn-primary btn-sm" id="retry-station" style="margin-top:12px">重新挑戰本關</button>' +
+        '<p style="margin:12px 0 0;text-align:center"><a href="../index.html" style="color:var(--accent)">← 返回活動說明</a></p>' +
+        "</div>";
+      document.getElementById("retry-station").addEventListener("click", () => {
+        window.location.reload();
+      });
+      box.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function scrollFieldIntoView(el) {
+      if (!el) return;
+      setTimeout(() => {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 280);
+    }
+
+    /* ===== Level 1: Conveyor (5×5) ===== */
+    const CONVEYOR_SIZE = 5;
+    const CONVEYOR_END = CONVEYOR_SIZE - 1;
+
+    /* 五種正解路徑，每次隨機抽一種 */
+    const CONVEYOR_PATHS = [
+      [[0, 0], [0, 1], [0, 2], [1, 2], [2, 2], [2, 3], [2, 4], [3, 4], [4, 4]],
+      [[0, 0], [1, 0], [2, 0], [3, 0], [4, 0], [4, 1], [4, 2], [4, 3], [4, 4]],
+      [[0, 0], [0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [4, 2], [4, 3], [4, 4]],
+      [[0, 0], [0, 1], [1, 1], [1, 2], [2, 2], [3, 2], [3, 3], [3, 4], [4, 4]],
+      [[0, 0], [1, 0], [1, 1], [2, 1], [2, 2], [3, 2], [3, 3], [4, 3], [4, 4]]
+    ];
+
+    let activeConveyorPath = CONVEYOR_PATHS[0];
+    let level1Won = false;
+
+    function pipeForDirs(dirA, dirB) {
+      const dirs = [dirA, dirB].sort((a, b) => a - b);
+      const key = dirs[0] + "," + dirs[1];
+      const map = {
+        "0,2": { type: "V", rot: 0 },
+        "1,3": { type: "H", rot: 0 },
+        "0,1": { type: "L", rot: 0 },
+        "1,2": { type: "L", rot: 1 },
+        "2,3": { type: "L", rot: 2 },
+        "0,3": { type: "L", rot: 3 }
+      };
+      return map[key] || { type: "H", rot: 1 };
+    }
+
+    const CONVEYOR_PIPE_MIX = { straight: 0.35, T: 0.2, L: 0.45 };
+
+    function countPipeTypes(layout) {
+      const counts = { straight: 0, T: 0, L: 0 };
+      layout.forEach((cell) => {
+        if (!cell) return;
+        if (cell.type === "H" || cell.type === "V") counts.straight += 1;
+        else if (cell.type === "T") counts.T += 1;
+        else if (cell.type === "L") counts.L += 1;
+      });
+      return counts;
+    }
+
+    function mixTargets(totalPipes) {
+      const targets = {
+        straight: Math.round(totalPipes * CONVEYOR_PIPE_MIX.straight),
+        T: Math.round(totalPipes * CONVEYOR_PIPE_MIX.T),
+        L: Math.round(totalPipes * CONVEYOR_PIPE_MIX.L)
+      };
+      let sum = targets.straight + targets.T + targets.L;
+      while (sum > totalPipes) {
+        if (targets.L > 0) targets.L -= 1;
+        else if (targets.straight > 0) targets.straight -= 1;
+        else targets.T -= 1;
+        sum -= 1;
+      }
+      while (sum < totalPipes) {
+        targets.L += 1;
+        sum += 1;
+      }
+      return targets;
+    }
+
+    function safeDecoyRots(r, c, type, pathKeys) {
+      const rots = [];
+      for (let rot = 0; rot < 4; rot++) {
+        if (decoyIsSafe(r, c, type, rot, pathKeys)) rots.push(rot);
+      }
+      return rots;
+    }
+
+    function isolatedDecoyOfType(r, c, pathKeys, type) {
+      const rots = safeDecoyRots(r, c, type, pathKeys);
+      if (!rots.length) return null;
+      return { type: type, rot: rots[Math.floor(Math.random() * rots.length)] };
+    }
+
+    function isolatedStraightDecoyAt(r, c, pathKeys) {
+      const order = Math.random() < 0.5 ? ["H", "V"] : ["V", "H"];
+      for (let i = 0; i < order.length; i++) {
+        const cell = isolatedDecoyOfType(r, c, pathKeys, order[i]);
+        if (cell) return cell;
+      }
+      return null;
+    }
+
+    function isolatedFallbackDecoyAt(r, c, pathKeys) {
+      const order = ["L", "T", "H", "V"].sort(() => Math.random() - 0.5);
+      for (let i = 0; i < order.length; i++) {
+        const cell = isolatedDecoyOfType(r, c, pathKeys, order[i]);
+        if (cell) return cell;
+      }
+      return { type: "L", rot: Math.floor(Math.random() * 4) };
+    }
+
+    function assignDecoyPipes(layout, pathKeys) {
+      const totalPipes = CONVEYOR_SIZE * CONVEYOR_SIZE - 2;
+      const targets = mixTargets(totalPipes);
+      const counts = countPipeTypes(layout);
+      const need = {
+        straight: Math.max(0, targets.straight - counts.straight),
+        T: Math.max(0, targets.T - counts.T),
+        L: Math.max(0, targets.L - counts.L)
+      };
+
+      const slots = [];
+      for (let idx = 0; idx < layout.length; idx++) {
+        if (idx === 0 || idx === layout.length - 1 || pathKeys.has(idx)) continue;
+        slots.push(idx);
+      }
+      slots.sort(() => Math.random() - 0.5);
+
+      const queue = [];
+      for (let i = 0; i < need.straight; i++) queue.push("straight");
+      for (let i = 0; i < need.T; i++) queue.push("T");
+      for (let i = 0; i < need.L; i++) queue.push("L");
+      while (queue.length < slots.length) queue.push("L");
+      queue.sort(() => Math.random() - 0.5);
+
+      slots.forEach((idx, i) => {
+        const r = Math.floor(idx / CONVEYOR_SIZE);
+        const c = idx % CONVEYOR_SIZE;
+        const want = queue[i] || "L";
+        let cell = null;
+
+        if (want === "straight") {
+          cell = isolatedStraightDecoyAt(r, c, pathKeys);
+        } else if (want === "T") {
+          cell = isolatedDecoyOfType(r, c, pathKeys, "T");
+        } else {
+          cell = isolatedDecoyOfType(r, c, pathKeys, "L");
+        }
+
+        if (!cell && want === "straight") {
+          cell = isolatedDecoyOfType(r, c, pathKeys, "T") || isolatedDecoyOfType(r, c, pathKeys, "L");
+        } else if (!cell && want === "T") {
+          cell = isolatedDecoyOfType(r, c, pathKeys, "L");
+        }
+
+        layout[idx] = cell || isolatedFallbackDecoyAt(r, c, pathKeys);
+      });
+    }
+
+    function dirBetween(from, to) {
+      const dr = to[0] - from[0];
+      const dc = to[1] - from[1];
+      if (dr === -1) return 0;
+      if (dc === 1) return 1;
+      if (dr === 1) return 2;
+      return 3;
+    }
+
+    function scrambleRot(type, solvedRot) {
+      if (type === "H" || type === "V") {
+        const wrong = solvedRot % 2 === 0 ? [1, 3] : [0, 2];
+        return wrong[Math.floor(Math.random() * wrong.length)];
+      }
+      const offset = 1 + Math.floor(Math.random() * 3);
+      return (solvedRot + offset) % 4;
+    }
+
+    function wrongRot(cell) {
+      if (cell.type === "H" || cell.type === "V") return 1;
+      return (cell.rot + 1) % 4;
+    }
+
+    function isIsolatedPipe(r, c, type, rot) {
+      const conn = rotateConn(PIPE[type], rot);
+      const checks = [[-1, 0, 0], [0, 1, 1], [1, 0, 2], [0, -1, 3]];
+      for (let i = 0; i < checks.length; i++) {
+        const dr = checks[i][0];
+        const dc = checks[i][1];
+        const dir = checks[i][2];
+        const nr = r + dr;
+        const nc = c + dc;
+        if (nr < 0 || nr > CONVEYOR_END || nc < 0 || nc > CONVEYOR_END) continue;
+        if (conn[dir]) return false;
+      }
+      return true;
+    }
+
+    function endpointConn(r, c, path) {
+      const idx = r * CONVEYOR_SIZE + c;
+      const lastIdx = CONVEYOR_SIZE * CONVEYOR_SIZE - 1;
+      const conn = [0, 0, 0, 0];
+      if (idx === 0 && path.length > 1) {
+        conn[dirBetween([0, 0], path[1])] = 1;
+        return conn;
+      }
+      if (idx === lastIdx && path.length > 1) {
+        const prev = path[path.length - 2];
+        conn[dirBetween([r, c], prev)] = 1;
+        return conn;
+      }
+      return null;
+    }
+
+    function decoyIsSafe(r, c, type, rot, pathKeys) {
+      if (!isIsolatedPipe(r, c, type, rot)) return false;
+      const conn = rotateConn(PIPE[type], rot);
+      const checks = [[-1, 0, 0], [0, 1, 1], [1, 0, 2], [0, -1, 3]];
+      for (let i = 0; i < checks.length; i++) {
+        const dr = checks[i][0];
+        const dc = checks[i][1];
+        const dir = checks[i][2];
+        if (!conn[dir]) continue;
+        const nr = r + dr;
+        const nc = c + dc;
+        if (nr < 0 || nr > CONVEYOR_END || nc < 0 || nc > CONVEYOR_END) continue;
+        const nIdx = nr * CONVEYOR_SIZE + nc;
+        if (pathKeys.has(nIdx) || nIdx === 0 || nIdx === CONVEYOR_SIZE * CONVEYOR_SIZE - 1) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+
+    function solvedLayoutFromPath(path) {
+      const total = CONVEYOR_SIZE * CONVEYOR_SIZE;
+      const layout = Array(total).fill(null);
+      const pathKeys = new Set(path.map(([r, c]) => r * CONVEYOR_SIZE + c));
+
+      for (let i = 1; i < path.length - 1; i++) {
+        const prev = path[i - 1];
+        const curr = path[i];
+        const next = path[i + 1];
+        const idx = curr[0] * CONVEYOR_SIZE + curr[1];
+        layout[idx] = pipeForDirs(
+          dirBetween(curr, prev),
+          dirBetween(curr, next)
+        );
+      }
+
+      assignDecoyPipes(layout, pathKeys);
+
+      return layout;
+    }
+
+    function buildConveyorLayout(path) {
+      const layout = solvedLayoutFromPath(path);
+      const pathKeys = new Set(path.map(([r, c]) => r * CONVEYOR_SIZE + c));
+      const lastIdx = CONVEYOR_SIZE * CONVEYOR_SIZE - 1;
+
+      for (let i = 1; i < path.length - 1; i++) {
+        const curr = path[i];
+        const idx = curr[0] * CONVEYOR_SIZE + curr[1];
+        const cell = layout[idx];
+        cell.rot = scrambleRot(cell.type, cell.rot);
+      }
+
+      for (let idx = 0; idx < layout.length; idx++) {
+        if (idx === 0 || idx === lastIdx || pathKeys.has(idx)) continue;
+        const r = Math.floor(idx / CONVEYOR_SIZE);
+        const c = idx % CONVEYOR_SIZE;
+        const cell = layout[idx];
+        const rots = safeDecoyRots(r, c, cell.type, pathKeys);
+        if (rots.length) {
+          cell.rot = rots[Math.floor(Math.random() * rots.length)];
+        }
+      }
+
+      return layout;
+    }
+
+    function conveyorConnForPlay(r, c, layout) {
+      const idx = r * CONVEYOR_SIZE + c;
+      const lastIdx = CONVEYOR_SIZE * CONVEYOR_SIZE - 1;
+      if (idx === 0 || idx === lastIdx) return [1, 1, 1, 1];
+
+      const cell = layout[idx];
+      if (!cell) return [0, 0, 0, 0];
+      return rotateConn(PIPE[cell.type], cell.rot);
+    }
+
+    function findConveyorRoute(layout) {
+      const size = CONVEYOR_SIZE;
+      const visited = Array.from({ length: size }, () => Array(size).fill(false));
+      const parent = {};
+      const queue = [[0, 0]];
+      visited[0][0] = true;
+      const dirs = [[-1, 0, 0, 2], [0, 1, 1, 3], [1, 0, 2, 0], [0, -1, 3, 1]];
+
+      function connAt(r, c) {
+        return conveyorConnForPlay(r, c, layout);
+      }
+
+      while (queue.length) {
+        const [r, c] = queue.shift();
+        if (r === CONVEYOR_END && c === CONVEYOR_END) {
+          const route = [[0, 0]];
+          let cr = CONVEYOR_END, cc = CONVEYOR_END;
+          while (cr !== 0 || cc !== 0) {
+            route.unshift([cr, cc]);
+            const prev = parent[cr + "," + cc];
+            cr = prev[0];
+            cc = prev[1];
+          }
+          return route;
+        }
+        const here = connAt(r, c);
+        dirs.forEach(([dr, dc, myDir, theirDir]) => {
+          const nr = r + dr, nc = c + dc;
+          if (nr < 0 || nr >= size || nc < 0 || nc >= size) return;
+          if (!here[myDir] || !connAt(nr, nc)[theirDir]) return;
+          if (!visited[nr][nc]) {
+            visited[nr][nc] = true;
+            parent[nr + "," + nc] = [r, c];
+            queue.push([nr, nc]);
+          }
+        });
+      }
+      return null;
+    }
+
+    function prepareConveyorLayout() {
+      const order = CONVEYOR_PATHS
+        .map((path, idx) => ({ path: path, idx: idx }))
+        .sort(() => Math.random() - 0.5);
+
+      for (let p = 0; p < order.length; p++) {
+        const path = order[p].path;
+        activeConveyorPath = path;
+        const solved = solvedLayoutFromPath(path);
+        if (!conveyorSolvable(solved, path)) continue;
+
+        for (let attempt = 0; attempt < 30; attempt++) {
+          const layout = buildConveyorLayout(path);
+          if (!conveyorSolvable(layout, path)) return layout;
+        }
+      }
+
+      activeConveyorPath = CONVEYOR_PATHS[0];
+      const layout = solvedLayoutFromPath(CONVEYOR_PATHS[0]);
+      for (let i = 1; i < activeConveyorPath.length - 1; i++) {
+        const idx = activeConveyorPath[i][0] * CONVEYOR_SIZE + activeConveyorPath[i][1];
+        layout[idx].rot = wrongRot(layout[idx]);
+      }
+      return layout;
+    }
+
+    function conveyorConnAt(r, c, layout, path) {
+      const route = path || activeConveyorPath;
+      const endpoint = endpointConn(r, c, route);
+      if (endpoint) return endpoint;
+
+      const size = CONVEYOR_SIZE;
+      const idx = r * size + c;
+      const cell = layout[idx];
+      if (!cell) return [0, 0, 0, 0];
+      return rotateConn(PIPE[cell.type], cell.rot);
+    }
+
+    function conveyorSolvable(layout, path) {
+      const route = path || activeConveyorPath;
+      const size = CONVEYOR_SIZE;
+      const visited = Array.from({ length: size }, () => Array(size).fill(false));
+      const queue = [[0, 0]];
+      visited[0][0] = true;
+      const dirs = [[-1, 0, 0, 2], [0, 1, 1, 3], [1, 0, 2, 0], [0, -1, 3, 1]];
+
+      while (queue.length) {
+        const [r, c] = queue.shift();
+        if (r === CONVEYOR_END && c === CONVEYOR_END) return true;
+        const here = conveyorConnAt(r, c, layout, route);
+        dirs.forEach(([dr, dc, myDir, theirDir]) => {
+          const nr = r + dr, nc = c + dc;
+          if (nr < 0 || nr >= size || nc < 0 || nc >= size) return;
+          if (!here[myDir]) return;
+          if (!conveyorConnAt(nr, nc, layout, route)[theirDir]) return;
+          if (!visited[nr][nc]) {
+            visited[nr][nc] = true;
+            queue.push([nr, nc]);
+          }
+        });
+      }
+      return false;
+    }
+
+    function initLevel1() {
+      level1Won = false;
+      const body = document.getElementById("level-body");
+      body.innerHTML =
+        '<p style="text-align:center;font-size:0.88rem;color:var(--muted);margin:0 0 10px">點選水管即可旋轉接通起點到終點即可過關</p>' +
+        '<div class="conveyor-wrap">' +
+        '<div class="conveyor-grid" id="conveyor-grid"></div>' +
+        '<div class="cargo" id="cargo"></div></div>';
+
+      const layout = prepareConveyorLayout();
+
+      const grid = document.getElementById("conveyor-grid");
+      layout.forEach((cell, idx) => {
+        const el = document.createElement("button");
+        el.type = "button";
+        el.className = "pipe-cell";
+        if (idx === 0) {
+          el.className += " start";
+          el.textContent = "起點";
+          el.disabled = true;
+        } else if (idx === CONVEYOR_SIZE * CONVEYOR_SIZE - 1) {
+          el.className += " end";
+          el.textContent = "終點";
+          el.disabled = true;
+        } else if (cell) {
+          el.dataset.type = cell.type;
+          el.dataset.rot = String(cell.rot);
+          updatePipeVisual(el, cell);
+          el.addEventListener("click", () => {
+            cell.rot = (parseInt(el.dataset.rot, 10) + 1) % 4;
+            el.dataset.rot = String(cell.rot);
+            updatePipeVisual(el, cell);
+            checkConveyor(layout);
+          });
+        }
+        grid.appendChild(el);
+      });
+    }
+
+    function checkConveyor(layout) {
+      if (level1Won) return;
+      const route = findConveyorRoute(layout);
+      if (!route) return;
+
+      level1Won = true;
+      animateCargo(route);
+      setTimeout(() => showLevelSuccess(DATA.levels[0]), route.length * 420 + 300);
+    }
+
+    function animateCargo(path) {
+      const cargo = document.getElementById("cargo");
+      const grid = document.getElementById("conveyor-grid");
+      const wrap = cargo.parentElement;
+
+      function posForCell(r, c) {
+        const cell = grid.children[r * CONVEYOR_SIZE + c];
+        const wrapRect = wrap.getBoundingClientRect();
+        const cellRect = cell.getBoundingClientRect();
+        const cargoSize = cargo.offsetWidth || 22;
+        return {
+          left: cellRect.left - wrapRect.left + (cellRect.width - cargoSize) / 2,
+          top: cellRect.top - wrapRect.top + (cellRect.height - cargoSize) / 2
+        };
+      }
+
+      const start = posForCell(0, 0);
+      cargo.style.left = start.left + "px";
+      cargo.style.top = start.top + "px";
+      cargo.classList.add("run");
+
+      path.forEach(([r, c], i) => {
+        setTimeout(() => {
+          const { left, top } = posForCell(r, c);
+          cargo.style.left = left + "px";
+          cargo.style.top = top + "px";
+        }, i * 420);
+      });
+    }
+
+
+    /* ===== Level 2: Liquid cooling modules + operator combo ===== */
+    function initLevel2() {
+      const cfg = DATA.liquidCooling || {};
+      const modules = cfg.modules || [];
+      const threshold = cfg.wipeThreshold == null ? 0.6 : cfg.wipeThreshold;
+      const liquidCoolingState = {
+        currentModule: 0,
+        completedModules: [false, false, false],
+        moduleValues: [null, null, null],
+        finalOperators: [null, null],
+        isCompleted: false
+      };
+      const body = document.getElementById("level-body");
+      body.innerHTML = '<div class="lc-wrap" id="lc-root"></div>';
+      const root = document.getElementById("lc-root");
+
+      function renderIntro() {
+        root.innerHTML =
+          '<div class="lc-status lc-alert">' + (cfg.introTitle || "AI伺服器溫度持續上升！") + "</div>" +
+          '<p class="story-body">' + (cfg.introText || "") + "</p>" +
+          '<div class="server-rack" style="max-width:340px;margin:0 auto 14px">' +
+          '<div class="server-rack-panel"></div><div style="height:120px;background:linear-gradient(180deg,#3a1515,#1a0a0a);display:grid;place-items:center;color:#ff8a8a;font-weight:700">⚠ 高溫警示</div>' +
+          '<div class="server-rack-grille"></div></div>' +
+          '<button type="button" class="btn btn-primary" id="lc-start">' + (cfg.startButton || "開始校正") + "</button>";
+        document.getElementById("lc-start").addEventListener("click", () => renderModule(0));
+      }
+
+      function filterColor(name) {
+        if (name === "red") return "rgba(180,20,20,0.92)";
+        if (name === "yellow") return "rgba(190,150,20,0.92)";
+        return "rgba(20,70,160,0.92)";
+      }
+
+      function renderModule(index) {
+        liquidCoolingState.currentModule = index;
+        const mod = modules[index];
+        if (!mod) {
+          renderFinal();
+          return;
+        }
+        root.innerHTML =
+          '<div class="lc-status"><strong>' + mod.name + "</strong>（模組 " + (index + 1) + " / 3）</div>" +
+          '<p class="story-body">請擦拭濾鏡，找出完整算式。</p>' +
+          '<div class="lc-stage" id="lc-stage"><canvas id="lc-base" width="300" height="220"></canvas><canvas id="lc-mask" width="300" height="220"></canvas></div>' +
+          '<p class="lc-hint" id="lc-hint">' + (cfg.wipeHint || "請繼續擦拭，找出完整算式。") + "</p>" +
+          '<div class="lc-choices" id="lc-choices"></div>' +
+          '<p id="lc-feedback" class="lc-hint"></p>';
+
+        const base = document.getElementById("lc-base");
+        const mask = document.getElementById("lc-mask");
+        const stage = document.getElementById("lc-stage");
+        const bctx = base.getContext("2d");
+        const mctx = mask.getContext("2d");
+        const W = 300, H = 220;
+        let unlocked = false;
+        let sampleTimer = 0;
+
+        function drawBase() {
+          const g = bctx.createLinearGradient(0, 0, 0, H);
+          g.addColorStop(0, "#2a2f34");
+          g.addColorStop(1, "#101214");
+          bctx.fillStyle = g;
+          bctx.fillRect(0, 0, W, H);
+          bctx.fillStyle = "rgba(255,90,40,0.25)";
+          bctx.fillRect(0, 0, W, H);
+          bctx.fillStyle = "#e8f4ff";
+          bctx.font = "bold 28px sans-serif";
+          bctx.textAlign = "center";
+          bctx.textBaseline = "middle";
+          bctx.fillText(mod.equation, W / 2, H / 2);
+        }
+
+        function drawMask() {
+          mctx.globalCompositeOperation = "source-over";
+          mctx.fillStyle = filterColor(mod.filter);
+          mctx.fillRect(0, 0, W, H);
+        }
+
+        function sampleCleared() {
+          const step = 8;
+          const data = mctx.getImageData(0, 0, W, H).data;
+          let clear = 0, total = 0;
+          for (let y = 0; y < H; y += step) {
+            for (let x = 0; x < W; x += step) {
+              total += 1;
+              if (data[(y * W + x) * 4 + 3] < 40) clear += 1;
+            }
+          }
+          return clear / total;
+        }
+
+        function setChoicesEnabled(on) {
+          const wrap = document.getElementById("lc-choices");
+          wrap.innerHTML = "";
+          (mod.choices || []).forEach((c) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.textContent = c;
+            btn.disabled = !on;
+            btn.addEventListener("click", () => {
+              if (!unlocked || liquidCoolingState.completedModules[index]) return;
+              if (String(c) === String(mod.answer)) {
+                liquidCoolingState.completedModules[index] = true;
+                liquidCoolingState.moduleValues[index] = mod.answer;
+                document.getElementById("lc-feedback").textContent = mod.success + " · " + mod.valueLabel;
+                setTimeout(() => renderModule(index + 1), 700);
+              } else {
+                document.getElementById("lc-feedback").textContent = "參數錯誤，請重新計算。";
+                btn.classList.remove("shake");
+                void btn.offsetWidth;
+                btn.classList.add("shake");
+              }
+            });
+            wrap.appendChild(btn);
+          });
+          document.getElementById("lc-hint").textContent = on ? "請選擇正確答案" : (cfg.wipeHint || "");
+        }
+
+        drawBase();
+        drawMask();
+        setChoicesEnabled(false);
+
+        let drawing = false;
+        function erase(clientX, clientY) {
+          const rect = mask.getBoundingClientRect();
+          const x = (clientX - rect.left) * (W / rect.width);
+          const y = (clientY - rect.top) * (H / rect.height);
+          mctx.globalCompositeOperation = "destination-out";
+          mctx.beginPath();
+          mctx.arc(x, y, 26, 0, Math.PI * 2);
+          mctx.fill();
+          const now = Date.now();
+          if (now - sampleTimer < 120) return;
+          sampleTimer = now;
+          if (!unlocked && sampleCleared() >= threshold) {
+            unlocked = true;
+            setChoicesEnabled(true);
+          }
+        }
+
+        function onDown(e) {
+          drawing = true;
+          const p = e.touches ? e.touches[0] : e;
+          erase(p.clientX, p.clientY);
+          e.preventDefault();
+        }
+        function onMove(e) {
+          if (!drawing) return;
+          const p = e.touches ? e.touches[0] : e;
+          erase(p.clientX, p.clientY);
+          e.preventDefault();
+        }
+        function onUp() { drawing = false; }
+
+        stage.addEventListener("pointerdown", onDown);
+        stage.addEventListener("pointermove", onMove);
+        stage.addEventListener("pointerup", onUp);
+        stage.addEventListener("pointercancel", onUp);
+        stage.addEventListener("pointerleave", onUp);
+      }
+
+      function renderFinal() {
+        const fin = cfg.final || {};
+        const vals = fin.values || liquidCoolingState.moduleValues;
+        root.innerHTML =
+          '<div class="lc-status"><strong>組合啟動密碼</strong></div>' +
+          '<p class="story-body">請選擇正確運算符號，啟動液冷系統。</p>' +
+          '<div class="lc-ops">' +
+          '<span class="val">' + vals[0] + "</span>" +
+          '<select id="lc-op1" aria-label="運算符號一"><option value="">？</option>' +
+          (fin.operators || []).map((o) => '<option value="' + o + '">' + o + "</option>").join("") +
+          "</select>" +
+          '<span class="val">' + vals[1] + "</span>" +
+          '<select id="lc-op2" aria-label="運算符號二"><option value="">？</option>' +
+          (fin.operators || []).map((o) => '<option value="' + o + '">' + o + "</option>").join("") +
+          "</select>" +
+          '<span class="val">' + vals[2] + "</span>" +
+          '<span class="val">＝' + (fin.result || "2026") + "</span></div>" +
+          '<button type="button" class="btn btn-primary" id="lc-final-check">啟動液冷系統</button>' +
+          '<p class="lc-hint" id="lc-final-hint"></p>';
+
+        document.getElementById("lc-final-check").addEventListener("click", () => {
+          const o1 = document.getElementById("lc-op1").value;
+          const o2 = document.getElementById("lc-op2").value;
+          liquidCoolingState.finalOperators = [o1, o2];
+          const correct = fin.correct || ["＋", "－"];
+          if (o1 === correct[0] && o2 === correct[1]) {
+            liquidCoolingState.isCompleted = true;
+            root.innerHTML =
+              '<div class="lc-status" style="color:var(--accent)">黃色警示解除 · 系統轉為藍色穩定</div>' +
+              '<div class="lc-stage cool" style="display:grid;place-items:center;color:var(--accent);font-weight:700">伺服器溫度下降中</div>' +
+              '<div class="lc-flow"></div>' +
+              "<h3 style='text-align:center;color:var(--accent)'>" + (fin.successTitle || "液冷系統啟動成功") + "</h3>" +
+              '<p class="story-body">闖關成功</p>';
+            setTimeout(() => showLevelSuccess(DATA.levels[1]), 1100);
+          } else {
+            document.getElementById("lc-final-hint").textContent = fin.wrongHint || "啟動參數不正確，請重新排列運算符號。";
+          }
+        });
+      }
+
+      renderIntro();
+    }
+
+    /* ===== Level 3: AI Chat quiz (supports choices) ===== */
+    function initLevel3() {
+      const body = document.getElementById("level-body");
+      const quiz = DATA.quizQuestions || [];
+      let current = 0;
+
+      body.innerHTML =
+        '<div class="chat-box">' +
+        '<div class="chat-header"><div class="bot-avatar"><i class="fa-solid fa-robot"></i></div>' +
+        '<div><strong>廣運 AI 小幫手</strong><br><small style="color:var(--muted)">線上協助中 · 廣運歷史小測驗</small></div></div>' +
+        '<div class="chat-messages" id="chat-msgs"></div>' +
+        '<div id="chat-choice-area"></div>' +
+        '<div class="chat-input-row" id="chat-input-row">' +
+        '<input type="text" id="chat-input" placeholder="輸入答案…" autocomplete="off" maxlength="40" />' +
+        '<button type="button" id="chat-send"><i class="fa-solid fa-paper-plane"></i></button>' +
+        "</div></div>";
+
+      const msgs = document.getElementById("chat-msgs");
+      const input = document.getElementById("chat-input");
+      const inputRow = document.getElementById("chat-input-row");
+      const choiceArea = document.getElementById("chat-choice-area");
+
+      function addBubble(text, who) {
+        const b = document.createElement("div");
+        b.className = "bubble " + who;
+        b.textContent = text;
+        msgs.appendChild(b);
+        msgs.scrollTop = msgs.scrollHeight;
+      }
+
+      function normalizeAnswer(text, question) {
+        const trimmed = text.trim();
+        if (question.caseInsensitive) return trimmed.replace(/\s+/g, "").toUpperCase();
+        return trimmed.replace(/\s+/g, "");
+      }
+
+      function isCorrect(text, question) {
+        const norm = normalizeAnswer(text, question);
+        return question.answers.some((answer) => {
+          const expected = question.caseInsensitive
+            ? answer.replace(/\s+/g, "").toUpperCase()
+            : answer.replace(/\s+/g, "");
+          return norm === expected;
+        });
+      }
+
+      function handleAnswer(val) {
+        const q = quiz[current];
+        if (!q || !val) return;
+        addBubble(val, "user");
+        if (isCorrect(val, q)) {
+          if (current < quiz.length - 1) {
+            setTimeout(() => addBubble("✅ 答對了！", "bot"), 350);
+            current += 1;
+            setTimeout(() => askQuestion(current), 900);
+            return;
+          }
+          setTimeout(() => addBubble("✅ 答對了！", "bot"), 350);
+          setTimeout(() => addBubble("🎉 五題全部答對！請向關主報告通關密語並蓋章！", "bot"), 900);
+          setTimeout(() => showLevelSuccess(DATA.levels[2]), 1800);
+          input.disabled = true;
+          const sendBtn = document.getElementById("chat-send");
+          if (sendBtn) sendBtn.disabled = true;
+          choiceArea.innerHTML = "";
+          return;
+        }
+        setTimeout(
+          () => addBubble((q.wrongHint || "好像還不太對耶") + "\n再仔細看看歷史牆上的線索喔。", "bot"),
+          450
+        );
+      }
+
+      function askQuestion(index) {
+        const q = quiz[index];
+        if (!q) return;
+        addBubble("💡 第 " + q.id + " 題：【" + (q.topic || q.subtitle) + "】\n\n" + q.prompt, "bot");
+        choiceArea.innerHTML = "";
+        if (q.choices && q.choices.length) {
+          inputRow.classList.add("hidden");
+          const wrap = document.createElement("div");
+          wrap.className = "chat-choices";
+          q.choices.forEach((c) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.textContent = c;
+            btn.addEventListener("click", () => handleAnswer(c));
+            wrap.appendChild(btn);
+          });
+          choiceArea.appendChild(wrap);
+        } else {
+          inputRow.classList.remove("hidden");
+          input.placeholder = q.placeholder || "輸入答案…";
+          input.focus();
+        }
+      }
+
+      addBubble(
+        "你好！我是廣運 AI 小幫手\n歡迎來到【廣運歷史小測驗】！\n\n提示：答案都在廣運歷史牆\n本關共有五道題。",
+        "bot"
+      );
+      setTimeout(() => askQuestion(0), 500);
+
+      document.getElementById("chat-send").addEventListener("click", () => {
+        const val = input.value.trim();
+        if (!val) return;
+        input.value = "";
+        handleAnswer(val);
+      });
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          const val = input.value.trim();
+          if (!val) return;
+          input.value = "";
+          handleAnswer(val);
+        }
+      });
+      input.addEventListener("focus", () => scrollFieldIntoView(input));
+    }
+
+    /* ===== Level 4: Smart factory classification ===== */
+    function initLevel4() {
+      const options = DATA.smartFactoryOptions || [];
+      const questions = DATA.smartFactoryQuestions || [];
+      let qIndex = 0;
+      let selected = new Set();
+      const body = document.getElementById("level-body");
+
+      function render() {
+        const q = questions[qIndex];
+        if (!q) {
+          body.innerHTML = '<p class="story-headline">智慧工廠核心技術整合完成</p>';
+          setTimeout(() => showLevelSuccess(DATA.levels[3]), 900);
+          return;
+        }
+        selected = new Set();
+        body.innerHTML =
+          '<p class="story-headline">' + q.title + "</p>" +
+          '<p class="sf-meta">' + q.hint + "</p>" +
+          '<p class="sf-meta" id="sf-count">已選 0 / ' + q.requiredCount + "</p>" +
+          '<div class="sf-grid" id="sf-grid"></div>' +
+          '<p class="lc-hint" id="sf-hint"></p>' +
+          '<button type="button" class="btn btn-primary" id="sf-confirm" disabled>確認答案</button>';
+
+        const grid = document.getElementById("sf-grid");
+        options.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "sf-card";
+          btn.dataset.id = opt.id;
+          btn.innerHTML = '<span class="ico">' + (opt.icon || "") + '</span><span>' + opt.label + "</span>";
+          btn.addEventListener("click", () => {
+            if (selected.has(opt.id)) {
+              selected.delete(opt.id);
+              btn.classList.remove("selected");
+            } else {
+              if (selected.size >= q.requiredCount) {
+                document.getElementById("sf-hint").textContent = "本題只需要選擇" + q.requiredCount + "個答案。";
+                return;
+              }
+              selected.add(opt.id);
+              btn.classList.add("selected");
+              document.getElementById("sf-hint").textContent = "";
+            }
+            document.getElementById("sf-count").textContent = "已選 " + selected.size + " / " + q.requiredCount;
+            document.getElementById("sf-confirm").disabled = selected.size !== q.requiredCount;
+          });
+          grid.appendChild(btn);
+        });
+
+        document.getElementById("sf-confirm").addEventListener("click", () => {
+          const answers = new Set(q.answers);
+          const correctSelected = [...selected].filter((id) => answers.has(id));
+          const wrongSelected = [...selected].filter((id) => !answers.has(id));
+          if (wrongSelected.length === 0 && correctSelected.length === q.requiredCount) {
+            qIndex += 1;
+            render();
+            return;
+          }
+          document.getElementById("sf-hint").textContent = "部分選項不正確，請再想想。";
+          grid.querySelectorAll(".sf-card").forEach((el) => {
+            const id = el.dataset.id;
+            if (wrongSelected.includes(id)) {
+              el.classList.add("wrong-flash");
+              setTimeout(() => {
+                el.classList.remove("wrong-flash", "selected");
+                selected.delete(id);
+                document.getElementById("sf-count").textContent = "已選 " + selected.size + " / " + q.requiredCount;
+                document.getElementById("sf-confirm").disabled = selected.size !== q.requiredCount;
+              }, 450);
+            }
+          });
+        });
+      }
+
+      render();
+    }
+
+    /* ===== Level 5: 3x3 key visual puzzle ===== */
+    function initLevel5() {
+      const body = document.getElementById("level-body");
+      const imgSrc = (typeof STATION_LEVEL === "number" ? "../" : "./") + "assets/kenmec-50-main-visual.png";
+      let order = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+      let hintUsed = false;
+      let locked = false;
+      let dragFrom = null;
+      let tapFrom = null;
+
+      function shuffleSolvable() {
+        do {
+          for (let i = order.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const t = order[i];
+            order[i] = order[j];
+            order[j] = t;
+          }
+        } while (order.every((v, i) => v === i));
+      }
+
+      function posStyle(tileIndex) {
+        const r = Math.floor(tileIndex / 3);
+        const c = tileIndex % 3;
+        return "background-image:url('" + imgSrc + "');background-position:" + (c * 50) + "% " + (r * 50) + "%;background-size:300% 300%";
+      }
+
+      function renderIntro() {
+        body.innerHTML =
+          '<p class="story-headline">廣運下一個五十年的願景，藏在完整主視覺之中。</p>' +
+          '<p class="story-body">請完成九宮格拼圖，一起開啟廣運邁向百年企業的新篇章。</p>' +
+          '<button type="button" class="btn btn-primary" id="pz-start">開始拼圖</button>';
+        document.getElementById("pz-start").addEventListener("click", startPreview);
+      }
+
+      function startPreview() {
+        body.innerHTML =
+          '<p class="sf-meta">請記住圖片的位置</p>' +
+          '<div class="puzzle-preview" id="pz-preview" style="background-image:url(\'' + imgSrc + '\')">' +
+          '<div class="puzzle-countdown" id="pz-count">3</div></div>';
+        let n = 3;
+        const el = document.getElementById("pz-count");
+        const timer = setInterval(() => {
+          n -= 1;
+          if (n <= 0) {
+            clearInterval(timer);
+            shuffleSolvable();
+            renderBoard();
+          } else {
+            el.textContent = String(n);
+          }
+        }, 1000);
+      }
+
+      function isSolved() {
+        return order.every((v, i) => v === i);
+      }
+
+      function swap(a, b) {
+        const t = order[a];
+        order[a] = order[b];
+        order[b] = t;
+      }
+
+      function renderBoard() {
+        body.innerHTML =
+          '<div class="puzzle-board" id="pz-board"></div>' +
+          '<p class="lc-hint" id="pz-msg"></p>' +
+          '<button type="button" class="btn btn-ghost btn-sm" id="pz-hint" style="width:100%;margin-top:8px">查看提示</button>';
+        const board = document.getElementById("pz-board");
+        order.forEach((tile, slot) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "puzzle-tile";
+          btn.draggable = true;
+          btn.dataset.slot = String(slot);
+          btn.style.cssText = posStyle(tile);
+          btn.addEventListener("dragstart", (e) => {
+            if (locked) return;
+            dragFrom = slot;
+            btn.classList.add("lifting");
+            e.dataTransfer.setData("text/plain", String(slot));
+          });
+          btn.addEventListener("dragend", () => btn.classList.remove("lifting"));
+          btn.addEventListener("dragover", (e) => e.preventDefault());
+          btn.addEventListener("drop", (e) => {
+            e.preventDefault();
+            if (locked) return;
+            const from = dragFrom == null ? Number(e.dataTransfer.getData("text/plain")) : dragFrom;
+            const to = slot;
+            if (from === to || Number.isNaN(from)) return;
+            swap(from, to);
+            dragFrom = null;
+            afterMove();
+          });
+          btn.addEventListener("click", () => {
+            if (locked) return;
+            if (tapFrom == null) {
+              tapFrom = slot;
+              btn.classList.add("selected");
+              return;
+            }
+            if (tapFrom === slot) {
+              tapFrom = null;
+              btn.classList.remove("selected");
+              return;
+            }
+            swap(tapFrom, slot);
+            tapFrom = null;
+            afterMove();
+          });
+
+          // pointer drag for touch
+          let px = 0, py = 0, moved = false;
+          btn.addEventListener("pointerdown", (e) => {
+            if (locked) return;
+            dragFrom = slot;
+            px = e.clientX; py = e.clientY; moved = false;
+            btn.setPointerCapture(e.pointerId);
+            btn.classList.add("lifting");
+          });
+          btn.addEventListener("pointermove", (e) => {
+            if (dragFrom == null) return;
+            if (Math.hypot(e.clientX - px, e.clientY - py) > 12) moved = true;
+          });
+          btn.addEventListener("pointerup", (e) => {
+            btn.classList.remove("lifting");
+            if (dragFrom == null) return;
+            const el = document.elementFromPoint(e.clientX, e.clientY);
+            const target = el && el.closest ? el.closest(".puzzle-tile") : null;
+            if (moved && target && target.dataset.slot != null) {
+              const to = Number(target.dataset.slot);
+              if (to !== dragFrom) {
+                swap(dragFrom, to);
+                dragFrom = null;
+                tapFrom = null;
+                afterMove();
+                return;
+              }
+            }
+            dragFrom = null;
+          });
+
+          board.appendChild(btn);
+        });
+
+        document.getElementById("pz-hint").addEventListener("click", () => {
+          if (hintUsed || locked) return;
+          hintUsed = true;
+          const btn = document.getElementById("pz-hint");
+          btn.textContent = "提示已使用";
+          btn.disabled = true;
+          const overlay = document.createElement("div");
+          overlay.className = "puzzle-preview";
+          overlay.style.backgroundImage = "url('" + imgSrc + "')";
+          overlay.style.position = "fixed";
+          overlay.style.left = "50%";
+          overlay.style.top = "50%";
+          overlay.style.transform = "translate(-50%,-50%)";
+          overlay.style.zIndex = "80";
+          overlay.style.width = "min(92vw,360px)";
+          document.body.appendChild(overlay);
+          setTimeout(() => overlay.remove(), 3000);
+        });
+      }
+
+      function afterMove() {
+        renderBoard();
+        if (!isSolved()) return;
+        locked = true;
+        const board = document.getElementById("pz-board");
+        board.classList.add("complete");
+        board.innerHTML = "";
+        board.style.backgroundImage = "url('" + imgSrc + "')";
+        board.style.backgroundSize = "cover";
+        board.style.backgroundPosition = "center";
+        document.getElementById("pz-msg").textContent = "闖關成功";
+        const hint = document.getElementById("pz-hint");
+        if (hint) hint.remove();
+        setTimeout(() => showLevelSuccess(DATA.levels[4]), 900);
+      }
+
+      renderIntro();
+    }
+
+
+        document.getElementById("modal-start").addEventListener("click", () => {
+      if (pendingLevel) startLevel(pendingLevel);
+    });
+    document.getElementById("modal-cancel").addEventListener("click", closeModal);
+    const resetBtn = document.getElementById("reset-btn");
+    if (resetBtn) resetBtn.addEventListener("click", () => {
+      if (confirm("確定重置所有闖關進度？")) {
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch {
+          storageAvailable = false;
+        }
+        memoryProgress = {};
+        progress = {};
+        renderHub();
+      }
+    });
+    }
+
+    init();
+  </script>
+</body>
+</html>

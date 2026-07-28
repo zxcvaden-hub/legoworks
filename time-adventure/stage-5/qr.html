@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0A2540" />
+<title>第05關 QR｜廣運成功密碼</title>
+<style>
+body { margin:0; min-height:100dvh; display:grid; place-items:center; background:radial-gradient(ellipse at top,#003366 0%,#0a2540 58%); font-family:system-ui,"Noto Sans TC",sans-serif; padding:24px; color:#e8f4ff; }
+.card { background:rgba(255,255,255,.06); border:1px solid rgba(0,242,254,.28); border-radius:20px; padding:28px 24px; width:min(380px,100%); text-align:center; }
+h1 { font-size:1.2rem; margin:0 0 8px; color:#00f2fe; }
+.meta { color:#8eb4d4; font-size:.9rem; line-height:1.5; margin:0 0 12px; }
+.url { word-break:break-all; background:rgba(0,0,0,.22); color:#00f2fe; font-weight:700; border-radius:10px; padding:12px; margin-top:12px; font-size:.82rem; user-select:text; -webkit-user-select:text; }
+#qrcode { display:flex; justify-content:center; margin:18px 0; padding:12px; background:#fff; border-radius:14px; }
+a.btn { display:block; margin-top:12px; background:linear-gradient(135deg,#00d2c4,#00f2fe); color:#0a2540; text-decoration:none; border-radius:12px; padding:12px; font-weight:700; min-height:48px; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>第 05 關｜廣運成功密碼</h1>
+  <p class="meta">闖關地點：329運動休息室<br>掃描後直接進入本關挑戰</p>
+  <div id="qrcode"></div>
+  <div id="url" class="url"></div>
+  <a class="btn" id="open" href="./">直接開啟本關</a>
+  <a class="btn" href="../index.html" style="background:transparent;border:1px solid rgba(0,242,254,.35);color:#00f2fe">← 活動說明</a>
+</div>
+<script src="../config.js"></script>
+<script src="../../qrcode.min.js"></script>
+<script>
+var path = "/time-adventure/stage-5/";
+var url = (typeof SITE_BASE_URL === "string" ? SITE_BASE_URL.replace(/\/$/, "") : (location.origin)) + path;
+document.getElementById("url").textContent = url;
+document.getElementById("open").href = "./";
+new QRCode(document.getElementById("qrcode"), {
+  text: url,
+  width: 220,
+  height: 220,
+  colorDark: "#0a2540",
+  colorLight: "#ffffff",
+  correctLevel: QRCode.CorrectLevel.M
+});
+</script>
+</body>
+</html>
