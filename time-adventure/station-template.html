@@ -1015,10 +1015,24 @@
       width: 100%;
     }
     .lc-ops-row select, .lc-ops-row .val {
-      min-height: 44px; min-width: 0; flex: 1 1 0; max-width: 72px;
+      min-height: 52px; min-width: 0; flex: 1 1 0; max-width: 78px;
       border-radius: 10px; border: 1px solid rgba(0,242,254,.3);
-      background: #0a2540; color: var(--accent); font-size: 1.05rem; font-weight: 700; text-align: center;
-      padding: 0 2px;
+      background: #0a2540; color: var(--accent); font-size: 1.28rem; font-weight: 800;
+      text-align: center; line-height: 1.1; padding: 0 2px;
+      display: inline-flex; align-items: center; justify-content: center;
+      box-sizing: border-box;
+    }
+    .lc-ops-row select {
+      display: block;
+      appearance: none; -webkit-appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, var(--accent) 50%),
+        linear-gradient(135deg, var(--accent) 50%, transparent 50%);
+      background-position: calc(100% - 12px) calc(50% - 3px), calc(100% - 7px) calc(50% - 3px);
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+      padding: 0 18px 0 4px;
+      line-height: 52px;
+      text-align-last: center;
     }
     .lc-ops-result {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
