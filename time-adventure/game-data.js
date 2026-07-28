@@ -374,6 +374,8 @@ window.GAME_DATA = {
     }
   ],
   "passphraseInstruction": "🗣️ 向關主說出通關密語，即可請關主在護照蓋通關完成章。",
+  "nextStageGuide": "🎉 本關過關成功！請尋找下一關現場，掃描該關專屬 QR Code 繼續挑戰。",
+  "lastStageGuide": "🎉 五關挑戰完成！請向關主出示闖關護照確認通關，即可領取禮券。",
   "finalRewardLines": [
     "🎉 完成五個關卡並集滿護照印章後，",
     "🎁 請向各個關主出示護照確認通關，即可領取禮券。"

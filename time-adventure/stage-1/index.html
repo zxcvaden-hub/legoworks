@@ -1346,6 +1346,16 @@
       color: var(--muted); font-size: 0.88rem; line-height: 1.55;
       word-break: break-word; overflow-wrap: anywhere;
     }
+    .next-stage-guide {
+      margin: 14px 0 0; padding: 14px 12px; border-radius: 14px;
+      background: rgba(0,242,254,.12); border: 1px solid rgba(0,242,254,.35);
+      color: var(--accent); font-size: 0.98rem; font-weight: 700; line-height: 1.6;
+      text-align: center; word-break: break-word; overflow-wrap: anywhere;
+    }
+    .next-stage-guide .guide-sub {
+      display: block; margin-top: 6px; font-size: 0.86rem; font-weight: 600;
+      color: var(--text); opacity: 0.92;
+    }
     .reward-lines { margin: 10px 0 0; text-align: left; }
     .reward-lines p {
       margin: 0 0 6px; font-size: 0.88rem; line-height: 1.55; color: var(--muted);
@@ -1676,11 +1686,23 @@
       const isStation = typeof STATION_LEVEL === "number";
       const incomplete = DATA.levels.filter((lv) => !progress[lv.id]);
       const passHint = DATA.passphraseInstruction || "🗣️ 向關主說出通關密語，即可請關主在護照蓋通關完成章。";
+      const isLast = level.id === 5;
+      const nextGuide = isLast
+        ? (DATA.lastStageGuide || "🎉 五關挑戰完成！請向關主出示闖關護照確認通關，即可領取禮券。")
+        : (DATA.nextStageGuide || "🎉 本關過關成功！請尋找下一關現場，掃描該關專屬 QR Code 繼續挑戰。");
+      const nextGuideHtml =
+        '<div class="next-stage-guide">' + nextGuide +
+        (isLast
+          ? ""
+          : '<span class="guide-sub">本關已結束，請至下一關卡現場掃碼進入。</span>') +
+        "</div>";
       const rewardLines = DATA.finalRewardLines || [
         "🎉 完成五個關卡並集滿護照印章後，",
         "🎁 請向各個關主出示護照確認通關，即可領取禮券。"
       ];
-      const rewardHtml = '<div class="reward-lines">' + rewardLines.map((line) => "<p>" + line + "</p>").join("") + "</div>";
+      const rewardHtml = isLast
+        ? '<div class="reward-lines">' + rewardLines.map((line) => "<p>" + line + "</p>").join("") + "</div>"
+        : "";
       box.innerHTML =
         '<div class="success-box">' +
         "<strong>" + headline + "</strong>" +
@@ -1688,11 +1710,11 @@
         '<p class="passphrase-label">關主通關密語</p>' +
         '<div class="code">「' + level.passphrase + '」</div>' +
         '<div class="passphrase-hint">' + passHint + "</div>" +
+        nextGuideHtml +
         rewardHtml +
         storageWarningHtml() +
         (isStation
-          ? '<button type="button" class="btn btn-primary btn-sm" id="retry-station" style="margin-top:12px">重新挑戰本關</button>' +
-            '<p style="margin:12px 0 0;text-align:center"><a href="../../index.html" style="color:var(--accent)">← 返回活動說明</a></p>'
+          ? '<button type="button" class="btn btn-primary btn-sm" id="retry-station" style="margin-top:12px">重新挑戰本關</button>'
           : '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:12px">' +
             '<button type="button" class="btn btn-primary btn-sm" id="back-after-win">返回五關總覽</button>' +
             (incomplete.length
