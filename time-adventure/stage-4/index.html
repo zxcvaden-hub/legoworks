@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
   <meta name="theme-color" content="#0A2540" />
   <title>廣運時光探險｜第4關 廣運AI智慧一點通</title>
-  <link rel="stylesheet" href="../font-icons.css" />
-  <script src="../adventure.js"></script>
+  <link rel="stylesheet" href="../font-icons.css?v=20260729c" />
+  <script src="../adventure.js?v=20260729c"></script>
   <style>
     :root {
       --bg-deep: #0a2540;
@@ -45,6 +45,19 @@
       flex-direction: column;
       gap: 12px;
     }
+
+    .inapp-tip {
+      margin: 0 0 4px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 207, 107, 0.45);
+      background: rgba(255, 207, 107, 0.14);
+      color: #ffe6a8;
+      font-size: 0.86rem;
+      line-height: 1.55;
+      text-align: center;
+    }
+    .inapp-tip.hidden { display: none !important; }
 
     .hero {
       text-align: center;
@@ -1418,6 +1431,9 @@
 </head>
 <body>
   <div class="app" id="app">
+    <div id="inapp-browser-tip" class="inapp-tip hidden" role="status">
+      💡 小提醒：若從 LINE／通訊軟體開啟，建議點右上角「…」選擇<strong>以 Safari／Chrome 開啟</strong>，闖關更順暢。
+    </div>
     <header class="hero">
       <div class="hero-badge">KENMEC 50 · 第 4 關</div>
       <h1>廣運時光探險</h1>
@@ -1427,9 +1443,7 @@
       </nav>
     </header>
 
-    <audio id="bgm" loop preload="none" playsinline>
-      <source src="../audio/bgm.mp3" type="audio/mpeg" />
-    </audio>
+    <audio id="bgm" loop preload="none" playsinline></audio>
 
     <nav class="stage-nav" id="stage-nav" aria-label="關卡導覽"></nav>
 
@@ -1501,9 +1515,20 @@
     </div>
   </div>
 
-  <script src="../config.js"></script>
-  <script src="../game-data.js"></script>
-  <script src="../game-common.js"></script>
+  <script src="../config.js?v=20260729c"></script>
+  <script src="../game-data.js?v=20260729c"></script>
+  <script src="../game-common.js?v=20260729c"></script>
+  <script>
+    (function showInAppBrowserTip() {
+      try {
+        const ua = navigator.userAgent || "";
+        if (/Line\//i.test(ua) || /MicroMessenger/i.test(ua) || /FBAN|FBAV|Instagram/i.test(ua)) {
+          const tip = document.getElementById("inapp-browser-tip");
+          if (tip) tip.classList.remove("hidden");
+        }
+      } catch (_) { /* ignore */ }
+    })();
+  </script>
   <script>
     const STATION_LEVEL = 4;
     const STORAGE_KEY = "guangyun-time-adventure-v2-stage-4";
@@ -2034,6 +2059,12 @@
     function startBgm() {
       const bgm = document.getElementById("bgm");
       if (!bgm) return;
+      // 僅在使用者手動開啟時才載入 mp3，避免全員進關就搶頻寬
+      if (!bgm.getAttribute("data-src-ready")) {
+        const base = (typeof STATION_LEVEL === "number") ? "../audio/bgm.mp3" : "./audio/bgm.mp3";
+        bgm.src = base;
+        bgm.setAttribute("data-src-ready", "1");
+      }
       bgm.play().then(() => {
         setStoredPreference(BGM_PREF_KEY, "on");
         syncSoundButtons();
