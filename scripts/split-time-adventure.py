@@ -43,18 +43,18 @@ def replace_inline_puzzles(html: str, data: dict) -> str:
 def station_page(template: str, level: dict, data: dict) -> str:
     level_id = level["id"]
     html = template
-    html = html.replace('href="./font-icons.css?v=20260729c"', 'href="../font-icons.css?v=20260729c"')
+    html = html.replace('href="./font-icons.css?v=20260729d"', 'href="../font-icons.css?v=20260729d"')
     html = html.replace('src="./audio/bgm.mp3"', 'src="../audio/bgm.mp3"')
-    html = html.replace('src="./config.js?v=20260729c"', 'src="../config.js?v=20260729c"')
-    html = html.replace('src="./game-common.js?v=20260729c"', 'src="../game-common.js?v=20260729c"')
-    html = html.replace('src="./game-data.js?v=20260729c"', 'src="../game-data.js?v=20260729c"')
-    html = html.replace('src="./adventure.js?v=20260729c"', 'src="../adventure.js?v=20260729c"')
+    html = html.replace('src="./config.js?v=20260729d"', 'src="../config.js?v=20260729d"')
+    html = html.replace('src="./game-common.js?v=20260729d"', 'src="../game-common.js?v=20260729d"')
+    html = html.replace('src="./game-data.js?v=20260729d"', 'src="../game-data.js?v=20260729d"')
+    html = html.replace('src="./adventure.js?v=20260729d"', 'src="../adventure.js?v=20260729d"')
     # legacy unversioned paths (safety)
-    html = html.replace('href="./font-icons.css"', 'href="../font-icons.css?v=20260729c"')
-    html = html.replace('src="./config.js"', 'src="../config.js?v=20260729c"')
-    html = html.replace('src="./game-common.js"', 'src="../game-common.js?v=20260729c"')
-    html = html.replace('src="./game-data.js"', 'src="../game-data.js?v=20260729c"')
-    html = html.replace('src="./adventure.js"', 'src="../adventure.js?v=20260729c"')
+    html = html.replace('href="./font-icons.css"', 'href="../font-icons.css?v=20260729d"')
+    html = html.replace('src="./config.js"', 'src="../config.js?v=20260729d"')
+    html = html.replace('src="./game-common.js"', 'src="../game-common.js?v=20260729d"')
+    html = html.replace('src="./game-data.js"', 'src="../game-data.js?v=20260729d"')
+    html = html.replace('src="./adventure.js"', 'src="../adventure.js?v=20260729d"')
     html = html.replace('href="../index.html"', 'href="../../index.html"')
     html = html.replace(
         "</head>",
@@ -210,7 +210,7 @@ a {{ color:var(--accent); }}
     💡 小提醒：若從 LINE／通訊軟體開啟，建議點右上角「…」選擇<strong>以 Safari／Chrome 開啟</strong>，體驗更順暢。
   </div>
   <div class="badge">KENMEC 50 · TIME ADVENTURE</div>
-  <img class="anniversary-visual" src="./assets/kenmec-50-main-visual.png?v=20260729c" alt="廣運 50 週年主視覺" />
+  <img class="anniversary-visual" src="./assets/kenmec-50-main-visual.png?v=20260729d" alt="廣運 50 週年主視覺" />
   <h1>🗺️ 廣運時光探險｜活動說明</h1>
   <p class="lead">{story}</p>
   <ol class="stage-list">{rows}</ol>
@@ -219,7 +219,7 @@ a {{ color:var(--accent); }}
     <p class="note-item"><span class="note-label">🎁 禮券兌換</span><br>集滿五關護照印章後，向各關關主出示護照確認通關，即可領取禮券。<br>完成兌換後，關主將於護照兌換區打孔，請妥善保管闖關護照。</p>
     <p class="note-item"><span class="note-label">ℹ️ 注意事項</span><br>本頁不提供五關入口，請至各關卡現場掃描 QR Code。<br>手機完成紀錄僅供查閱，兌獎以闖關護照蓋章為準。<br>⚠️ 每人限兌換乙次，闖關護照遺失恕不補發。</p>
   </div>
-  <p class="footer-links"><a href="https://zxcvaden-hub.github.io/kenmec/?v=20260729c">← 返回活動客服</a> · <a href="./qr-codes.html?v=20260729c">工作人員 QR 總覽</a></p>
+  <p class="footer-links"><a href="https://zxcvaden-hub.github.io/kenmec/?v=20260729d">← 返回活動客服</a> · <a href="./qr-codes.html?v=20260729d">工作人員 QR 總覽</a></p>
 </main>
 <script>
 (function () {{
