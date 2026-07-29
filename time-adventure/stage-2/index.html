@@ -1421,7 +1421,7 @@
     <header class="hero">
       <div class="hero-badge">KENMEC 50 · 第 2 關</div>
       <h1>廣運時光探險</h1>
-      <p class="hero-sub">第 2 關｜液冷尋密碼</p>
+      <p class="hero-sub">50年的啟程 · 五關獨立挑戰 · 完成後向各個關主確認通關領取 100 元禮券</p>
       <nav class="nav-row">
         <a href="https://zxcvaden-hub.github.io/kenmec/">← 活動客服</a>
       </nav>
@@ -1441,7 +1441,7 @@
       <div class="stage-list" id="stage-list"></div>
       <div id="complete-banner" class="complete-banner hidden">
         <strong>🎉 五關全部完成！</strong><br />
-        手機紀錄僅供個人查看。完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。
+        手機紀錄僅供個人查看。完成五個關卡並集滿護照印章後，請向各個關主出示護照確認通關，即可領取 100 元禮券。禮券領取後，關主將於護照兌換區打孔，請妥善保管護照。
       </div>
       <!-- reset removed for production -->
     </section>
@@ -1484,7 +1484,7 @@
         <strong>恭喜完成<br>廣運50週年<br>時光探險</strong>
         <div class="reward-lines" id="finale-reward-lines">
           <p>🎉 完成五個關卡並集滿護照印章後，</p>
-          <p>🎁 請向各個關主出示護照確認通關，即可領取禮券。</p>
+          <p>🎁 請向各個關主出示護照確認通關，即可領取 100 元禮券。</p>
         </div>
       </div>
     </div>
@@ -1731,7 +1731,7 @@
       const passHint = DATA.passphraseInstruction || "🗣️ 向關主說出通關密語，即可請關主在護照蓋通關完成章。";
       const isLast = level.id === 5;
       const nextGuide = isLast
-        ? (DATA.lastStageGuide || "🎉 五關挑戰完成！請向關主出示闖關護照確認通關，即可領取禮券。")
+        ? (DATA.lastStageGuide || "🎉 五關挑戰完成！請向關主出示闖關護照確認通關，即可領取 100 元禮券。")
         : (DATA.nextStageGuide || "🎉 本關過關成功！請尋找下一關現場，掃描該關專屬 QR Code 繼續挑戰。");
       const nextGuideHtml =
         '<div class="next-stage-guide">' + nextGuide +
@@ -1741,7 +1741,7 @@
         "</div>";
       const rewardLines = DATA.finalRewardLines || [
         "🎉 完成五個關卡並集滿護照印章後，",
-        "🎁 請向各個關主出示護照確認通關，即可領取禮券。"
+        "🎁 請向各個關主出示護照確認通關，即可領取 100 元禮券。"
       ];
       const rewardHtml = isLast
         ? '<div class="reward-lines">' + rewardLines.map((line) => "<p>" + line + "</p>").join("") + "</div>"
@@ -3168,17 +3168,29 @@
       function showFactorySuccess() {
         clearToasts();
         showLevelSuccess(DATA.levels[3]);
-        setTimeout(() => {
+        const injectNote = () => {
           const box = document.querySelector("#stage-success .success-box");
-          if (!box || box.querySelector(".sf-extra-line")) return;
+          if (!box) return false;
+          if (box.querySelector(".sf-extra-line")) return true;
           const note = document.createElement("p");
           note.className = "sf-extra-line";
           note.style.margin = "8px 0 0";
           note.style.fontSize = "0.92rem";
           note.style.color = "var(--text)";
           note.textContent = "你成功修復了廣運智慧工廠！";
-          box.insertBefore(note, box.querySelector(".passphrase-label"));
-        }, 30);
+          const anchor = box.querySelector(".passphrase-label");
+          if (anchor) box.insertBefore(note, anchor);
+          else box.appendChild(note);
+          return true;
+        };
+        let tries = 0;
+        const poll = () => {
+          if (injectNote() || tries++ > 20) return;
+          if (GC) GC.trackTimeout(setTimeout(poll, 120));
+          else setTimeout(poll, 120);
+        };
+        if (GC) GC.trackTimeout(setTimeout(poll, 900));
+        else setTimeout(poll, 900);
       }
 
       function renderIntro() {
@@ -3292,6 +3304,8 @@
 
       function renderBootSequence() {
         clearToasts();
+        // Lock timer as soon as boot starts so late timeout cannot cancel a finished puzzle.
+        if (GC) GC.markCleared();
         if (GC) GC.playFactoryBootSound();
         body.innerHTML =
           '<div class="sf-shell">' +
@@ -3307,12 +3321,16 @@
           '<div class="sf-sequence" id="sf-sequence">' + bootSteps.map((step) => "<div>" + step + "</div>").join("") + "</div>" +
           "</div></div>";
         const nodes = [...document.querySelectorAll("#sf-sequence div")];
+        const schedule = (fn, ms) => {
+          if (GC) GC.trackTimeout(setTimeout(fn, ms));
+          else setTimeout(fn, ms);
+        };
         nodes.forEach((node, index) => {
-          GC.trackTimeout(setTimeout(() => node.classList.add("on"), index * 280));
+          schedule(() => node.classList.add("on"), index * 280);
         });
-        GC.trackTimeout(setTimeout(() => {
+        schedule(() => {
           if (!challengeFailed) showFactorySuccess();
-        }, 2000));
+        }, 2000);
       }
 
       function renderSystem() {
