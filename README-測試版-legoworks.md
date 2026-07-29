@@ -2,20 +2,21 @@
 
 > **這是測試版說明。**  
 > 本站僅供內部預覽與驗證。  
-> **正式對外請改用正式版：** [`README-正式版-kenmec.md`](./README-正式版-kenmec.md)
+> **正式對外請改用正式版：** [`README-正式版-kenmec.md`](./README-正式版-kenmec.md)  
+> **先讀導覽：** [`LEADME.md`](./LEADME.md)｜進度：[`PROGRESS_SNAPSHOT.md`](./PROGRESS_SNAPSHOT.md)（2026-07-29 下午）
 
 ## 基本資訊
 
 | 項目 | 內容 |
 |------|------|
 | 專案名稱 | 廣運50週年慶智能客服測試版 |
-| GitHub repo | `zxcvaden-hub/legoworks` |
-| 智能客服 | https://zxcvaden-hub.github.io/legoworks/ |
+| GitHub repo | `zxcvaden-hub/legoworks`（目前 `a892304`＋docs） |
+| 智能客服 | https://zxcvaden-hub.github.io/legoworks/?v=20260729d |
 | QR Code | https://zxcvaden-hub.github.io/legoworks/qr.html |
-| 時光探險（測試） | https://zxcvaden-hub.github.io/legoworks/time-adventure/ |
+| 時光探險（測試） | https://zxcvaden-hub.github.io/legoworks/time-adventure/?v=20260729d |
 | 客服／知識庫版本 | **0728**（與正式版內容同步） |
 | FAQ 數量 | **39** 則 |
-| 時光探險版本 | **0728 UX**（stage-only、180 秒、規則＋321GO） |
+| 時光探險版本 | **20260729d**（cache bust／LINE 提示／BGM 懶載／50年文案） |
 
 ## 與正式版的差異
 
@@ -33,43 +34,15 @@
 | 活動說明 | `/time-adventure/` |
 | 第 1 關｜啟航輸送機 | `/time-adventure/stage-1/` |
 | 第 2 關｜液冷尋密碼 | `/time-adventure/stage-2/` |
-| 第 3 關｜廣運歷史快問快答 | `/time-adventure/stage-3/` |
-| 第 4 關｜修復智慧工廠 | `/time-adventure/stage-4/` |
+| 第 3 關｜廣運歷史小測驗 | `/time-adventure/stage-3/` |
+| 第 4 關｜廣運AI智慧一點通 | `/time-adventure/stage-4/` |
 | 第 5 關｜廣運成功密碼 | `/time-adventure/stage-5/` |
 | QR 總覽 | `/time-adventure/qr-codes.html` |
 
-重點：
+現場避快取：網址後加 `?v=20260729d`。
 
-- 僅 `stage-1`～`stage-5`（已無 `level-*`）  
-- 網址集中於 `time-adventure/config.js` → `SITE_BASE_URL`  
-- 五關統一：規則 → 開始挑戰 → 3、2、1、GO → 180 秒  
-- 測試 QR 不可交付客戶；正式站需改 `SITE_BASE_URL` 後重下 QR
+## 客服維護
 
-## 客服功能（與正式版相同）
-
-- FAQ 關鍵字回答  
-- 正式快捷 6 鈕  
-- 交通卡片與導航  
-- 純靜態運作  
-
-## 必傳檔案（上傳至 legoworks 根目錄）
-
-```
-├── index.html
-├── knowledge.json
-├── qr.html
-├── qrcode.min.js
-└── messageImage_1779701547098.jpg
-```
-
-> 另外請保留／更新：`time-adventure/`（完整五關包）
-
-## 上傳後檢查（建議無痕）
-
-- https://zxcvaden-hub.github.io/legoworks/?v=0728  
-- https://zxcvaden-hub.github.io/legoworks/qr.html?v=0728  
-- https://zxcvaden-hub.github.io/legoworks/time-adventure/?v=0728b  
-- https://zxcvaden-hub.github.io/legoworks/time-adventure/stage-1/?v=0728b  
-- https://zxcvaden-hub.github.io/legoworks/time-adventure/qr-codes.html?v=0728b  
-
-詳細雙站上傳流程見：[`README-上傳說明.md`](./README-上傳說明.md)
+1. 改 `data/knowledge.json`  
+2. inject → `py scripts/verify-chatbot-health.py` PASS  
+3. 上傳本站根目錄客服檔（勿覆蓋 `time-adventure/`）
