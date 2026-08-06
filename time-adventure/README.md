@@ -3,7 +3,7 @@
 廣運 50 週年家庭日 · 五關手機互動挑戰＋現場蓋章。靜態網站，部署於 GitHub Pages。
 
 **進度存檔：** 詳見專案根目錄 `PROGRESS_SNAPSHOT.md`（**2026-07-29 下午**）。  
-**目前測試站（LEGOWORKS）最新：** `a892304`｜`ASSET_VERSION=20260729d`
+**目前測試站（LEGOWORKS）最新：** `a892304`｜`ASSET_VERSION=20260806a`
 
 正式對外請待切換 `SITE_BASE_URL` 至 kenmec 後再下載正式 QR。
 
@@ -16,10 +16,10 @@
 | QR 總覽（工作人員） | `/time-adventure/qr-codes.html` |
 
 完整網址由 `config.js` 的 `SITE_BASE_URL` 組合。  
-避快取請加：`?v=20260729d`
+避快取請加：`?v=20260806a`
 
-- 活動說明：https://zxcvaden-hub.github.io/legoworks/time-adventure/?v=20260729d  
-- 第 2 關：https://zxcvaden-hub.github.io/legoworks/time-adventure/stage-2/?v=20260729d  
+- 活動說明：https://zxcvaden-hub.github.io/legoworks/time-adventure/?v=20260806a  
+- 第 2 關：https://zxcvaden-hub.github.io/legoworks/time-adventure/stage-2/?v=20260806a  
 
 ## 網址／限時／快取版本（唯一設定）
 
@@ -31,7 +31,7 @@
 const SITE_BASE_URL = "...";           // 唯一要改的站點根網址
 const GAME_BASE_PATH = "/time-adventure";
 const GAME_DURATION_SECONDS = 180;     // 五關共用限時
-const ASSET_VERSION = "20260729d";     // 改程式後請提高，避舊快取
+const ASSET_VERSION = "20260806a";     // 改程式後請提高，避舊快取
 ```
 
 - `STAGE_URLS`、`QR_OVERVIEW_URL` 由此自動組合  
@@ -63,6 +63,18 @@ const ASSET_VERSION = "20260729d";     // 改程式後請提高，避舊快取
 玩法文案與密語以 `puzzles.json` 為準。  
 第 2 關故事已定稿為「廣運將**50年**累積的……」（勿寫四十多年）。
 
+### 第 3 關題目（目前版本）
+
+「廣運歷史小測驗」為五題三選一，題目涵蓋：
+
+1. 廣運集團公司創立的起點日期
+2. 盛新材料科技投入的碳化矽（SiC）材料技術
+3. 廣運創立初期的自動運輸設備技術
+4. 永暘光學隱形眼鏡的透氧性
+5. 太極能源發展的太陽能
+
+正確選項與玩家端資料均以 `puzzles.json` 為唯一來源；更新後必須執行 split 重建。
+
 ## 玩家流程（五關統一）
 
 ```
@@ -85,7 +97,7 @@ const ASSET_VERSION = "20260729d";     // 改程式後請提高，避舊快取
 
 | 項目 | 說明 |
 |------|------|
-| Cache busting | JS／CSS／圖加 `?v=20260729d` |
+| Cache busting | JS／CSS／圖加 `?v=20260806a` |
 | LINE 提示 | 偵測 LINE／微信等內建瀏覽器 → 建議 Safari／Chrome 開啟 |
 | BGM 懶載 | `preload="none"`；預設關；**手動開聲音才載入** mp3 |
 | 題目資料 | 內嵌於 `game-data.js`（**不** `fetch(puzzles.json)`） |
@@ -136,7 +148,7 @@ py -m http.server 8080
 
 ## 最近線上更新（LEGOWORKS）
 
-- `a892304`：第 2 關「五十／40多年」→「**50年**」；`ASSET_VERSION=20260729d`  
+- `a892304`：第 2 關「五十／40多年」→「**50年**」；`ASSET_VERSION=20260806a`  
 - `d13451d`：cache bust、LINE 外開提示、BGM 懶載  
 - 第 4 關 UX：先點系統再點設備；狀態列置底  
 - 過關引導「尋找下一關掃 QR」；禮券 100 元＋護照打洞文案  

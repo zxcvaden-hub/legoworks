@@ -5,7 +5,7 @@
 const SITE_BASE_URL = "https://zxcvaden-hub.github.io/legoworks";
 const GAME_BASE_PATH = "/time-adventure";
 const GAME_DURATION_SECONDS = 180;
-const ASSET_VERSION = "20260729d";
+const ASSET_VERSION = "20260806a";
 
 const STAGE_URLS = {
   stage1: `${SITE_BASE_URL}${GAME_BASE_PATH}/stage-1/`,
