@@ -106,7 +106,7 @@ window.GAME_DATA = {
     "3": [
       {
         "icon": "fa-list",
-        "text": "本關共有五題四選一題目"
+        "text": "本關共有五題三選一題目"
       },
       {
         "icon": "fa-check-double",
